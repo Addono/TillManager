@@ -1,11 +1,11 @@
-            </div>
-        </div>
-        <script src="<?php echo $resources;?>/jquery-ui/external/jquery/jquery.js" type="text/javascript"></script>
-        <script src="<?php echo $resources;?>/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
-        <script src="<?php echo $resources;?>/jquery-mobile/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
-        <?php echo $log;?>
-        <em>&copy; 2016</em>
+            </div><!-- main -->
+        <?php $this->Util->resources->add(['jquery', 'jquery-mobile']); ?>
+        <em>Made by Adriaan Knapen - WIP &copy; 2016</em>
         
+        </div><!-- page -->
+        
+        <?php // If a menu is required, initiate jQuery mobile to build it for us.
+        if($navigation) { ?>
         <script>
             // Set the thresholds for the swipe gestures.
             $.event.special.swipe.scrollSupressionThreshold = (screen.availWidth) / 9;
@@ -20,5 +20,6 @@
                $("#nav-button").click();
             });
         </script>
+        <?php } ?>
     </body>
 </html>

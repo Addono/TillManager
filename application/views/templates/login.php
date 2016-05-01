@@ -1,15 +1,17 @@
-<html>
     <?php
-    $this->load->helper('form');
+    echo validation_errors();
+    
     echo form_open('login');
     ?>
+        <div class="ui-field-contain">
+            <label for="username" >Username</label>
+            <input type="text" name="username" placeholder="Username"/>
+        </div>
 
-        <label for="username">Username</label>
-        <input type="input" name="username" /><br />
+        <div class="ui-field-contain">
+            <label for="password">Password</label>
+            <input type="password" name="password" placeholder="Password"/>
+        </div>
 
-        <label for="password">Password</label>
-        <input type="password" name="password" /><br />
-
-        <input type="submit" name="submit" />
+        <button type="submit" data-role="button" class="ui-btn ui-shadow ui-corner-all" name="submit" value="submit">Login</button>
     </form>
-</html>

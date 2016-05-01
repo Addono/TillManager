@@ -7,10 +7,10 @@ $navigation_pages = [
 <html>
     <head>
         <title><?php echo $name . $title; ?></title>
-        <link href="<?php echo $resources;?>/jquery-ui/jquery-ui.min.css" rel="stylesheet">
-        <link href="<?php echo $resources;?>/jquery-mobile/jquery.mobile-1.4.5.css" rel="stylesheet">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     </head>
     <body>
+        <?php if($navigation) { ?>
         <div data-role="page" class="ui-responsive-panel">
             <div data-role="panel" data-position="left" data-display="overlay" data-theme="a" id="nav-panel">
                 <ul data-role="listview">
@@ -25,11 +25,13 @@ $navigation_pages = [
                         }
                     ?>
                 </ul>
-            </div>
+            </div><!-- nav-panel -->
+        <?php } ?>
             
             <div data-role="header" class="ui-header" id="header">
-                <a href="#nav-panel" data-role="button" role="button" class="jqm-navmenu-link ui-nodisc-icon ui-alt-icon ui-btn-left ui-btn ui-icon-bars ui-btn-icon-notext" id="nav-button">Panel</a>
+                <?php if($navigation) {?><a href="#nav-panel" data-role="button" role="button" class="jqm-navmenu-link ui-nodisc-icon ui-alt-icon ui-btn-left ui-btn ui-icon-bars ui-btn-icon-notext" id="nav-button">Panel</a> <?php } ?>
                 <h1><?php echo $name . ucfirst($title);?></h1>
-            </div>
+            </div><!-- header -->
+            
             <div data-role="main" class="ui-content jqm-content jqm-fullwidth" id="main">
             
