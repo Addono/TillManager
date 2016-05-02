@@ -9,7 +9,6 @@ class Pages extends CI_Controller {
     private $logged_in;
     
     public function index($page = 'home') {
-        echo $page;
         $this->Logger = new Logger($this);
         $this->DBManager = new DBManager($this);
         $this->Util = new Util($this);
@@ -33,9 +32,6 @@ class Pages extends CI_Controller {
             if($this->form_validation->run() == TRUE) {
                 $this->session->set_userdata('userID', '123');
                 $this->logged_in = true;
-                echo "Test";
-            } else {
-                echo "Test 2";
             }
         }
         
@@ -64,8 +60,6 @@ class Pages extends CI_Controller {
         $data['name'] = self::name;
         $data['logged_in'] = $this->logged_in;
         $data['redirect'] = null;
-        
-        echo $page;
         
         switch($page) {
             case 'login':

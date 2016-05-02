@@ -8,7 +8,8 @@ $navigation_pages = [
     <head>
         <title><?php echo $name . $title; ?></title>
         <meta name="viewport" content="initial-scale=1, maximum-scale=1">
-        <?php if($redirect != null) echo "<meta http-equiv='refresh' content='0;url=" . base_url() . "index.php/$redirect'>"; ?>
+        <?php //if($redirect != null) echo "<meta http-equiv='refresh' content='0;url=" . base_url() . "index.php/$redirect'>"; ?>
+        <?php if($redirect != null) echo "<script type='text/javascript'> window.location.href = '" . base_url() . "index.php/$redirect'</script>"; ?>
     </head>
     <body>
         <?php if($navigation) { ?>
