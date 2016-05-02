@@ -9,6 +9,9 @@ class Pages extends CI_Controller {
     private $logged_in;
     
     public function index($page = 'home') {
+        // Load our own settings.
+        $this->config->load('TillManager');
+        
         // Create all used instances
         $this->Logger = new Logger($this);
         $this->DBManager = new DBManager($this);
@@ -30,13 +33,15 @@ class Pages extends CI_Controller {
         
         // If the user is not logged in, prepare the login form.
         if(!$this->logged_in) {
-            $this->load->library('form_validation');
+            $this->load->library('form_validation'); // Enable the form validation library.
             
-            $this->form_validation->set_error_delimiters('<div class="error">', '</div>');
+            $this->form_validation->set_error_delimiters('<div class="error">', '</div>'); // Set the form validation error delimiters.
             
-            $this->form_validation->set_rules('username', 'Username', 'required');
-            $this->form_validation->set_rules('password', 'Password', 'required');
+            // Set the form validation rules for the login form.
+            $this->form_validation->set_rules('username', 'Username', 'required|minlength[1]');
+            $this->form_validation->set_rules('password', 'Password', 'required|minlength[1]');
             
+            // Check if the form validation was valid.
             if($this->form_validation->run() == TRUE) {
                 $this->session->set_userdata('userID', '123');
                 $this->logged_in = true;
@@ -69,9 +74,7 @@ class Pages extends CI_Controller {
         $data['logged_in'] = $this->logged_in;
         $data['redirect'] = null;
         
-        $data['prepage'] = $this->session->flashdata('pre-page');
-        $this->session->set_flashdata('pre-page', $page);
-        
+        // Show the page which should be loaded.
         switch($page) {
             case 'login':
                 $data['navigation'] = false;

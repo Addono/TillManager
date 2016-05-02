@@ -13,6 +13,48 @@ class DBManager {
     }
     
     /**
+     * Adds a new user to the user table.
+     */
+    public function add_user($nickname, $first_name, $last_name, $password) {
+        $data = [
+          'nickname' => $nickname,
+            'first_name' => $first_name,
+            'last_name' => $last_name,
+            'password' => $this->hash_password($password),
+            'pin' => $this->generate_pin($this->ci->config->item('pin_length'))
+        ];
+        
+        $this->ci->db->insert(self::user_table_name, $data);
+    }
+    
+    private function hash_password($password) {
+        return password_hash($password, PASSWORD_DEFAULT);
+    }
+    
+    /**
+     * Generates a pin, as a string, of the specified length.
+     * @param int The required length of the pin. 
+     * @return string The pin as a string.
+     */
+    private function generate_pin($length) {
+        $pin = "";
+        
+        for($i = 0; $i < $length; $i++) {
+            $pin .= rand(0, 9);
+        }
+        
+        return $pin;
+    }
+    
+    public function check_user_credentials($username, $password) {
+        $this->ci->db->where(['username' => $username, 'pass' => $password]);
+        
+        $q = $this->ci->db->get(self::user_table_name);
+        
+        return $q->num_rows() > 0;
+    }
+    
+    /**
     * Creates the required tables missing from the database.
     */
    private function create_missing_tables() {
@@ -23,14 +65,14 @@ class DBManager {
            first_name tinytext,
            last_name tinytext,
            pin tinytext NOT NULL,
-           pass tinytext NOT NULL,
+           password tinytext NOT NULL,
            debit float(10,2) DEFAULT '0' NOT NULL,
            credit float(10,2) DEFAULT '0' NOT NULL,
            role ENUM('till manager', 'user', 'till') DEFAULT 'user' NOT NULL,
            cdate datetime DEFAULT NOW() NOT NULL,
            edate datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
            UNIQUE KEY id (id)
-       )
+      )
        ENGINE=InnoDB
        AUTO_INCREMENT=0;",
 
@@ -70,12 +112,13 @@ class DBManager {
                $this->ci->Logger->add_comment("Table $name already exists");
            } elseif($this->ci->db->query($sql)) {
                $this->ci->Logger->show_warning("Table '$name' created");
+               
+               if($name == self::user_table_name) {
+                   $this->add_user('admin', 'Site', 'Admin', 'Banana', 0);
+               }
            } else {
-               $this->ci->Logger->show_error("Failed to create '$name'");
+               $this->ci->Logger->show_error("Failed to create '$name'.");
            }
        }
-
-       //$admin_user_sql = "INSERT INTO `" . self::user_table_name . "` (`id`, `nickname`, `first_name`, `last_name`, `pin`, `pass`, `debit`, `credit`, `role`) VALUES ('1', 'admin', 'site', 'admin', '0000', '" . password_hash("admin", PASSWORD_DEFAULT) . "', '0.00', '0.00', 'user');";
-       //$this->ci->db->query($admin_user_sql);
    }
 }
