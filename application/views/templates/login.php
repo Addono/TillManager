@@ -1,7 +1,7 @@
     <?php
     echo validation_errors();
     
-    echo form_open('login');
+    echo form_open('login', 'data-ajax="false"');
     ?>
         <div class="ui-field-contain">
             <label for="username" >Username</label>

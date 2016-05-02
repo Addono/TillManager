@@ -15,18 +15,32 @@ class DBManager {
     /**
      * Adds a new user to the user table.
      */
-    public function add_user($nickname, $first_name, $last_name, $password) {
+    public function add_user($nickname, $first_name, $last_name, $password, $admin, $till_manager) {
         $data = [
-          'nickname' => $nickname,
+          'username' => $nickname,
             'first_name' => $first_name,
             'last_name' => $last_name,
             'password' => $this->hash_password($password),
-            'pin' => $this->generate_pin($this->ci->config->item('pin_length'))
+            'pin' => $this->generate_pin($this->ci->config->item('pin_length')),
+            'admin' => $admin,
+            'till_manager' => $till_manager
         ];
         
         $this->ci->db->insert(self::user_table_name, $data);
     }
     
+    public function get_user_data($username) {
+        $this->ci->db->where(['username' => $username]);
+        $this->ci->db->select(['*']);
+        
+        return $this->ci->db->get(self::user_table_name)->row_array();
+    }
+    
+    /**
+     * Hashes a password.
+     * @param string The password to be hashed.
+     * @return string The hash of the password.
+     */
     private function hash_password($password) {
         return password_hash($password, PASSWORD_DEFAULT);
     }
@@ -34,24 +48,38 @@ class DBManager {
     /**
      * Generates a pin, as a string, of the specified length.
      * @param int The required length of the pin. 
-     * @return string The pin as a string.
+     * @return int The pin as integer.
      */
     private function generate_pin($length) {
-        $pin = "";
-        
-        for($i = 0; $i < $length; $i++) {
-            $pin .= rand(0, 9);
-        }
-        
-        return $pin;
+        return rand(0, (pow(10, $length)) - 1);
     }
     
+    /**
+     * Checks if the user credentials are present in the database.
+     * @param string The username.
+     * @param string The password.
+     * @return string The result of the check, 'valid' if it was correct,
+     * 'username' if the username wasn't found, and 'password' if the
+     * password was incorrect.
+     */
     public function check_user_credentials($username, $password) {
-        $this->ci->db->where(['username' => $username, 'pass' => $password]);
+        $this->ci->db->where(['username' => $username]);
+        $this->ci->db->select(['password']);
         
         $q = $this->ci->db->get(self::user_table_name);
+        $hash;
         
-        return $q->num_rows() > 0;
+        if($q->num_rows() > 0) {
+            $hash = $q->row_array()['password'];
+        } else {
+            return 'username'; // Username not found
+        }
+        
+        if(password_verify($password, $hash)) {
+            return 'valid';
+        } else {
+            return 'password';
+        }
     }
     
     /**
@@ -61,14 +89,15 @@ class DBManager {
        $table_sql = [
            self::user_table_name => "CREATE TABLE `" . self::user_table_name . "` (
            id mediumint NOT NULL PRIMARY KEY AUTO_INCREMENT,
-           nickname tinytext NOT NULL,
+           username tinytext NOT NULL,
            first_name tinytext,
            last_name tinytext,
-           pin tinytext NOT NULL,
+           pin int(12) NOT NULL UNIQUE,
            password tinytext NOT NULL,
            debit float(10,2) DEFAULT '0' NOT NULL,
            credit float(10,2) DEFAULT '0' NOT NULL,
-           role ENUM('till manager', 'user', 'till') DEFAULT 'user' NOT NULL,
+           admin BOOLEAN NOT NULL DEFAULT FALSE,
+           till_manager BOOLEAN NOT NULL DEFAULT FALSE,
            cdate datetime DEFAULT NOW() NOT NULL,
            edate datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
            UNIQUE KEY id (id)
@@ -109,12 +138,12 @@ class DBManager {
 
        foreach($table_sql as $name => $sql) {
            if($this->ci->db->table_exists($name)) {
-               $this->ci->Logger->add_comment("Table $name already exists");
+               // Do something if the table already exists.
            } elseif($this->ci->db->query($sql)) {
                $this->ci->Logger->show_warning("Table '$name' created");
                
                if($name == self::user_table_name) {
-                   $this->add_user('admin', 'Site', 'Admin', 'Banana', 0);
+                   $this->add_user('admin', 'Site', 'Admin', 'Banana', true, false);
                }
            } else {
                $this->ci->Logger->show_error("Failed to create '$name'.");

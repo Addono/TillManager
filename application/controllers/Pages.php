@@ -7,6 +7,7 @@ class Pages extends CI_Controller {
 
     const name = "Stamkas - ";
     private $logged_in;
+    private $user_data;
     
     public function index($page = 'home') {
         // Load our own settings.
@@ -22,12 +23,17 @@ class Pages extends CI_Controller {
         $this->load->library('session');
         
         // Check if the user is logged in.
-        $this->logged_in = isset($this->session->userID) && $this->session->userID != NULL;
+        $this->logged_in = isset($this->session->username) && $this->session->username != NULL;
+        
+        if($this->logged_in) {
+            $user = $this->session->username;
+            $this->user_data = $this->DBManager->get_user_data($user);
+        }
         
         // Log the user out if he's logged in and wants to log out.
         if($this->logged_in && $page == 'logout') {
             $this->logged_in = false;
-            $this->session->unset_userdata('userID');
+            $this->session->unset_userdata('username');
             $this->session->set_flashdata('logout', true);
         }
         
@@ -38,13 +44,31 @@ class Pages extends CI_Controller {
             $this->form_validation->set_error_delimiters('<div class="error">', '</div>'); // Set the form validation error delimiters.
             
             // Set the form validation rules for the login form.
-            $this->form_validation->set_rules('username', 'Username', 'required|minlength[1]');
-            $this->form_validation->set_rules('password', 'Password', 'required|minlength[1]');
+            $this->form_validation->set_rules('username', 'Username', 'required');
+            $this->form_validation->set_rules('password', 'Password', 'required');
             
             // Check if the form validation was valid.
             if($this->form_validation->run() == TRUE) {
-                $this->session->set_userdata('userID', '123');
-                $this->logged_in = true;
+                // Get the post data of the form.
+                $username = $this->input->post('username');
+                $password = $this->input->post('password');
+                
+                // Check if the credentials entered by the user are correct.
+                $login = $this->DBManager->check_user_credentials($username, $password);
+                
+                // Check if the login was succesfull, if not show an error message.
+                switch($login) {
+                    case 'valid':
+                        $this->session->set_userdata('username', $username);
+                        $this->logged_in = true;
+                        break;
+                    case 'password':
+                        $this->Logger->show_warning('Invalid password.');
+                        break;
+                    case 'username':
+                        $this->Logger->show_warning('Username not found.');
+                        break;
+                } 
             }
         }
         
@@ -56,17 +80,13 @@ class Pages extends CI_Controller {
             }
         } else {
             switch($page) {
-                // Check if the user tries to acces the login page while already logged in.
-                case 'login':
-                    $this->view('home');
-                    break;
                 default:
                     $this->view($page);
                     break;
             }
         }
         
-        var_dump($this->session->all_userdata());
+        var_dump($this->session->all_userdata()); //#
     }
     
     public function view($page) {
@@ -74,22 +94,34 @@ class Pages extends CI_Controller {
         $data['logged_in'] = $this->logged_in;
         $data['redirect'] = null;
         
+        if($this->logged_in) {
+            $data['user_data'] = $this->user_data;
+        }
+        
         // Show the page which should be loaded.
         switch($page) {
             case 'login':
                 $data['navigation'] = false;
                 $data['title'] = 'Login';
                 
-                // Show the logout message if the user just logged out.
-                if($this->session->flashdata('logout')) {
-                    $this->Logger->show_message('You succesfully logged out.', 'info');
+                // Check if the user is already logged in, then there is no point in showing the login form.
+                if($this->logged_in) {
+                    $data['redirect'] = 'home';
+                    
+                    $this->load->view('templates/header', $data);
+                    $this->load->view('templates/footer', $data);
+                } else {
+                    // Show the logout message if the user just logged out.
+                    if($this->session->flashdata('logout')) {
+                        $this->Logger->show_message('You succesfully logged out.', 'info');
+                    }
+
+                    $data['log'] = $this->Logger->get_html_log();
+
+                    $this->load->view('templates/header', $data);
+                    $this->load->view('templates/login');
+                    $this->load->view('templates/footer', $data);
                 }
-                
-                $data['log'] = $this->Logger->get_html_log();
-                
-                $this->load->view('templates/header', $data);
-                $this->load->view('templates/login');
-                $this->load->view('templates/footer', $data);
             break;
             case 'logout':
                 $data['redirect'] = 'login';
