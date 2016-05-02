@@ -34,4 +34,15 @@ class Logger {
                         <strong>Warning: </strong>' . $message . '</p>
                 </div>';
     }
+    
+    /**
+     * Adds a message to the log.
+     * @param type The message it should display.
+     * @param type The icon it should display.
+     * 
+     * Todo: Use something different than buttons to make them easier to distinguish.
+     */
+    public function show_message($message, $icon) {
+        $this->html_log .= '<a disable class="ui-shadow-icon ui-btn-icon-left ui-btn ui-shadow ui-corner-all ui-icon-' . $icon . '">' . $message . '</a>';
+    }
 }

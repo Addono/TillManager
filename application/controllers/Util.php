@@ -13,12 +13,6 @@ class Util {
     
 }
 
-/*
- * 
-        <script src="<?php echo $resources;?>/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
-        <script src="<?php echo $resources;?>/jquery-mobile/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
- */
-
 class resources {
     private $location;
     

@@ -4,12 +4,15 @@ $navigation_pages = [
     "About" => "about",
 ];
 ?>
+<!DOCTYPE html>
 <html>
     <head>
+        <meta charset="utf-8">
         <title><?php echo $name . $title; ?></title>
         <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+        <?php $this->Util->resources->add(['jquery', 'jquery-ui' ,'jquery-mobile']); ?>
         <?php //if($redirect != null) echo "<meta http-equiv='refresh' content='0;url=" . base_url() . "index.php/$redirect'>"; ?>
-        <?php if($redirect != null) echo "<script type='text/javascript'> window.location.href = '" . base_url() . "index.php/$redirect'</script>"; ?>
+        <?php if($redirect != null) echo "<script type='text/javascript'> window.location.href = '" . base_url() . "index.php/$redirect/'</script>"; ?>
     </head>
     <body>
         <?php if($navigation) { ?>
@@ -22,7 +25,7 @@ $navigation_pages = [
                             if($url == $title) {
                                 echo "<li data-theme='b'>$page_name</li>\n";
                             } else {
-                                echo "<li><a href='" . base_url() . "index.php/$url'>$page_name</a></li>\n";
+                                echo "<li><a href='" . base_url() . "index.php/$url' data-url='" . base_url() . "index.php/$url'>$page_name</a></li>\n";
                             }
                         }
                     ?>
@@ -33,7 +36,7 @@ $navigation_pages = [
             <div data-role="header" class="ui-header" id="header">
                 <?php if($navigation) {?><a href="#nav-panel" data-role="button" role="button" class="jqm-navmenu-link ui-nodisc-icon ui-alt-icon ui-btn-left ui-btn ui-icon-bars ui-btn-icon-notext" id="nav-button">Panel</a> <?php } ?>
                 <h1><?php echo $name . ucfirst($title);?></h1>
-                <?php if($logged_in) {echo "<a href='" . base_url() . "index.php/logout' data-role='button' role='button' class='ui-btn ui-icon-power ui-btn-icon-right'>Logout</a>";} ?> 
+                <?php if($logged_in) {echo "<a data-ajax='false' data-method='delete' rel='nofollow' href='" . base_url() . "index.php/logout' data-role='button' class='ui-btn ui-icon-power ui-btn-icon-right'>Logout</a>";} ?> 
             </div><!-- header -->
             
             <div data-role="main" class="ui-content jqm-content jqm-fullwidth" id="main">
