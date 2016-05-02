@@ -6,18 +6,25 @@ require_once('Logger.php');
 class Pages extends CI_Controller {
 
     const name = "Stamkas - ";
+    private $logged_in;
     
     public function index($page = 'home') {
+        echo $page;
         $this->Logger = new Logger($this);
         $this->DBManager = new DBManager($this);
         $this->Util = new Util($this);
-
+        
+        $this->load->helper(array('form', 'url'));
         $this->load->library('session');
         
-        $logged_in = isset($this->session->userID) && $this->session->userID != NULL;
+        $this->logged_in = isset($this->session->userID) && $this->session->userID != NULL;
         
-        if(!$logged_in) {
-            $this->load->helper(array('form', 'url'));
+        if($this->logged_in && $page == 'logout') {
+            $this->logged_in = false;
+            $this->session->sess_destroy();
+        }
+        
+        if(!$this->logged_in) {
             $this->load->library('form_validation');
             
             $this->form_validation->set_rules('username', 'Username', 'required');
@@ -25,16 +32,19 @@ class Pages extends CI_Controller {
             
             if($this->form_validation->run() == TRUE) {
                 $this->session->set_userdata('userID', '123');
-                $logged_in = true;
-                
-                echo "Form validated!";
+                $this->logged_in = true;
+                echo "Test";
             } else {
-                echo "Form not valid!";
+                echo "Test 2";
             }
         }
         
-        if(!$logged_in) {
-            $this->view('login');
+        if(!$this->logged_in) {
+            if($page == 'logout') {
+                $this->view('logout');
+            } else {
+                $this->view('login');
+            }
         } else {
             switch($page) {
                 // Check if the user tries to acces the login page while already logged in.
@@ -52,31 +62,42 @@ class Pages extends CI_Controller {
     
     public function view($page) {
         $data['name'] = self::name;
+        $data['logged_in'] = $this->logged_in;
+        $data['redirect'] = null;
         
-        if($page == 'login') {
-            $data['navigation'] = false;
-            $data['title'] = 'Login';
-            
-            $this->load->view('templates/header', $data);
-            $this->load->view('templates/login');
-            $this->Logger->show_html_log();
-            $this->load->view('templates/footer', $data);
-        } else {
-            if ( ! file_exists(APPPATH.'views/pages/'.$page.'.php')) {
-                // Whoops, we don't have a page for that!
-                show_404();
-            }
-            
+        echo $page;
+        
+        switch($page) {
+            case 'login':
+                $data['navigation'] = false;
+                $data['title'] = 'Login';
 
-            // Set multiple variables used during page rendering.
-            $data['title'] = $page;
-            $data['navigation'] = true;
+                $this->load->view('templates/header', $data);
+                $this->load->view('templates/login');
+                $this->Logger->show_html_log();
+                $this->load->view('templates/footer', $data);
+            break;
+            case 'logout':
+                $data['redirect'] = 'login';
+                $this->load->view('templates/header', $data);
+                $this->load->view('templates/footer', $data);
+                break;
+            default:
+                if ( ! file_exists(APPPATH.'views/pages/'.$page.'.php')) {
+                    // Whoops, we don't have a page for that!
+                    show_404();
+                }
 
-            // Show the page. 
-            $this->load->view('templates/header', $data);
-            $this->load->view('pages/'.$page, $data);
-            $this->Logger->show_html_log();
-            $this->load->view('templates/footer', $data);
+                // Set multiple variables used during page rendering.
+                $data['title'] = $page;
+                $data['navigation'] = true;
+
+                // Show the page. 
+                $this->load->view('templates/header', $data);
+                $this->load->view('pages/'.$page, $data);
+                $this->Logger->show_html_log();
+                $this->load->view('templates/footer', $data);
+                break;
         }
     }
 }

@@ -8,6 +8,7 @@ $navigation_pages = [
     <head>
         <title><?php echo $name . $title; ?></title>
         <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+        <?php if($redirect != null) echo "<meta http-equiv='refresh' content='0;url=" . base_url() . "index.php/$redirect'>"; ?>
     </head>
     <body>
         <?php if($navigation) { ?>
@@ -31,6 +32,7 @@ $navigation_pages = [
             <div data-role="header" class="ui-header" id="header">
                 <?php if($navigation) {?><a href="#nav-panel" data-role="button" role="button" class="jqm-navmenu-link ui-nodisc-icon ui-alt-icon ui-btn-left ui-btn ui-icon-bars ui-btn-icon-notext" id="nav-button">Panel</a> <?php } ?>
                 <h1><?php echo $name . ucfirst($title);?></h1>
+                <?php if($logged_in) {echo "<a href='" . base_url() . "index.php/logout' data-role='button' role='button' class='ui-btn ui-icon-power ui-btn-icon-right'>Logout</a>";} ?> 
             </div><!-- header -->
             
             <div data-role="main" class="ui-content jqm-content jqm-fullwidth" id="main">
