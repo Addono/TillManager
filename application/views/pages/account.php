@@ -23,19 +23,14 @@
             <td><?php echo $user_data['last_name'];?></td>
         </tr>
         
-        <tr><!-- Pin -->
-            <td>Pin</td>
-            <td><?php echo $user_data['pin'];?></td>
-        </tr>
-        
-        <tr><!-- Password -->
-            <td>Password</td>
-            <td><i>Hidden</i><?php echo $this->Util->get_html_tooltip("For privacy and security reasons we do not store your password directly but use <a href='https://en.wikipedia.org/wiki/Cryptographic_hash_function'>hashing</a>, therefore we do not know what your password is."); ?></td>
-        </tr>
-        
         <tr><!-- Role(s) -->
             <td><?php echo ($user_data['till_manager'] || $user_data['admin']) ? "Roles" : "Role";?></td>
             <td>User<?php echo $user_data['till_manager'] ? ", Till manager" : ""; echo $user_data['admin'] ? ", Admin" : ""; ?></td>
+        </tr>
+        
+        <tr><!-- Pin -->
+            <td>Pin</td>
+            <td><?php echo $this->Util->get_html_popup_button('Show', $user_data['pin']); ?></td>
         </tr>
     </table>
 </div>

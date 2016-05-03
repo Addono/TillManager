@@ -13,8 +13,16 @@ class Util {
     
     public function get_html_tooltip($message) {
         $id = "tooltip-" . rand(0, 99999999999);
+        
         return "<a href='#$id' data-rel='popup' data-transition='pop' style='border: 0; background: none;' class='ui-btn ui-alt-icon ui-btn-inline ui-nodisc-icon ui-icon-info ui-btn-icon-notext'>Tooltip</a>"
-        . "\n<div data-role='popup' id='$id' class='ui-content'><p>$message</p></div>";
+        . "\n<div style='max-width:30em' data-role='popup' id='$id' class='ui-content'><p>$message</p></div>";
+    }
+    
+    public function get_html_popup_button($button, $popup) {
+        $id = "popup-" . rand(0, 999999999);
+        
+        return "<a href='#$id' data-rel='popup' data-transition='pop' class='ui-btn'>$button</a>"
+                . "\n<div style='max-width:30em' data-role='popup' id='$id' class='ui-content'><p>$popup</p></div>";
     }
 }
 
