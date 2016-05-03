@@ -1,9 +1,9 @@
 <?php
 class DBManager {
     private $ci;
-    const user_table_name = "user_table";
-    const trans_table_name = "trans_table";
-    const journ_table_name = "journ_table";
+    const user_table = "user_table";
+    const trans_table = "trans_table";
+    const journ_table = "journ_table";
     
     function __construct($ci) {
         $this->ci = $ci; // Parse controller object.
@@ -26,14 +26,14 @@ class DBManager {
             'till_manager' => $till_manager
         ];
         
-        $this->ci->db->insert(self::user_table_name, $data);
+        $this->ci->db->insert(self::user_table, $data);
     }
     
     public function get_user_data($username) {
         $this->ci->db->where(['username' => $username]);
         $this->ci->db->select(['*']);
         
-        return $this->ci->db->get(self::user_table_name)->row_array();
+        return $this->ci->db->get(self::user_table)->row_array();
     }
     
     /**
@@ -66,7 +66,7 @@ class DBManager {
         // Query for the password.
         $this->ci->db->where(['username' => $username]);
         $this->ci->db->select(['password']);
-        $q = $this->ci->db->get(self::user_table_name);
+        $q = $this->ci->db->get(self::user_table);
         
         // Check if the username was found.
         if($q->num_rows() > 0) {
@@ -85,16 +85,41 @@ class DBManager {
     }
     
     /**
+     * 
+     * @param string The username of the account which password should be updated.
+     * @param string The old password of the user, if left null then it won't be checked (not recommended).
+     * @param string The new password of the user.
+     */
+    public function update_password($username, $old_password, $new_password) {
+        // Check if the old password is correct, if it was parsed.
+        if($old_password != null) {
+            $password_check = $this->check_user_credentials($username, $old_password);
+            
+            if($password_check != 'valid') {
+                return $password_check;
+            }
+        }
+        
+        $this->ci->db->where('username', $username);
+        $hash = $this->hash_password($new_password); // The hashed version of the new password.
+        
+        if($this->ci->db->update(self::user_table, ['password' => $hash])) {
+            return 'succes';
+        }
+    }
+    
+    /**
     * Creates the required tables, if they are missing from the database.
     */
    private function create_missing_tables() {
        // Define the SQL creation code for each table we need.
        $table_sql = [
-           self::user_table_name => "CREATE TABLE `" . self::user_table_name . "` (
+           self::user_table => "CREATE TABLE `" . self::user_table . "` (
            id mediumint NOT NULL PRIMARY KEY AUTO_INCREMENT,
            username tinytext NOT NULL,
            first_name tinytext,
            last_name tinytext,
+           email tinytext,
            pin int(12) NOT NULL UNIQUE,
            password tinytext NOT NULL,
            debit float(10,2) DEFAULT '0' NOT NULL,
@@ -108,7 +133,7 @@ class DBManager {
        ENGINE=InnoDB
        AUTO_INCREMENT=0;",
 
-       self::trans_table_name => "CREATE TABLE " . self::trans_table_name . " (
+       self::trans_table => "CREATE TABLE " . self::trans_table . " (
            trans_id mediumint NOT NULL PRIMARY KEY AUTO_INCREMENT,
            author_id mediumint UNSIGNED NOT NULL,
            description tinytext,
@@ -122,7 +147,7 @@ class DBManager {
        AUTO_INCREMENT=1000000
        ;",
 
-       self::journ_table_name => "CREATE TABLE " . self::journ_table_name . " (
+       self::journ_table => "CREATE TABLE " . self::journ_table . " (
            `journ_id` mediumint UNSIGNED NOT NULL AUTO_INCREMENT,
            `trans_id` mediumint UNSIGNED NOT NULL,
            `accountid` mediumint UNSIGNED NOT NULL,
@@ -148,7 +173,7 @@ class DBManager {
                $this->ci->Logger->show_warning("Table '$name' created");
                
                // Add the default admin user to the user table.
-               if($name == self::user_table_name) {
+               if($name == self::user_table) {
                    $this->add_user('admin', 'Site', 'Admin', 'Banana', true, false);
                }
            } else {

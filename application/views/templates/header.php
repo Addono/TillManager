@@ -1,6 +1,8 @@
 <?php
 $navigation_pages = [
     "Home" => "home",
+    "My account" => "account",
+    "Change password" => "change_password",
     "About" => "about",
 ];
 ?>

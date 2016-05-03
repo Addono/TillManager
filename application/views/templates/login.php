@@ -5,7 +5,7 @@
     ?>
         <div class="ui-field-contain">
             <label for="username" >Username</label>
-            <input required type="text" name="username" placeholder="Username" value="<?php echo $username; ?>"/>
+            <input required type="text" name="username" placeholder="Username" value="<?php echo $this->input->post('username'); ?>"/>
         </div>
 
         <div class="ui-field-contain">

@@ -14,7 +14,7 @@ class Pages extends CI_Controller {
         $this->config->load('TillManager');
         
         // Create all used instances
-        $this->Logger = new Logger($this);
+        $this->Logger = new Logger;
         $this->DBManager = new DBManager($this);
         $this->Util = new Util($this);
         
@@ -63,10 +63,10 @@ class Pages extends CI_Controller {
                         $this->logged_in = true;
                         break;
                     case 'password':
-                        $this->Logger->show_warning('Invalid password.');
+                        $this->Logger->add_warning('Invalid password.');
                         break;
                     case 'username':
-                        $this->Logger->show_warning('Username not found.');
+                        $this->Logger->add_warning('Username not found.');
                         break;
                 } 
             }
@@ -85,25 +85,19 @@ class Pages extends CI_Controller {
                     break;
             }
         }
-        
-        var_dump($this->session->all_userdata()); //#
     }
     
     public function view($page) {
         $data['name'] = self::name;
         $data['logged_in'] = $this->logged_in;
         $data['redirect'] = null;
-        
-        if($this->logged_in) {
-            $data['user_data'] = $this->user_data;
-        }
+        $data['user_data'] = $this->user_data;
         
         // Show the page which should be loaded.
         switch($page) {
             case 'login':
                 $data['navigation'] = false;
                 $data['title'] = 'Login';
-                $data['username'] = $this->input->post('username');
                 
                 // Check if the user is already logged in, then there is no point in showing the login form.
                 if($this->logged_in) {
@@ -114,10 +108,10 @@ class Pages extends CI_Controller {
                 } else {
                     // Show the logout message if the user just logged out.
                     if($this->session->flashdata('logout')) {
-                        $this->Logger->show_message('You succesfully logged out.', 'info');
+                        $this->Logger->add_message('You succesfully logged out.', 'info');
                     }
 
-                    $data['log'] = $this->Logger->get_html_log();
+                    $data['log'] = $this->Logger->get_html();
 
                     $this->load->view('templates/header', $data);
                     $this->load->view('templates/login');
@@ -129,7 +123,7 @@ class Pages extends CI_Controller {
                 $data['title'] = 'test';
                 $data['navigation'] = false;
                 
-                $data['log'] = $this->Logger->get_html_log();
+                $data['log'] = $this->Logger->get_html();
                 $this->load->view('templates/header', $data);
                 $this->load->view('templates/footer', $data);
                 break;
@@ -142,7 +136,7 @@ class Pages extends CI_Controller {
                 // Set multiple variables used during page rendering.
                 $data['title'] = $page;
                 $data['navigation'] = true;
-                $data['log'] = $this->Logger->get_html_log();
+                $data['log'] = $this->Logger->get_html();
                 
                 // Show the page. 
                 $this->load->view('templates/header', $data);
