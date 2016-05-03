@@ -71,7 +71,7 @@ class DBManager {
         // Check if the username was found.
         if($q->num_rows() > 0) {
             // Get the hashed password.
-            $hash = $q->row_array()->password;
+            $hash = $q->row()->password;
             
             // Check if the hashed password corresponds to entered password.
             if(password_verify($password, $hash)) {
