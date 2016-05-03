@@ -46,7 +46,7 @@ class DBManager {
     }
     
     /**
-     * Generates a pin, as a string, of the specified length.
+     * Generates a pin of the specified length.
      * @param int The required length of the pin. 
      * @return int The pin as integer.
      */
@@ -85,7 +85,7 @@ class DBManager {
     }
     
     /**
-    * Creates the required tables missing from the database.
+    * Creates the required tables, if they are missing from the database.
     */
    private function create_missing_tables() {
        // Define the SQL creation code for each table we need.
