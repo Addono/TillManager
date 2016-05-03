@@ -1,3 +1,5 @@
+<div class="ui-body ui-body-a ui-corner-all">
+    <h3>Login</h3>
     <?php
     echo validation_errors();
     
@@ -15,3 +17,4 @@
 
         <button type="submit" data-role="button" class="ui-btn ui-shadow ui-corner-all" name="submit" value="submit">Login</button>
     </form>
+</div>
