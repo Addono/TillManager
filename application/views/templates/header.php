@@ -1,9 +1,9 @@
 <?php
-$navigation_pages = [
-    "Home" => "home",
-    "My account" => "account",
-    "About" => "about",
-];
+$navigation_pages = [];
+$navigation_pages["Home"] = "home";
+$navigation_pages["My account"] = "account";
+$user_data['admin'] == 1 ? $navigation_pages["Admin panel"] = "admin" : "";
+$navigation_pages["About"] = "about";
 ?>
 <!DOCTYPE html>
 <html>

@@ -15,9 +15,17 @@ class DBManager {
     /**
      * Adds a new user to the user table.
      */
-    public function add_user($nickname, $first_name, $last_name, $password, $admin, $till_manager) {
+    public function add_user($username, $first_name, $last_name, $password, $admin, $till_manager) {
+        // Check if the username is unique.
+        $this->ci->db->where(['username' => $username]);
+        $q = $this->ci->db->get(self::user_table);
+        
+        if($q->num_rows > 0) {
+            return 'username'; // Return if the username was not unique.
+        }
+        
         $data = [
-          'username' => $nickname,
+          'username' => $username,
             'first_name' => $first_name,
             'last_name' => $last_name,
             'password' => $this->hash_password($password),

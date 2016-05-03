@@ -19,10 +19,18 @@ class Util {
     }
     
     public function get_html_popup_button($button, $popup) {
-        $id = "popup-" . rand(0, 999999999);
+        $id = "popup-" . rand(0, 99999999999);
         
         return "<a href='#$id' data-rel='popup' data-transition='pop' class='ui-btn'>$button</a>"
                 . "\n<div style='max-width:30em' data-role='popup' id='$id' class='ui-content'><p>$popup</p></div>";
+    }
+    
+    public function get_html_not_admin() {
+        return '<div class="ui-body ui-body-a ui-corner-all">'
+        . '<h3>Get out, admin only here!</h3>'
+        . '<p>You need to be an admin to be allowed to acces this page. Click the button to go back to safety. <br><sub>Don\'t worry, you are not in danger - at least not that I\'m aware of - but really, you should go ... and be carefull out there!</sub></p>'
+        . '<a href="' . base_url() . 'index.php/home" class="ui-btn ui-btn-inline">Home</a>'
+        . '</div>';
     }
 }
 
