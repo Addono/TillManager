@@ -103,6 +103,7 @@ class Pages extends CI_Controller {
             case 'login':
                 $data['navigation'] = false;
                 $data['title'] = 'Login';
+                $data['username'] = $this->input->post('username');
                 
                 // Check if the user is already logged in, then there is no point in showing the login form.
                 if($this->logged_in) {
