@@ -2,7 +2,6 @@
 $navigation_pages = [
     "Home" => "home",
     "My account" => "account",
-    "Change password" => "change_password",
     "About" => "about",
 ];
 ?>
@@ -29,7 +28,7 @@ $navigation_pages = [
         <div data-role="page" class="ui-responsive-panel">
             <div data-role="panel" data-position="left" data-display="overlay" data-theme="a" id="nav-panel">
                 <ul data-role="listview">
-                    <li data-icon="delete"><a href="#" data-rel="close">Close</a></li>
+                    <li data-icon="delete"><a href="#" data-rel="close">Close this panel</a></li>
                     <?php
                         foreach($navigation_pages as $page_name => $url) {
                             if($url == $title) {

@@ -11,6 +11,11 @@ class Util {
         $this->resources = new resources(base_url() . "application/resources");
     }
     
+    public function get_html_tooltip($message) {
+        $id = "tooltip-" . rand(0, 99999999999);
+        return "<a href='#$id' data-rel='popup' data-transition='pop' style='border: 0; background: none;' class='ui-btn ui-alt-icon ui-btn-inline ui-nodisc-icon ui-icon-info ui-btn-icon-notext'>Tooltip</a>"
+        . "\n<div data-role='popup' id='$id' class='ui-content'><p>$message</p></div>";
+    }
 }
 
 class resources {

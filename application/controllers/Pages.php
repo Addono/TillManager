@@ -66,7 +66,7 @@ class Pages extends CI_Controller {
                         $this->Logger->add_warning('Invalid password.');
                         break;
                     case 'username':
-                        $this->Logger->add_warning('Username not found.');
+                        $this->Logger->add_warning('Username not found, note that the username is case sensitive.');
                         break;
                 } 
             }
