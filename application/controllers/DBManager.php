@@ -29,6 +29,11 @@ class DBManager {
         $this->ci->db->insert(self::user_table, $data);
     }
     
+    /**
+     * Get's all data in the user table for one user.
+     * @param string The username whom's data should be returned
+     * @return array All user data as an array.
+     */
     public function get_user_data($username) {
         $this->ci->db->where(['username' => $username]);
         $this->ci->db->select(['*']);
