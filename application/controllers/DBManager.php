@@ -21,7 +21,7 @@ class DBManager {
             'first_name' => $first_name,
             'last_name' => $last_name,
             'password' => $this->hash_password($password),
-            'pin' => $this->generate_pin($this->ci->config->item('pin_length')),
+            'pin' => $this->generate_pin($this->ci->config->item->pin_length),
             'admin' => $admin,
             'till_manager' => $till_manager
         ];
@@ -59,26 +59,28 @@ class DBManager {
      * @param string The username.
      * @param string The password.
      * @return string The result of the check, 'valid' if it was correct,
-     * 'username' if the username wasn't found, and 'password' if the
-     * password was incorrect.
+     *      'username' if the username wasn't found, and 'password' if the
+     *      password did not match the hashed password in the database.
      */
     public function check_user_credentials($username, $password) {
+        // Query for the password.
         $this->ci->db->where(['username' => $username]);
         $this->ci->db->select(['password']);
-        
         $q = $this->ci->db->get(self::user_table_name);
-        $hash;
         
+        // Check if the username was found.
         if($q->num_rows() > 0) {
-            $hash = $q->row_array()['password'];
+            // Get the hashed password.
+            $hash = $q->row_array()->password;
+            
+            // Check if the hashed password corresponds to entered password.
+            if(password_verify($password, $hash)) {
+                return 'valid';
+            } else {
+                return 'password';
+            }
         } else {
             return 'username'; // Username not found
-        }
-        
-        if(password_verify($password, $hash)) {
-            return 'valid';
-        } else {
-            return 'password';
         }
     }
     
@@ -86,6 +88,7 @@ class DBManager {
     * Creates the required tables missing from the database.
     */
    private function create_missing_tables() {
+       // Define the SQL creation code for each table we need.
        $table_sql = [
            self::user_table_name => "CREATE TABLE `" . self::user_table_name . "` (
            id mediumint NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -136,12 +139,15 @@ class DBManager {
        ;"
        ];
 
+       // Check for each table if it exists, if not create it.
        foreach($table_sql as $name => $sql) {
            if($this->ci->db->table_exists($name)) {
-               // Do something if the table already exists.
-           } elseif($this->ci->db->query($sql)) {
+               // This get's executed if the table already exists.
+           } elseif($this->ci->db->query($sql)) { // Create the table if it doesn't exist.
+               // Give the user feedback that a table was created.
                $this->ci->Logger->show_warning("Table '$name' created");
                
+               // Add the default admin user to the user table.
                if($name == self::user_table_name) {
                    $this->add_user('admin', 'Site', 'Admin', 'Banana', true, false);
                }
