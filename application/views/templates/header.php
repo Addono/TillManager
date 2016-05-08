@@ -3,13 +3,14 @@ $navigation_pages = [];
 $navigation_pages["Home"] = "home";
 $navigation_pages["My account"] = "account";
 $user_data['admin'] == 1 ? $navigation_pages["Admin panel"] = "admin" : "";
+$user_data['admin'] == 1 ? $navigation_pages["Manage users"] = "manage_users" : "";
 $navigation_pages["About"] = "about";
 ?>
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
-        <title><?php echo $name . $title; ?></title>
+        <title><?php echo $name . str_replace("_", " ", ucfirst($title)); ?></title>
         <meta name="viewport" content="initial-scale=1, maximum-scale=1">
         <?php 
         // Add jQuery, jQuery UI, jQuery Mobile js and css.
@@ -44,7 +45,7 @@ $navigation_pages["About"] = "about";
             
             <div data-role="header" class="ui-header" id="header">
                 <?php if($navigation) {?><a href="#nav-panel" data-role="button" role="button" class="jqm-navmenu-link ui-nodisc-icon ui-alt-icon ui-btn-left ui-btn ui-icon-bars ui-btn-icon-notext" id="nav-button">Panel</a> <?php } ?>
-                <h1><?php echo $name . ucfirst($title);?></h1>
+                <h1><?php echo $name .  str_replace("_", " ", ucfirst($title)); ?></h1>
                 <?php
                 // Show the logout button if the user is logged in.
                 if($logged_in) {

@@ -1,6 +1,7 @@
 <?php
 class Util {
     public $resources;
+    public $form;
     
     private $ci;
     
@@ -9,6 +10,7 @@ class Util {
         $this->ci->load->helper('url'); // Load required packages.
         
         $this->resources = new resources(base_url() . "application/resources");
+        $this->form = new Form($ci);
     }
     
     public function get_html_tooltip($message) {
@@ -63,5 +65,48 @@ class resources {
                 return "<link href='$this->location/jquery-mobile/jquery.mobile-1.4.5.css' rel='stylesheet'>\n" . 
                     "<script src='$this->location/jquery-mobile/jquery.mobile-1.4.5.min.js' type='text/javascript'></script>";
         }
+    }
+}
+
+class Form {
+    private $ci;
+    
+    function __construct($ci) {
+        $this->ci = $ci;
+    }
+    
+    /**
+     * Generates the HTML a form switch.
+     * @param type $name
+     * @param type $label
+     * @param type $option_left
+     * @param type $option_right
+     * @param type $default_pos
+     * @return string The HTML for the switch form element.
+     */
+    public function get_switch($name, $label = null, $option_left = "Off", $option_right = "On", $default_pos = true) {
+        $html = "<div class='ui-field-contain'>";
+        
+        if($label != null && $label != "") {
+            $html .= '<label for="flip-select-second">' . $label . '</label>';
+        }
+        
+        $html .= '<select id="flip-select-second" name="' . $name . '" data-role="flipswitch">'
+                . '<option>' . $option_left . '</option>';
+        
+        // Set the default position.
+        if($default_pos) {
+            $html .= '<option>' . $option_right . '</option>';
+        } else {
+            $html .= '<option selected="">' . $option_right . '</option>';
+        } 
+            
+        $html .= '</select>';
+        
+        return $html . "</div>";
+    }
+    
+    public function get_submit($title = "Submit", $inline = false) {
+        return '<button type="submit" data-role="button" class="ui-btn ui-shadow ui-corner-all' . ($inline ? ' ui-btn-inline' : '') . '" name="submit" value="submit">' . $title . '</button>';
     }
 }

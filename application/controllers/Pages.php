@@ -120,7 +120,7 @@ class Pages extends CI_Controller {
             break;
             case 'logout':
                 $data['redirect'] = 'login';
-                $data['title'] = 'test';
+                $data['title'] = 'Logout';
                 $data['navigation'] = false;
                 
                 $data['log'] = $this->Logger->get_html();
