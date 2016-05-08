@@ -1,6 +1,8 @@
 <?php
 class DBManager {
     private $ci;
+    public $curUser;
+    
     const user_table = "user_table";
     const trans_table = "trans_table";
     const journ_table = "journ_table";
@@ -15,13 +17,26 @@ class DBManager {
     /**
      * Adds a new user to the user table.
      */
-    public function add_user($username, $first_name, $last_name, $password, $admin, $till_manager) {
+    public function add_user($username, $first_name, $last_name, $password, $admin, $till_manager, $conf_password = null) {
+        if($username == null || $username == "") {
+            return 'username';
+        }
+        
+        if($password == null || $password == "") {
+            return 'password';
+        }
+
+        // If the confirmation password is passed, check if it matches.
+        if($conf_password != null && $password != $conf_password) {
+            return 'password-conf';
+        }
+
         // Check if the username is unique.
         $this->ci->db->where(['username' => $username]);
         $q = $this->ci->db->get(self::user_table);
         
         if($q->num_rows > 0) {
-            return 'username'; // Return if the username was not unique.
+            return 'username-exists'; // Return if the username was not unique.
         }
         
         $data = [
@@ -29,7 +44,7 @@ class DBManager {
             'first_name' => $first_name,
             'last_name' => $last_name,
             'password' => $this->hash_password($password),
-            'pin' => $this->generate_pin($this->ci->config->item->pin_length),
+            'pin' => $this->generate_pin($this->ci->config->item('pin_length')),
             'admin' => $admin,
             'till_manager' => $till_manager
         ];
@@ -46,7 +61,29 @@ class DBManager {
         $this->ci->db->where(['username' => $username]);
         $this->ci->db->select(['*']);
         
-        return $this->ci->db->get(self::user_table)->row_array();
+        $data = $this->ci->db->get(self::user_table)->row_array();
+        
+        // Add zeros to the start of the pin to make them equal in length.
+        while(strlen("0" . $data['pin']) <= $this->ci->config->item('pin_length')) {
+            $data['pin'] = "0" . $data['pin'];
+        }
+        
+        return $data;
+    }
+    
+    public function get_all_user_data($admin = null, $till_manager = null) {
+        if($admin != null) {
+            $this->ci->db->where(['admin' => true]);
+        }
+        
+        if($till_manager != null) {
+            $this->ci->db->where(['till_manager' => true]);
+        }
+        
+        $this->ci->db->select("*");
+        $q = $this->ci->db->get(self::user_table);
+        
+        return $q->result_array();
     }
     
     /**
@@ -183,14 +220,14 @@ class DBManager {
                // This get's executed if the table already exists.
            } elseif($this->ci->db->query($sql)) { // Create the table if it doesn't exist.
                // Give the user feedback that a table was created.
-               $this->ci->Logger->show_warning("Table '$name' created");
+               $this->ci->Logger->add_warning("Table '$name' created");
                
                // Add the default admin user to the user table.
                if($name == self::user_table) {
                    $this->add_user('admin', 'Site', 'Admin', 'Banana', true, false);
                }
            } else {
-               $this->ci->Logger->show_error("Failed to create '$name'.");
+               $this->ci->Logger->add_error("Failed to create '$name'.");
            }
        }
    }

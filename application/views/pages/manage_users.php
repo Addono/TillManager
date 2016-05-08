@@ -14,6 +14,35 @@ if($user_data['admin'] != 1) {
     $form['admin'] = $this->input->post('admin');
     $form['till_manager'] = $this->input->post('till_manager');
     
+    $form_filled = false;
+    
+    foreach($form as $field) {
+        if($field !== null) {
+            $form_filled = true;
+        }
+    }
+    
+    if($form_filled) {
+        switch($this->DBManager->add_user($form['username'], $form['first_name'], $form['last_name'], $form['password'], $form['admin'], $form['till_manager'], $form['password_conf'])) {
+            case 'username':
+                $this->page_Logger->add_warning("Failed to add user, username should not be empty. Please fill the username field and try again.");
+                break;
+            case 'username-exists':
+                $this->page_Logger->add_warning("Failed to add user, username is already in use. Try again with a different username.");
+                break;
+            case 'password':
+                $this->page_Logger->add_warning("Failed to add user, password should not be empty.");
+                break;
+            case 'password-conf':
+                $this->page_Logger->add_warning("Failed to add user, passwords did not match. Make sure that they are equal.");
+                break;
+            default:
+                $this->page_Logger->add_message("User '" . $form['username'] . "' added succesfully.", "check");
+                $user_added = true;
+                break;
+        }
+    }
+    
     ?>
     <div class="ui-body ui-body-a ui-corner-all">
     <h3>Add user</h3>
@@ -60,3 +89,21 @@ if($user_data['admin'] != 1) {
 <?php
     $this->page_Logger->show_html();
 }
+?>
+
+<div class="ui-body ui-body-a ui-corner-all">
+    <h3>User information</h3>
+    <table>
+        <?php
+            $columns = [
+                'username',
+                'first_name',
+                'last_name',
+                'admin',
+                'till_manager',
+                'debit',
+                'credit'
+            ];
+        ?>
+    </table>
+</div>
