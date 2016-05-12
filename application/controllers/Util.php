@@ -76,7 +76,7 @@ class Form {
     }
     
     /**
-     * Generates the HTML a form switch.
+     * Generates the HTML a form switch
      * @param type $name
      * @param type $label
      * @param type $option_left
@@ -85,7 +85,7 @@ class Form {
      * @return string The HTML for the switch form element.
      */
     public function get_switch($name, $label = null, $option_left = "Off", $option_right = "On", $default_pos = true) {
-        $html = "<div class='ui-field-contain'>";
+        $html = "<div class='ui-field-contain'>\n";
         
         if($label != null && $label != "") {
             $html .= '<label for="flip-select-second">' . $label . '</label>';
@@ -101,9 +101,9 @@ class Form {
             $html .= '<option selected="">' . $option_right . '</option>';
         } 
             
-        $html .= '</select>';
+        $html .= "</select>\n";
         
-        return $html . "</div>";
+        return $html . "</div>\n";
     }
     
     public function get_submit($title = "Submit", $inline = false) {

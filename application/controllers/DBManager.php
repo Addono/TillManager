@@ -17,13 +17,26 @@ class DBManager {
     /**
      * Adds a new user to the user table.
      */
-    public function add_user($username, $first_name, $last_name, $password, $admin, $till_manager, $conf_password = null) {
+    public function add_user($username, $first_name, $last_name, $password, $admin, $till_manager, $conf_password = null, $email = null) {
         if($username == null || $username == "") {
             return 'username';
         }
         
         if($password == null || $password == "") {
             return 'password';
+        }
+        
+        // Check if a valid email has been parsed.
+        if($email != null) {
+            // Check if the email is empty.
+            if($email == "") {
+                return 'email-empty';
+            }
+            
+            // Check if the email has a valid syntax.
+            if(!$this->check_email($email)) {
+                return 'email-invalid';
+            }
         }
 
         // If the confirmation password is passed, check if it matches.
@@ -46,7 +59,8 @@ class DBManager {
             'password' => $this->hash_password($password),
             'pin' => $this->generate_pin($this->ci->config->item('pin_length')),
             'admin' => $admin,
-            'till_manager' => $till_manager
+            'till_manager' => $till_manager,
+            'email' => $email
         ];
         
         $this->ci->db->insert(self::user_table, $data);
@@ -71,6 +85,12 @@ class DBManager {
         return $data;
     }
     
+    /**
+     * Returns all user data as an two dimensional array.
+     * @param boolean/null A boolean value if only, or no, admins should be selected.
+     * @param boolean/null A boolean value if only, or no, till managers should be selected.
+     * @return array A two dimensional array with the information of all users.
+     */
     public function get_all_user_data($admin = null, $till_manager = null) {
         if($admin != null) {
             $this->ci->db->where(['admin' => true]);
@@ -102,6 +122,19 @@ class DBManager {
      */
     private function generate_pin($length) {
         return rand(0, (pow(10, $length)) - 1);
+    }
+    
+    /**
+     * Checks if an email address has a valid syntax.
+     * @param string The email address to be checked.
+     * @return boolean If the email's syntax is valid.
+     */
+    private function check_email($email) {
+        if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return true;
+        } else {
+            return false;
+        }
     }
     
     /**
