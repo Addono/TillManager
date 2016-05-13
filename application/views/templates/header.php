@@ -6,13 +6,17 @@ $navigation_pages = [
         "admin" => false
     ],
     [
-        "title" => "Admin",
-        "admin" => true
+        "title" => "My account",
+        "admin" => false
     ],
     [
         "location" => "account",
-        "title" => "My account",
+        "title" => "Account details",
         "admin" => false
+    ],
+    [
+        "title" => "Admin",
+        "admin" => true
     ],
     [
         "location" => "admin",
@@ -62,7 +66,7 @@ $navigation_pages = [
                                 if($page['location'] == $title) {
                                     echo "<li data-theme='b'>" . $page['title'] . "</li>\n";
                                 } else {
-                                echo "<li><a href='" . base_url() . "index.php/" . $page['location'] . "' data-url='" . base_url() . "index.php/" . $page['location'] . "'>" . $page['title'] . "</a></li>\n";
+                                    echo "<li><a href='" . base_url() . "index.php/" . $page['location'] . "' data-url='" . base_url() . "index.php/" . $page['location'] . "'>" . $page['title'] . "</a></li>\n";
                                 }
                             }
                         }
