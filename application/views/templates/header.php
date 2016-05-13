@@ -7,24 +7,22 @@ $navigation_pages = [
     ],
     [
         "title" => "Admin",
-        "admin" => true,
-        "children" => [    
-            [
-                "location" => "admin",
-                "title" => "Admin panel",
-                "admin" => true
-            ],
-            [
-                "location" => "manage_users",
-                "title" => "Manage users",
-                "admin" => true
-            ]
-        ]
+        "admin" => true
     ],
     [
         "location" => "account",
         "title" => "My account",
         "admin" => false
+    ],
+    [
+        "location" => "admin",
+        "title" => "Admin panel",
+        "admin" => true
+    ],
+    [
+        "location" => "manage_users",
+        "title" => "Manage users",
+        "admin" => true
     ]
 ];
 ?>
@@ -58,33 +56,14 @@ $navigation_pages = [
                                 continue;
                             }
                             
-                            if(isset($page['children'])) {
-                                echo "\n<li><div class=\"ui-collapsible-content ui-body-inherit ui-collapsible-content-collapsed\" data-role=\"collapsible\">\n";
-                                echo "<h3>Test</h3><ul>";
-                                foreach($page['children'] as $page) {
-                                    // Check if this is the current page, if so return it in a different color and without a link.
-                                    if($page['location'] == $title) {
-                                        echo "<li data-theme='b'>" . $page['title'];
-                                    } else {
-                                        echo "<li><a href='" . base_url() . "index.php/" . $page['location'] . "' data-url='" . base_url() . "index.php/" . $page['location'] . "'>" . $page['title'] . "</a>";
-                                    }
-                                }
-                                
-                                echo "</li>\n";
-                                echo "</ul></div>\n";
+                            if(!isset($page['location'])) {
+                                echo "<li>" . $page['title'] . "</li>";
                             } else {
-                                // Check if the location is set, if not return a listed item without a link.
-                                if(!isset($page['location'])) {
-                                    echo "<li>" .$page['title'];
+                                if($page['location'] == $title) {
+                                    echo "<li data-theme='b'>" . $page['title'] . "</li>\n";
                                 } else {
-                                    // Check if this is the current page, if so return it in a different color and without a link.
-                                    if($page['location'] == $title) {
-                                        echo "<li data-theme='b'>" . $page['title'];
-                                    } else {
-                                        echo "<li><a href='" . base_url() . "index.php/" . $page['location'] . "' data-url='" . base_url() . "index.php/" . $page['location'] . "'>" . $page['title'] . "</a>";
-                                    }
+                                echo "<li><a href='" . base_url() . "index.php/" . $page['location'] . "' data-url='" . base_url() . "index.php/" . $page['location'] . "'>" . $page['title'] . "</a></li>\n";
                                 }
-                                echo "</li>\n";
                             }
                         }
                     ?>
