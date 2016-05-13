@@ -1,10 +1,32 @@
 <?php
-$navigation_pages = [];
-$navigation_pages["Home"] = "home";
-$navigation_pages["My account"] = "account";
-$user_data['admin'] == 1 ? $navigation_pages["Admin panel"] = "admin" : "";
-$user_data['admin'] == 1 ? $navigation_pages["Manage users"] = "manage_users" : "";
-$navigation_pages["About"] = "about";
+$navigation_pages = [
+    [
+        "location" => "home",
+        "title" => "Home",
+        "admin" => false
+    ],
+    [
+        "title" => "Admin",
+        "admin" => true,
+        "children" => [    
+            [
+                "location" => "admin",
+                "title" => "Admin panel",
+                "admin" => true
+            ],
+            [
+                "location" => "manage_users",
+                "title" => "Manage users",
+                "admin" => true
+            ]
+        ]
+    ],
+    [
+        "location" => "account",
+        "title" => "My account",
+        "admin" => false
+    ]
+];
 ?>
 <!DOCTYPE html>
 <html>
@@ -26,16 +48,43 @@ $navigation_pages["About"] = "about";
         <?php 
         // Build the navigation list.
         if($navigation) { ?>
-        <div data-role="page" class="ui-responsive-panel">
+        <div data-role="page" class="ui-responsive-panel" data-position-fixed="true">
             <div data-role="panel" data-position="left" data-display="overlay" data-theme="a" id="nav-panel">
                 <ul data-role="listview">
                     <li data-icon="delete"><a href="#" data-rel="close">Close this panel</a></li>
                     <?php
-                        foreach($navigation_pages as $page_name => $url) {
-                            if($url == $title) {
-                                echo "<li data-theme='b'>$page_name</li>\n";
+                        foreach($navigation_pages as $page) {
+                            if($page['admin'] && !$user_data['admin']) {
+                                continue;
+                            }
+                            
+                            if(isset($page['children'])) {
+                                echo "\n<li><div class=\"ui-collapsible-content ui-body-inherit ui-collapsible-content-collapsed\" data-role=\"collapsible\">\n";
+                                echo "<h3>Test</h3><ul>";
+                                foreach($page['children'] as $page) {
+                                    // Check if this is the current page, if so return it in a different color and without a link.
+                                    if($page['location'] == $title) {
+                                        echo "<li data-theme='b'>" . $page['title'];
+                                    } else {
+                                        echo "<li><a href='" . base_url() . "index.php/" . $page['location'] . "' data-url='" . base_url() . "index.php/" . $page['location'] . "'>" . $page['title'] . "</a>";
+                                    }
+                                }
+                                
+                                echo "</li>\n";
+                                echo "</ul></div>\n";
                             } else {
-                                echo "<li><a href='" . base_url() . "index.php/$url' data-url='" . base_url() . "index.php/$url'>$page_name</a></li>\n";
+                                // Check if the location is set, if not return a listed item without a link.
+                                if(!isset($page['location'])) {
+                                    echo "<li>" .$page['title'];
+                                } else {
+                                    // Check if this is the current page, if so return it in a different color and without a link.
+                                    if($page['location'] == $title) {
+                                        echo "<li data-theme='b'>" . $page['title'];
+                                    } else {
+                                        echo "<li><a href='" . base_url() . "index.php/" . $page['location'] . "' data-url='" . base_url() . "index.php/" . $page['location'] . "'>" . $page['title'] . "</a>";
+                                    }
+                                }
+                                echo "</li>\n";
                             }
                         }
                     ?>

@@ -84,7 +84,7 @@ class Form {
      * @param type $default_pos
      * @return string The HTML for the switch form element.
      */
-    public function get_switch($name, $label = null, $option_left = "Off", $option_right = "On", $default_pos = true) {
+    public function get_switch($name, $label = null, $option_left = "Off", $option_right = "On", $default_pos = false) {
         $html = "<div class='ui-field-contain'>\n";
         
         if($label != null && $label != "") {
@@ -96,9 +96,9 @@ class Form {
         
         // Set the default position.
         if($default_pos) {
-            $html .= '<option>' . $option_right . '</option>';
-        } else {
             $html .= '<option selected="">' . $option_right . '</option>';
+        } else {
+            $html .= '<option>' . $option_right . '</option>';
         } 
             
         $html .= "</select>\n";
