@@ -89,8 +89,8 @@ if($user_data['admin'] != 1) {
         <?php
         
             // Add the two switches for the user rights.
-            echo $this->Util->form->get_switch('admin', 'Admin', 'No', 'Yes', !$user_added ? $form['admin'] : false);  
-            echo $this->Util->form->get_switch('till_manager', 'Till Manager', 'No', 'Yes', !$user_added ? $form['admin'] : false);
+            echo $this->Util->form->get_switch('admin', 'Admin', 'No', 'Yes', !$user_added ? !$form['admin'] : false);  
+            echo $this->Util->form->get_switch('till_manager', 'Till Manager', 'No', 'Yes', !$user_added ? !$form['admin'] : false);
             
             // Add the submit button.
             echo $this->Util->form->get_submit('Add user', false);
