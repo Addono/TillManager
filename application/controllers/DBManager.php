@@ -6,6 +6,7 @@ class DBManager {
     const user_table = "user_table";
     const trans_table = "trans_table";
     const journ_table = "journ_table";
+    const posts_table = "posts_table";
     
     function __construct($ci) {
         $this->ci = $ci; // Parse controller object.
@@ -18,7 +19,7 @@ class DBManager {
      * Adds a new user to the user table.
      */
     public function add_user($username, $first_name, $last_name, $password, $admin, $till_manager, $conf_password = null, $email = null) {
-        if($username == null || $username == "") {
+        if($username === null || $username === "") {
             return 'username';
         }
         
@@ -44,18 +45,16 @@ class DBManager {
             return 'password-conf';
         }
 
-        // Check if the username is unique.
-        $this->ci->db->where(['username' => $username]);
-        $q = $this->ci->db->get(self::user_table);
-        
-        if($q->num_rows > 0) {
-            return 'username-exists'; // Return if the username was not unique.
+        // Check if the username is already in use.
+        if($this->user_exists($username)) {
+            return 'username-exists';
         }
         
         $data = [
           'username' => $username,
             'first_name' => $first_name,
             'last_name' => $last_name,
+            'post_id' => $username = "admin" ? null : $this->add_post($username),
             'password' => $this->hash_password($password),
             'pin' => $this->generate_pin($this->ci->config->item('pin_length')),
             'admin' => $admin,
@@ -64,6 +63,34 @@ class DBManager {
         ];
         
         $this->ci->db->insert(self::user_table, $data);
+    }
+    
+    private function user_exists($username) {
+        $this->ci->db->select(['username']);
+        $this->ci->db->where(['username' => $username]);
+        $q = $this->ci->db->get(self::user_table);
+        
+        if($q->num_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public function add_post($name) {
+        if(is_array($name)) {
+            foreach($name as $one_name) {
+                $this->add_post($one_name);
+            }
+        } else {
+            $data = [
+                "name" => $name
+            ];
+
+            $this->ci->db->insert(self::posts_table, $data);
+            
+            echo $this->ci->db->insert_id();
+        }
     }
     
     /**
@@ -158,9 +185,9 @@ class DBManager {
             
             // Check if the hashed password corresponds to entered password.
             if(password_verify($password, $hash)) {
-                return 'valid';
+                return 'valid'; // The entered password matches the hashed version in the database.
             } else {
-                return 'password';
+                return 'password'; // The entered password did not match the hashed version in the database.
             }
         } else {
             return 'username'; // Username not found
@@ -173,8 +200,15 @@ class DBManager {
      * @param string The old password of the user, if left null then it won't be checked (not recommended).
      * @param string The new password of the user.
      */
-    public function update_password($username, $old_password, $new_password) {
-        // Check if the old password is correct, if it was parsed.
+    public function update_password($username, $old_password, $new_password, $new_password_conf = null) {
+        // Check if the confirmation password is correct.
+        if($new_password_conf !== null) {
+            if($new_password_conf !== $new_password) {
+                return 'passwords-not-equal';
+            }
+        }
+
+        // Check if the old password is correct, if it was parsed to this function.
         if($old_password != null) {
             $password_check = $this->check_user_credentials($username, $old_password);
             
@@ -191,22 +225,49 @@ class DBManager {
         }
     }
     
+    public function reset_pin($username) {
+        $this->ci->db->where(['username' => $username]);
+        $this->ci->db->select(['username']);
+        $q = $this->ci->db->get(self::user_table);
+        
+        if($q->num_rows() == 0) {
+            return 'username';
+        } else {
+            $this->ci->db->where(['username' => $username]);
+            $this->ci->db->update(self::user_table, ['pin' => $this->generate_pin($this->ci->config->item('pin_length'))]);
+            
+            return 'succes';
+        }
+    }
+    
     /**
     * Creates the required tables, if they are missing from the database.
     */
    private function create_missing_tables() {
        // Define the SQL creation code for each table we need.
        $table_sql = [
+            self::posts_table => "CREATE TABLE " . self::posts_table . " (
+            `post_id` mediumint UNSIGNED NOT NULL AUTO_INCREMENT,
+            `name` tinytext,
+            `debit` FLOAT(10,2) DEFAULT 0.00,
+            `credit` FLOAT(10,2) DEFAULT 0.00,
+            `cdate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            `edate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (`post_id`)
+            )
+            ENGINE=InnoDB
+            AUTO_INCREMENT=7000000
+            ;",
+           
            self::user_table => "CREATE TABLE `" . self::user_table . "` (
            id mediumint NOT NULL PRIMARY KEY AUTO_INCREMENT,
            username tinytext NOT NULL,
            first_name tinytext,
            last_name tinytext,
+           post_id mediumint,
            email tinytext,
            pin int(12) NOT NULL UNIQUE,
            password tinytext NOT NULL,
-           debit float(10,2) DEFAULT '0' NOT NULL,
-           credit float(10,2) DEFAULT '0' NOT NULL,
            admin BOOLEAN NOT NULL DEFAULT FALSE,
            till_manager BOOLEAN NOT NULL DEFAULT FALSE,
            cdate datetime DEFAULT NOW() NOT NULL,
@@ -256,8 +317,13 @@ class DBManager {
                $this->ci->Logger->add_warning("Table '$name' created");
                
                // Add the default admin user to the user table.
-               if($name == self::user_table) {
-                   $this->add_user('admin', 'Site', 'Admin', 'Banana', true, false);
+               switch($name) {
+                    case self::user_table:
+                        $this->add_user('admin', 'Site', 'Admin', 'Banana', true, false);
+                        break;
+                    case self::posts_table:
+                        $this->add_post(['Inventory', 'Deposit', 'Profit', 'COGS', 'Sales revenue']);
+                        break;
                }
            } else {
                $this->ci->Logger->add_error("Failed to create '$name'.");

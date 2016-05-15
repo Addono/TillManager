@@ -4,8 +4,6 @@ if($user_data['admin'] != 1) {
 } else {
     $this->page_Logger = new Logger;
     
-    $user_added = false;
-    
     $form['username'] = $this->input->post('username');
     $form['first_name'] = $this->input->post('first_name');
     $form['last_name'] = $this->input->post('last_name');
@@ -14,66 +12,99 @@ if($user_data['admin'] != 1) {
     $form['password_conf'] = $this->input->post('password_confirm');
     $form['admin'] = $this->input->post('admin');
     $form['till_manager'] = $this->input->post('till_manager');
+    $form['username-change-password'] = $this->input->post('username-change-password');
+    $form['change-password'] = $this->input->post('change-password');
+    $form['conf-change-password'] = $this->input->post('conf-change-password');
     
+    var_dump($form['username']);
+    var_dump($form['admin']);
+    
+    $form_default = [
+                'username' => '',
+                'first_name' => '',
+                'last_name' => '',
+                'email' => '',
+                'password' => '',
+                'password_conf' => '',
+                'admin' => false,
+                'till_manager' => false,
+                'username-change-password' => '',
+                'change-password' => '',
+                'conf-change-password' => ''
+            ];
+    
+    $user_added = false;
     $form_filled = false;
-    
-    foreach($form as $field) {
-        if($field !== null) {
-            $form_filled = true;
-        }
+
+    switch($this->input->post('type')) {
+        case('add-user') :
+            if($form['username'] === null) {
+                $form = $form_default;
+            } else {
+                switch($this->DBManager->add_user($form['username'], $form['first_name'], $form['last_name'], $form['password'], $form['admin'], $form['till_manager'], $form['password_conf'], $form['email'])) {
+                    case 'username':
+                        $this->page_Logger->add_warning("Failed to add user, username should not be empty. Please fill the username field and try again.");
+                        break;
+                    case 'username-exists':
+                        $this->page_Logger->add_warning("Failed to add user, username is already in use. Try again with a different username.");
+                        break;
+                    case 'email-empty':
+                        $this->page_Logger->add_warning("Failed to add user, email address should not be empty.");
+                        break;
+                    case 'email-invalid':
+                        $this->page_Logger->add_warning("Failed to add user, email address has an invalid syntax.");
+                        break;
+                    case 'password':
+                        $this->page_Logger->add_warning("Failed to add user, password should not be empty.");
+                        break;
+                    case 'password-conf':
+                        $this->page_Logger->add_warning("Failed to add user, passwords did not match. Make sure that they are equal.");
+                        break;
+                    default:
+                        $this->page_Logger->add_message("User '" . $form['username'] . "' added succesfully.", "check");
+                        $form = $form_default;
+                        break;
+                }
+            }
+            break;
+        case('change-password'):
+            $error = "Failed to update the password of '" . $form['username-change-password'] . "', ";
+            
+            switch($this->DBManager->update_password($form['username-change-password'], null, $form["change-password"], $form["conf-change-password"])) {
+                case 'passwords-not-equal':
+                    $this->page_Logger->add_warning($error . "the passwords did not match.");
+                break;
+                case 'succes':
+                    $this->page_Logger->add_message("Password for '" . $form['username-change-password'] . "' succesfully updated, this user can now login with this new password.", "check");
+                    break;
+            }
+            break;
     }
-    
-    if($form_filled) {
-        switch($this->DBManager->add_user($form['username'], $form['first_name'], $form['last_name'], $form['password'], $form['admin'], $form['till_manager'], $form['password_conf'], $form['email'])) {
-            case 'username':
-                $this->page_Logger->add_warning("Failed to add user, username should not be empty. Please fill the username field and try again.");
-                break;
-            case 'username-exists':
-                $this->page_Logger->add_warning("Failed to add user, username is already in use. Try again with a different username.");
-                break;
-            case 'email-empty':
-                $this->page_Logger->add_warning("Failed to add user, email address should not be empty.");
-                break;
-            case 'email-invalid':
-                $this->page_Logger->add_warning("Failed to add user, email address has an invalid syntax.");
-                break;
-            case 'password':
-                $this->page_Logger->add_warning("Failed to add user, password should not be empty.");
-                break;
-            case 'password-conf':
-                $this->page_Logger->add_warning("Failed to add user, passwords did not match. Make sure that they are equal.");
-                break;
-            default:
-                $this->page_Logger->add_message("User '" . $form['username'] . "' added succesfully.", "check");
-                $user_added = true;
-                break;
-        }
-    }
-    
     ?>
     <div class="ui-body ui-body-a ui-corner-all">
     <h3>Add user</h3>
     <p><i>All fields are required</i></p>
     
     <form method="post">
+        <input type="hidden" name="type" value="add-user">
         <div class="ui-field-contain">
             <label for="username">Username</label>
-            <input type="text" name="username" value="<?php if(!$user_added) echo $form['username'];?>" required />
+            <input type="text" name="username" value="<?php echo $form['username'];?>" required />
         </div>
         
         <div class="ui-field-contain">
             <label for="first_name">First name</label>
-            <input type="text" name="first_name" value="<?php if(!$user_added) echo $form['first_name'];?>" required />
+            <input type="text" name="first_name" value="<?php echo $form['first_name'];?>" required />
         </div>
         
         <div class="ui-field-contain">
             <label for="last_name">Last name</label>
-            <input type="text" name="last_name" value="<?php if(!$user_added) echo $form['last_name'];?>" required />
+            <input type="text" name="last_name" value="<?php echo $form['last_name'];?>" required />
         </div>
         
         <div class="ui-field-contain">
             <label for="username">Email</label>
-            <input type="text" name="email" value="<?php if(!$user_added) echo $form['email'];?>" required />
+            <input type="text" name="email" value="<?php echo $form['email'];?>" required />
         </div>
         
         <div class="ui-field-contain">
@@ -89,8 +120,8 @@ if($user_data['admin'] != 1) {
         <?php
         
             // Add the two switches for the user rights.
-            echo $this->Util->form->get_switch('admin', 'Admin', 'No', 'Yes', !$user_added ? !$form['admin'] : false);  
-            echo $this->Util->form->get_switch('till_manager', 'Till Manager', 'No', 'Yes', !$user_added ? !$form['admin'] : false);
+            echo $this->Util->form->get_switch('admin', 'Admin', 'No', 'Yes', $form['admin']);  
+            echo $this->Util->form->get_switch('till_manager', 'Till Manager', 'No', 'Yes', $form['till_manager']);
             
             // Add the submit button.
             echo $this->Util->form->get_submit('Add user', false);
@@ -157,16 +188,10 @@ if($user_data['admin'] != 1) {
                     'priority' => '5'
                 ],
                 [
-                    'name' => 'debit',
-                    'friendly-name' => 'Debit',
-                    'type' => 'euros',
-                    'priority' => '6'
-                ],
-                [
-                    'name' => 'credit',
-                    'friendly-name' => 'Credit',
-                    'type' => 'euros',
-                    'priority' => '6'
+                    'friendly-name' => 'Change password',
+                    'username' => 'username', // The username field.
+                    'type' => 'change-password',
+                    'priority' => '7'
                 ]
             ];
             
@@ -229,6 +254,32 @@ if($user_data['admin'] != 1) {
                                     echo "False";
                                 }
                             }
+                            break;
+                        case 'change-password':
+                            $username = $user[$column['username']];
+                            
+                            if($username == "admin" || $username == $user_data['username']) {
+                                echo "<a href='" . $this->Util->get_url('account') . "' class='ui-btn ui-corner-all ui-shadow ui-mini ui-icon-alert ui-btn-icon-left' style='margin: 0'>Change your own password</a>";
+                                break;
+                            }
+                            
+                            $id = "PR" . $username;
+                            
+                            // Generate the popup of the password reset.
+                            echo $this->Util->get_html_popup_button(
+                                    "Change password", // Set the title of the popup.
+                                    "<h3>Change password for '$username'</h3>\n" . 
+                                    "<form method='post' data-ajax='false'>\n" . 
+                                    "<input type='hidden' name='type' value='change-password'>\n" .
+                                    "<input type='hidden' name='username-change-password' value='" . $username . "'>\n" . 
+                                    "<label for='password'>Password</label><input type='password' name='change-password' />\n" .
+                                    "<label for='conf-password'>Confirm password</label><input type='password' name='conf-change-password' />\n" .
+                                    $this->Util->form->get_submit('Change password', false) . 
+                                    "</form>\n",
+                                    null, // Don't use an icon.
+                                    $id, // Set the id of this popup.
+                                    true // Use the mini version of the button.
+                                    );
                             break;
                     }
                     

@@ -7,7 +7,7 @@
                     }
                 }
             ?>
-        <em>Adriaan Knapen &copy; 2016 (Beta, WIP)</em>
+        <em>Adriaan Knapen &copy; 2016 (Beta, WIP)</em> <!-- Koen was here! -->
         </div><!-- page -->
         
         <?php // If a menu is required, initiate jQuery mobile to build it for us.

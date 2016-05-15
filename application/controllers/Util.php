@@ -13,6 +13,10 @@ class Util {
         $this->form = new Form($ci);
     }
     
+    public function get_url($page) {
+        return base_url() . "index.php/" . $page;
+    }
+    
     public function get_html_tooltip($message) {
         $id = "tooltip-" . rand(0, 99999999999);
         
@@ -20,11 +24,32 @@ class Util {
         . "\n<div style='max-width:30em' data-role='popup' id='$id' class='ui-content'><p>$message</p></div>";
     }
     
-    public function get_html_popup_button($button, $popup) {
-        $id = "popup-" . rand(0, 99999999999);
+    public function get_html_popup_button($button, $popup, $icon = null, $id = null, $mini = false) {
+        $html = "";
+        $class = "";
+        $style = "";
         
-        return "<a href='#$id' data-rel='popup' data-transition='pop' class='ui-btn'>$button</a>"
-                . "\n<div style='max-width:30em' data-role='popup' id='$id' class='ui-content'><p>$popup</p></div>";
+        if($id == null) {
+            $id = "popup-" . rand(0, 99999999999);
+        }
+        
+        if($mini) {
+            $class .= " ui-mini";
+            $style .= "margin: 0"; 
+        }
+        
+        if($icon == null) {
+            $html .= "<a href='#$id' data-rel='popup' data-transition='pop' class='ui-btn ui-corner-all $class' style='$style'>$button</a>\n";
+        } else {
+            $html .= "<a href='#$id' data-rel='popup' data-transition='pop' class='ui-btn ui-corner-all ui-icon-$icon ui-btn-icon-left $class' style='$style'>$button</a>\n";
+        }
+        
+        $html .= "<div style='max-width:30em' data-role='popup' id='$id' class='ui-content ui-corner-all'>\n"
+                . "<a href='#' data-rel='back' class='ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right'>Close</a>\n" // Add the close button
+                . "$popup\n"
+                . "</div>\n";
+        
+        return $html;
     }
     
     public function get_html_not_admin() {

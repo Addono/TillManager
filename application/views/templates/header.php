@@ -6,22 +6,9 @@ $navigation_pages = [
         "admin" => false
     ],
     [
-        "title" => "My account",
-        "admin" => false
-    ],
-    [
         "location" => "account",
         "title" => "Account details",
         "admin" => false
-    ],
-    [
-        "title" => "Admin",
-        "admin" => true
-    ],
-    [
-        "location" => "admin",
-        "title" => "Admin panel",
-        "admin" => true
     ],
     [
         "location" => "manage_users",
