@@ -1,4 +1,7 @@
 <?php
+/**
+ * A class containing multiple tools to handle generic and regularly used HTML.
+ */
 class Util {
     public $resources;
     public $form;
@@ -13,15 +16,25 @@ class Util {
         $this->form = new Form($ci);
     }
     
+    /**
+     * Returns the full url of a page.
+     * @param string The name of the page.
+     * @return string The url of the page.
+     */
     public function get_url($page) {
         return base_url() . "index.php/" . $page;
     }
     
+    /**
+     * Returns the HTML of an tooltip with an specified message.
+     * @param string The message of the tooltip
+     * @return string An tooltip as HTML.
+     */
     public function get_html_tooltip($message) {
         $id = "tooltip-" . rand(0, 99999999999);
         
         return "<a href='#$id' data-rel='popup' data-transition='pop' style='border: 0; background: none;' class='ui-btn ui-alt-icon ui-btn-inline ui-nodisc-icon ui-icon-info ui-btn-icon-notext'>Tooltip</a>"
-        . "\n<div style='max-width:30em' data-role='popup' id='$id' class='ui-content'><p>$message</p></div>";
+        . "\n<div style='max-width:30em' data-role='popup' id='$id' class='ui-content'>$message</div>";
     }
     
     public function get_html_popup_button($button, $popup, $icon = null, $id = null, $mini = false) {
@@ -52,6 +65,10 @@ class Util {
         return $html;
     }
     
+    /**
+     * Returns the message which should be shown to the user if they do not have the admin rights to view the page.
+     * @return string The HTML which should be displayed if the page should only be visible to admins.
+     */
     public function get_html_not_admin() {
         return '<div class="ui-body ui-body-a ui-corner-all">'
         . '<h3>Get out, admin only here!</h3>'
@@ -61,6 +78,9 @@ class Util {
     }
 }
 
+/**
+ * Class for adding (external) JS and CSS resources to the page.
+ */
 class resources {
     private $location;
     
@@ -68,6 +88,10 @@ class resources {
         $this->location = $location;
     }
     
+    /**
+     * Adds the HTML for one or multiple packages to the page.
+     * @param mixed Either an string of the name of one package, or multiple names stored in an array.
+     */
     public function add($packages) {
         // If an array of packages is parsed, load them one by one.
         if(is_array($packages)) {
@@ -79,6 +103,7 @@ class resources {
         }
     }
     
+    // Gets the html needed to return each of the packages.
     private function get_html($package) {
         switch(strtolower($package)) {
             case 'jquery':
@@ -89,6 +114,8 @@ class resources {
             case 'jquery-mobile':
                 return "<link href='$this->location/jquery-mobile/jquery.mobile-1.4.5.css' rel='stylesheet'>\n" . 
                     "<script src='$this->location/jquery-mobile/jquery.mobile-1.4.5.min.js' type='text/javascript'></script>";
+            default: // Log an error if the package does not exist.
+                error_log("Package  '$package' was not found, and could therefore not be added by util->resources");
         }
     }
 }
@@ -102,11 +129,11 @@ class Form {
     
     /**
      * Generates the HTML a form switch
-     * @param type $name
-     * @param type $label
-     * @param type $option_left
-     * @param type $option_right
-     * @param type $default_pos
+     * @param string The name tag of the switch.
+     * @param string The label in front of the switch.
+     * @param string The left - false - value and name of the switch.
+     * @param string The right - true - value and name of the switch.
+     * @param mixed  Can be either an boolean or a string deciding if the right or left value should be default. Parsing true (boolean) or the right option (string) will make the right position default.
      * @return string The HTML for the switch form element.
      */
     public function get_switch($name, $label = null, $option_left = "Off", $option_right = "On", $default_pos = false) {
@@ -119,8 +146,9 @@ class Form {
         $html .= '<select id="flip-select-second" name="' . $name . '" data-role="flipswitch">'
                 . '<option>' . $option_left . '</option>';
         
-        // Set the default position.
-        if($default_pos) {
+        // Set the default position to right if this is specified.
+        if(($default_pos === $option_right && is_string($default_pos) || // Check if the default position is equal to the right one, if the default position is parsed as a string.
+                ($default_pos && is_bool($default_pos)))) { // Check if the default position is right (true) if the default position is set as an boolean.
             $html .= '<option selected="">' . $option_right . '</option>';
         } else {
             $html .= '<option>' . $option_right . '</option>';
@@ -128,7 +156,7 @@ class Form {
             
         $html .= "</select>\n";
         
-        return $html . "</div>\n";
+        return $html . "</div>\n"; // Return the generated HTML of the switch.
     }
     
     public function get_submit($title = "Submit", $inline = false) {

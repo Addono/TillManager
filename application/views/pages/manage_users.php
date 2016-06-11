@@ -4,6 +4,7 @@ if($user_data['admin'] != 1) {
 } else {
     $this->page_Logger = new Logger;
     
+    // Get all post variables into one array.
     $form['username'] = $this->input->post('username');
     $form['first_name'] = $this->input->post('first_name');
     $form['last_name'] = $this->input->post('last_name');
@@ -16,9 +17,7 @@ if($user_data['admin'] != 1) {
     $form['change-password'] = $this->input->post('change-password');
     $form['conf-change-password'] = $this->input->post('conf-change-password');
     
-    var_dump($form['username']);
-    var_dump($form['admin']);
-    
+    // The default values of all form fields.
     $form_default = [
                 'username' => '',
                 'first_name' => '',
@@ -26,8 +25,8 @@ if($user_data['admin'] != 1) {
                 'email' => '',
                 'password' => '',
                 'password_conf' => '',
-                'admin' => false,
-                'till_manager' => false,
+                'admin' => null,
+                'till_manager' => null,
                 'username-change-password' => '',
                 'change-password' => '',
                 'conf-change-password' => ''

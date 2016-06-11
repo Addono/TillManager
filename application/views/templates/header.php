@@ -21,7 +21,9 @@ $navigation_pages = [
 <html>
     <head>
         <meta charset="utf-8">
-        <title><?php echo $name . str_replace("_", " ", ucfirst($title)); ?></title>
+        <title>
+            <?php echo $name . str_replace("_", " ", ucfirst($title)); ?>
+        </title>
         <meta name="viewport" content="initial-scale=1, maximum-scale=1">
         <?php 
         // Add jQuery, jQuery UI, jQuery Mobile js and css.
