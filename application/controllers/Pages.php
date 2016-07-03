@@ -13,17 +13,20 @@ class Pages extends CI_Controller {
         "home" => [
             "location" => "home",
             "title" => "Home",
-            "admin" => false
+            "admin" => false,
+            "tillmanager" => false
         ],
         "account" => [
             "location" => "account",
             "title" => "Account details",
-            "admin" => false
+            "admin" => false,
+            "tillmanager" => false
         ],
         "manage_users" => [
             "location" => "manage_users",
             "title" => "Manage users",
-            "admin" => true
+            "admin" => true,
+            "tillmanager" => false
         ]
     ];
     
@@ -163,6 +166,8 @@ class Pages extends CI_Controller {
                 
                 if($this->pages[$page]['admin'] && !$this->user_data['admin']) {
                     $this->load->view('templates/admin_only', $data);
+                } elseif($this->pages[$page]['admin'] && !$this->user_data['admin']) {
+                    $this->load->view('templates/tillmanager_only', $data);
                 } else {
                     $this->load->view('pages/' . $page, $data);
                 }
