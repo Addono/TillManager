@@ -64,18 +64,6 @@ class Util {
         
         return $html;
     }
-    
-    /**
-     * Returns the message which should be shown to the user if they do not have the admin rights to view the page.
-     * @return string The HTML which should be displayed if the page should only be visible to admins.
-     */
-    public function get_html_not_admin() {
-        return '<div class="ui-body ui-body-a ui-corner-all">'
-        . '<h3>Get out, admin only here!</h3>'
-        . '<p>You need to be an admin to be allowed to acces this page. Click the button to go back to safety. <br><sub>Don\'t worry, you are not in danger - at least not that I\'m aware of - but really, you should go ... and be carefull out there!</sub></p>'
-        . '<a href="' . base_url() . 'index.php/home" class="ui-btn ui-btn-inline">Home</a>'
-        . '</div>';
-    }
 }
 
 /**

@@ -9,6 +9,24 @@ class Pages extends CI_Controller {
     private $logged_in;
     private $user_data;
     
+    private $pages = [
+        "home" => [
+            "location" => "home",
+            "title" => "Home",
+            "admin" => false
+        ],
+        "account" => [
+            "location" => "account",
+            "title" => "Account details",
+            "admin" => false
+        ],
+        "manage_users" => [
+            "location" => "manage_users",
+            "title" => "Manage users",
+            "admin" => true
+        ]
+    ];
+    
     public function index($page = 'home') {
         // Load our own settings.
         $this->config->load('TillManager');
@@ -92,6 +110,7 @@ class Pages extends CI_Controller {
         $data['logged_in'] = $this->logged_in;
         $data['redirect'] = null;
         $data['user_data'] = $this->user_data;
+        $data['navigation_veriables'] = $this->pages;
         
         // Show the page which should be loaded.
         switch($page) {
@@ -99,7 +118,7 @@ class Pages extends CI_Controller {
                 $data['navigation'] = false;
                 $data['title'] = 'Login';
                 
-                // Check if the user is already logged in, then there is no point in showing the login form.
+                // If the user is already logged in, show the home page instead.
                 if($this->logged_in) {
                     $data['redirect'] = 'home';
                     
@@ -124,11 +143,12 @@ class Pages extends CI_Controller {
                 $data['navigation'] = false;
                 
                 $data['log'] = $this->Logger->get_html();
+                
                 $this->load->view('templates/header', $data);
                 $this->load->view('templates/footer', $data);
                 break;
             default:
-                if ( ! file_exists(APPPATH.'views/pages/'.$page.'.php')) {
+                if ( ! file_exists(APPPATH.'views/pages/' . $page . '.php')) {
                     // Whoops, we don't have a page for that!
                     show_404();
                 }
@@ -140,7 +160,12 @@ class Pages extends CI_Controller {
                 
                 // Show the page. 
                 $this->load->view('templates/header', $data);
-                $this->load->view('pages/'.$page, $data);
+                
+                if($this->pages[$page]['admin'] && !$this->user_data['admin']) {
+                    $this->load->view('templates/admin_only', $data);
+                } else {
+                    $this->load->view('pages/' . $page, $data);
+                }
                 $this->load->view('templates/footer', $data);
                 break;
         }

@@ -1,84 +1,81 @@
 <?php
-if($user_data['admin'] != 1) {
-    echo $this->Util->get_html_not_admin();
-} else {
-    $this->page_Logger = new Logger;
-    
-    // Get all post variables into one array.
-    $form['username'] = $this->input->post('username');
-    $form['first_name'] = $this->input->post('first_name');
-    $form['last_name'] = $this->input->post('last_name');
-    $form['email']  = $this->input->post('email');
-    $form['password'] = $this->input->post('password');
-    $form['password_conf'] = $this->input->post('password_confirm');
-    $form['admin'] = $this->input->post('admin');
-    $form['till_manager'] = $this->input->post('till_manager');
-    $form['username-change-password'] = $this->input->post('username-change-password');
-    $form['change-password'] = $this->input->post('change-password');
-    $form['conf-change-password'] = $this->input->post('conf-change-password');
-    
-    // The default values of all form fields.
-    $form_default = [
-                'username' => '',
-                'first_name' => '',
-                'last_name' => '',
-                'email' => '',
-                'password' => '',
-                'password_conf' => '',
-                'admin' => null,
-                'till_manager' => null,
-                'username-change-password' => '',
-                'change-password' => '',
-                'conf-change-password' => ''
-            ];
-    
-    $user_added = false;
-    $form_filled = false;
+$this->page_Logger = new Logger;
 
-    switch($this->input->post('type')) {
-        case('add-user') :
-            if($form['username'] === null) {
-                $form = $form_default;
-            } else {
-                switch($this->DBManager->add_user($form['username'], $form['first_name'], $form['last_name'], $form['password'], $form['admin'], $form['till_manager'], $form['password_conf'], $form['email'])) {
-                    case 'username':
-                        $this->page_Logger->add_warning("Failed to add user, username should not be empty. Please fill the username field and try again.");
-                        break;
-                    case 'username-exists':
-                        $this->page_Logger->add_warning("Failed to add user, username is already in use. Try again with a different username.");
-                        break;
-                    case 'email-empty':
-                        $this->page_Logger->add_warning("Failed to add user, email address should not be empty.");
-                        break;
-                    case 'email-invalid':
-                        $this->page_Logger->add_warning("Failed to add user, email address has an invalid syntax.");
-                        break;
-                    case 'password':
-                        $this->page_Logger->add_warning("Failed to add user, password should not be empty.");
-                        break;
-                    case 'password-conf':
-                        $this->page_Logger->add_warning("Failed to add user, passwords did not match. Make sure that they are equal.");
-                        break;
-                    default:
-                        $this->page_Logger->add_message("User '" . $form['username'] . "' added succesfully.", "check");
-                        $form = $form_default;
-                        break;
-                }
-            }
-            break;
-        case('change-password'):
-            $error = "Failed to update the password of '" . $form['username-change-password'] . "', ";
-            
-            switch($this->DBManager->update_password($form['username-change-password'], null, $form["change-password"], $form["conf-change-password"])) {
-                case 'passwords-not-equal':
-                    $this->page_Logger->add_warning($error . "the passwords did not match.");
-                break;
-                case 'succes':
-                    $this->page_Logger->add_message("Password for '" . $form['username-change-password'] . "' succesfully updated, this user can now login with this new password.", "check");
+// Get all post variables into one array.
+$form['username'] = $this->input->post('username');
+$form['first_name'] = $this->input->post('first_name');
+$form['last_name'] = $this->input->post('last_name');
+$form['email']  = $this->input->post('email');
+$form['password'] = $this->input->post('password');
+$form['password_conf'] = $this->input->post('password_confirm');
+$form['admin'] = $this->input->post('admin');
+$form['till_manager'] = $this->input->post('till_manager');
+$form['username-change-password'] = $this->input->post('username-change-password');
+$form['change-password'] = $this->input->post('change-password');
+$form['conf-change-password'] = $this->input->post('conf-change-password');
+
+// The default values of all form fields.
+$form_default = [
+            'username' => '',
+            'first_name' => '',
+            'last_name' => '',
+            'email' => '',
+            'password' => '',
+            'password_conf' => '',
+            'admin' => null,
+            'till_manager' => null,
+            'username-change-password' => '',
+            'change-password' => '',
+            'conf-change-password' => ''
+        ];
+
+$user_added = false;
+$form_filled = false;
+
+switch($this->input->post('type')) {
+    case('add-user') :
+        if($form['username'] === null) {
+            $form = $form_default;
+        } else {
+            switch($this->DBManager->add_user($form['username'], $form['first_name'], $form['last_name'], $form['password'], $form['admin'], $form['till_manager'], $form['password_conf'], $form['email'])) {
+                case 'username':
+                    $this->page_Logger->add_warning("Failed to add user, username should not be empty. Please fill the username field and try again.");
+                    break;
+                case 'username-exists':
+                    $this->page_Logger->add_warning("Failed to add user, username is already in use. Try again with a different username.");
+                    break;
+                case 'email-empty':
+                    $this->page_Logger->add_warning("Failed to add user, email address should not be empty.");
+                    break;
+                case 'email-invalid':
+                    $this->page_Logger->add_warning("Failed to add user, email address has an invalid syntax.");
+                    break;
+                case 'password':
+                    $this->page_Logger->add_warning("Failed to add user, password should not be empty.");
+                    break;
+                case 'password-conf':
+                    $this->page_Logger->add_warning("Failed to add user, passwords did not match. Make sure that they are equal.");
+                    break;
+                default:
+                    $this->page_Logger->add_message("User '" . $form['username'] . "' added succesfully.", "check");
+                    $form = $form_default;
                     break;
             }
+        }
+        break;
+    case('change-password'):
+        $error = "Failed to update the password of '" . $form['username-change-password'] . "', ";
+
+        switch($this->DBManager->update_password($form['username-change-password'], null, $form["change-password"], $form["conf-change-password"])) {
+            case 'passwords-not-equal':
+                $this->page_Logger->add_warning($error . "the passwords did not match.");
             break;
-    }
+            case 'succes':
+                $this->page_Logger->add_message("Password for '" . $form['username-change-password'] . "' succesfully updated, this user can now login with this new password.", "check");
+                break;
+        }
+        break;
+}
     ?>
     <div class="ui-body ui-body-a ui-corner-all">
     <h3>Add user</h3>
@@ -130,7 +127,6 @@ if($user_data['admin'] != 1) {
 
 <?php
     $this->page_Logger->show_html();
-}
 ?>
 
 <div class="ui-body ui-body-a ui-corner-all">
