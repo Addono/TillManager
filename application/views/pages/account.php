@@ -1,6 +1,7 @@
 <?php
     $this->page_Logger = new Logger;
     
+    // Check which form was submitted.
     switch($this->input->post('type')) {
         case 'change-password':
         $username = $user_data['username'];
@@ -9,10 +10,7 @@
         $new_password_conf = $this->input->post('new_password_confirm');
 
         if($current_password != null) {
-            if($new_password !== $new_password_conf) {
-                $this->page_Logger->add_message("New passwords do not match.", "alert");
-            } else {
-                switch($this->DBManager->update_password($username, $current_password, $new_password)) {
+            switch($this->DBManager->update_password($username, $current_password, $new_password)) {
                     case 'succes':
                         $this->page_Logger->add_message("Password succesfully updated.", "check");
                         break;
@@ -22,14 +20,16 @@
                     case 'password':
                         $this->page_Logger->add_message("The current password you entered is incorrect.", "alert");
                         break;
+                    case 'passwords-not-equal':
+                        $this->page_Logger->add_message("New passwords do not match.", "alert");
                     default:
                         $this->page_Logger->add_error("Something went wrong");
                         break;
-                }
             }
         }
         break;
         case 'reset-pin':
+            // Try to reset the pin, and show a message according to the result.
             switch($this->DBManager->reset_pin($user_data['username'])) {
                 case 'succes':
                     $this->page_Logger->add_message("Your pin was succesfully updated, to see your new pin click on the 'Show' button.", "check");
