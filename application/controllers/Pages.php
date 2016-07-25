@@ -151,11 +151,6 @@ class Pages extends CI_Controller {
                 $this->load->view('templates/footer', $data);
                 break;
             default:
-                if ( ! file_exists(APPPATH.'views/pages/' . $page . '.php')) {
-                    // Whoops, we don't have a page for that!
-                    show_404();
-                }
-
                 // Set multiple variables used during page rendering.
                 $data['title'] = $page;
                 $data['navigation'] = true;
@@ -164,7 +159,11 @@ class Pages extends CI_Controller {
                 // Show the page. 
                 $this->load->view('templates/header', $data);
                 
-                if($this->pages[$page]['admin'] && !$this->user_data['admin']) {
+                if(isset($this->pages[$page])) {
+                    show_404();
+                } elseif(!file_exists(APPPATH.'views/pages/' . $page . '.php')) {
+                    show_404();
+                } elseif($this->pages[$page]['admin'] && !$this->user_data['admin']) {
                     $this->load->view('templates/admin_only', $data);
                 } elseif($this->pages[$page]['admin'] && !$this->user_data['admin']) {
                     $this->load->view('templates/tillmanager_only', $data);
