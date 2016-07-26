@@ -49,7 +49,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
+$route['ajax/(:any)'] = 'pages/ajax/$1'; // Catch all the ajax calls.
 $route['default_controller'] = 'pages/index';
 $route['(:any)'] = 'pages/index/$1';
-$route['404_override'] = '';
+$route['404_override'] = 'pages/index';
 $route['translate_uri_dashes'] = FALSE;

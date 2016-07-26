@@ -44,12 +44,9 @@ class Pages extends CI_Controller {
         $this->load->library('session');
 
         // Check if the user is logged in.
-        $this->logged_in = isset($this->session->username) && $this->session->username != NULL;
+        $this->current_user_logged_in();
 
-        if($this->logged_in) {
-            $user = $this->session->username;
-            $this->user_data = $this->DBManager->get_user_data($user);
-        }
+        $this->get_data_current_user();
 
         // Log the user out if he's logged in and wants to log out.
         if($this->logged_in && $page == 'logout') {
@@ -106,6 +103,17 @@ class Pages extends CI_Controller {
                     break;
             }
         }
+    }
+
+    private function current_user_logged_in() {
+      return $this->logged_in = isset($this->session->username) && $this->session->username != NULL;
+    }
+
+    private function get_data_current_user() {
+      if($this->logged_in) {
+          $user = $this->session->username;
+          return $this->user_data = $this->DBManager->get_user_data($user);
+      }
     }
 
     public function view($page) {
@@ -173,5 +181,62 @@ class Pages extends CI_Controller {
                 $this->load->view('templates/footer', $data);
                 break;
         }
+    }
+
+    public function ajax($target) {
+      $this->load->library('session');
+      $this->DBManager = new DBManager($this);
+
+      $this->current_user_logged_in();
+      $this->get_data_current_user();
+
+      // If the user is not logged in, then show an error.
+      if(!$this->logged_in) {
+        echo "failed: user not logged in";
+      } else {
+        switch($target) {
+          case 'admin-switch':
+            // Check if the current user is an admin.
+            if($this->user_data['admin']) {
+              $username = $this->input->post('name');
+              $value = $this->input->post('value');
+
+              if('admin' == $username) {
+                echo "failed: not allowed to change the admin status of the main admin account";
+              } elseif($username == "" || $value == "") {
+                echo "failed: invalid data parsed";
+              } else {
+                // Convert the switch value into a boolean value.
+                $value = $value == "True" || $value == "Yes";
+
+                echo $this->DBManager->update_admin($username, $value);
+              }
+            } else {
+              echo "failed: access denied";
+            }
+            break;
+          case 'till_manager-switch':
+            case 'admin-switch':
+              // Check if the current user is an admin.
+              if($this->user_data['admin']) {
+                $username = $this->input->post('name');
+                $value = $this->input->post('value');
+
+                // Convert the switch value into a boolean value.
+                $value = $value == "True" || $value == "Yes";
+
+                if('admin' == $username) {
+                  echo "failed: not allowed to change the till manager status of the main admin account";
+                } else {
+                  echo $this->DBManager->update_till_manager($username, $value);
+                }
+              } else {
+                echo "failed: access denied";
+              }
+            break;
+          default:
+            echo "No AJAX script found for '$target'";
+        }
+      }
     }
 }

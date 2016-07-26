@@ -1,0 +1,7 @@
+.compact-switch {
+  margin: 0px;
+}
+
+.compact-switch > .ui-flipswitch {
+  margin: 0px;
+}

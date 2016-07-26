@@ -80,29 +80,29 @@ switch($this->input->post('type')) {
     <div class="ui-body ui-body-a ui-corner-all">
     <h3>Add user</h3>
     <p><i>All fields are required</i></p>
-    
+
     <form method="post">
         <input type="hidden" name="type" value="add-user">
         <div class="ui-field-contain">
             <label for="username">Username</label>
             <input type="text" name="username" value="<?php echo $form['username'];?>" required />
         </div>
-        
+
         <div class="ui-field-contain">
             <label for="first_name">First name</label>
             <input type="text" name="first_name" value="<?php echo $form['first_name'];?>" required />
         </div>
-        
+
         <div class="ui-field-contain">
             <label for="last_name">Last name</label>
             <input type="text" name="last_name" value="<?php echo $form['last_name'];?>" required />
         </div>
-        
+
         <div class="ui-field-contain">
             <label for="username">Email</label>
             <input type="text" name="email" value="<?php echo $form['email'];?>" required />
         </div>
-        
+
         <div class="ui-field-contain">
             <label for="new_password">Password</label>
             <input type="password" name="password" required />
@@ -114,11 +114,11 @@ switch($this->input->post('type')) {
         </div>
 
         <?php
-        
+
             // Add the two switches for the user rights.
-            echo $this->Util->form->get_switch('admin', 'Admin', 'No', 'Yes', $form['admin']);  
+            echo $this->Util->form->get_switch('admin', 'Admin', 'No', 'Yes', $form['admin']);
             echo $this->Util->form->get_switch('till_manager', 'Till Manager', 'No', 'Yes', $form['till_manager']);
-            
+
             // Add the submit button.
             echo $this->Util->form->get_submit('Add user', false);
         ?>
@@ -152,7 +152,7 @@ switch($this->input->post('type')) {
                     'friendly-name' => 'First name',
                     'type' => 'string',
                     'priority' => '2'
-                    
+
                 ],
                 [
                     'name' => 'last_name',
@@ -172,7 +172,8 @@ switch($this->input->post('type')) {
                     'type' => 'boolean',
                     'true' => 'Yes',
                     'false' => 'No',
-                    'priority' => '4'
+                    'priority' => '4',
+                    'editable' => true
                 ],
                 [
                     'name' => 'till_manager',
@@ -180,7 +181,8 @@ switch($this->input->post('type')) {
                     'type' => 'boolean',
                     'true' => 'Yes',
                     'false' => 'No',
-                    'priority' => '5'
+                    'priority' => '5',
+                    'editable' => true
                 ],
                 [
                     'friendly-name' => 'Change password',
@@ -189,12 +191,12 @@ switch($this->input->post('type')) {
                     'priority' => '7'
                 ]
             ];
-            
+
             $users = $this->DBManager->get_all_user_data();
-            
+
             // Return the first row containing the table header.
             echo "<thead><tr>\n";
-            
+
             foreach($columns as $column) {
                 // Check if the priority field is set, if so add it to the head of the column.
                 if(isset($column['priority'])) {
@@ -202,18 +204,18 @@ switch($this->input->post('type')) {
                 } else {
                     echo "\t\t<th>";
                 }
-                
+
                 echo $column['friendly-name'];
                 echo "</th>\n";
             }
-            
+
             echo "\t</tr></thead>\n";
-            
+
             // Return the table body.
             echo "\t<tbody>\n";
             foreach($users as $user) { // Return a row for every user.
                 echo "\t\t<tr>\n";
-                
+
                 // Return every column for each user.
                 foreach($columns as $key => $column) {
                     // Make the first cell in each row the header.
@@ -222,7 +224,7 @@ switch($this->input->post('type')) {
                     } else {
                         echo "\t\t\t<td>";
                     }
-                    
+
                     // Return every column, how is based on the column's type.
                     switch($column['type']) {
                         case 'string':
@@ -233,43 +235,56 @@ switch($this->input->post('type')) {
                             echo "&euro;" . $user[$column['name']];
                             break;
                         case 'boolean':
-                            // Check if the field is true or false.
-                            if($user[$column['name']]) {
-                                // Check if a different string for true is set, else use default value.
-                                if(isset($column['true'])) {
-                                    echo $column['true'];
+                            $strings = [];
+
+                            // Check if a different string for true is set, else use default value.
+                            if(isset($column['true'])) {
+                                $strings['true'] = $column['true'];
+                            } else {
+                                $strings['true'] = "True";
+                            }
+
+                            // Check if a different string for false is set, else use default value.
+                            if(isset($column['false'])) {
+                                $strings['false'] = $column['false'];
+                            } else {
+                                $strings['false'] = "False";
+                            }
+
+                            $username = $user['username'];
+
+                            // Check if it is editable and prevent altering admin and the users own information.
+                            if(!$column['editable'] || $username === "admin" || $username === $user_data['username']) {
+                                if($user[$column['name']]) {
+                                    echo $strings['true'];
                                 } else {
-                                    echo "True";
+                                    echo $strings['false'];
                                 }
                             } else {
-                                // Check if a different string for false is set, else use default value.
-                                if(isset($column['false'])) {
-                                    echo $column['false'];
-                                } else {
-                                    echo "False";
-                                }
+                                $value  = $user[$column['name']] != 0 ? true : false;
+                                echo $this->Util->form->get_switch($username, null, $strings['false'], $strings['true'], $value, $column['name'], true);
                             }
                             break;
                         case 'change-password':
                             $username = $user[$column['username']];
-                            
+
                             if($username == "admin" || $username == $user_data['username']) {
                                 echo "<a href='" . $this->Util->get_url('account') . "' class='ui-btn ui-corner-all ui-shadow ui-mini ui-icon-alert ui-btn-icon-left' style='margin: 0'>Change your own password</a>";
                                 break;
                             }
-                            
+
                             $id = "PR" . $username;
-                            
+
                             // Generate the popup of the password reset.
                             echo $this->Util->get_html_popup_button(
                                     "Change password", // Set the title of the popup.
-                                    "<h3>Change password for '$username'</h3>\n" . 
-                                    "<form method='post' data-ajax='false'>\n" . 
+                                    "<h3>Change password for '$username'</h3>\n" .
+                                    "<form method='post' data-ajax='false'>\n" .
                                     "<input type='hidden' name='type' value='change-password'>\n" .
-                                    "<input type='hidden' name='username-change-password' value='" . $username . "'>\n" . 
+                                    "<input type='hidden' name='username-change-password' value='" . $username . "'>\n" .
                                     "<label for='password'>Password</label><input type='password' name='change-password' />\n" .
                                     "<label for='conf-password'>Confirm password</label><input type='password' name='conf-change-password' />\n" .
-                                    $this->Util->form->get_submit('Change password', false) . 
+                                    $this->Util->form->get_submit('Change password', false) .
                                     "</form>\n",
                                     null, // Don't use an icon.
                                     $id, // Set the id of this popup.
@@ -277,7 +292,7 @@ switch($this->input->post('type')) {
                                     );
                             break;
                     }
-                    
+
                     // Make the first cell of each row the header.
                     if($key == 0) {
                         echo "</th>\n";
@@ -285,11 +300,16 @@ switch($this->input->post('type')) {
                         echo "</td>\n";
                     }
                 }
-                
+
                 echo "\t\t</tr>\n";
             }
-            
+
             echo "\t</tbody>\n";
         ?>
     </table>
 </div>
+
+<?php
+  echo $this->Util->Ajax->switch_js("admin");
+  echo $this->Util->Ajax->switch_js("till_manager");
+?>

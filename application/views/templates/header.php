@@ -25,10 +25,10 @@ $navigation_pages = [
             <?php echo $name . str_replace("_", " ", ucfirst($title)); ?>
         </title>
         <meta name="viewport" content="initial-scale=1, maximum-scale=1">
-        <?php 
+        <?php
         // Add jQuery, jQuery UI, jQuery Mobile js and css.
-        $this->Util->resources->add(['jquery', 'jquery-ui' ,'jquery-mobile']);
-        
+        $this->Util->resources->add(['jquery', 'jquery-ui' ,'jquery-mobile', 'css']);
+
         // Check if the page should redirect.
         if ($redirect != null) {
             echo "<script type='text/javascript'> window.location.href = '" . base_url() . "index.php/$redirect/'</script>";
@@ -36,7 +36,7 @@ $navigation_pages = [
         ?>
     </head>
     <body>
-        <?php 
+        <?php
         // Build the navigation list.
         if($navigation) { ?>
         <div data-role="page" class="ui-responsive-panel" data-position-fixed="true">
@@ -48,7 +48,7 @@ $navigation_pages = [
                             if($page['admin'] && !$user_data['admin']) {
                                 continue;
                             }
-                            
+
                             if(!isset($page['location'])) {
                                 echo "<li>" . $page['title'] . "</li>";
                             } else {
@@ -63,16 +63,15 @@ $navigation_pages = [
                 </ul>
             </div><!-- nav-panel -->
         <?php } ?>
-            
+
             <div data-role="header" class="ui-header" id="header">
                 <?php if($navigation) {?><a href="#nav-panel" data-role="button" role="button" class="jqm-navmenu-link ui-nodisc-icon ui-alt-icon ui-btn-left ui-btn ui-icon-bars ui-btn-icon-notext" id="nav-button">Panel</a> <?php } ?>
                 <h1><?php echo $name .  str_replace("_", " ", ucfirst($title)); ?></h1>
                 <?php
                 // Show the logout button if the user is logged in.
                 if($logged_in) {
-                    echo "<a data-ajax='false' data-method='delete' rel='nofollow' href='" . base_url() . "index.php/logout' data-role='button' class='ui-btn ui-icon-power ui-btn-icon-right'>Logout</a>";                    
-                } ?> 
+                    echo "<a data-ajax='false' data-method='delete' rel='nofollow' href='" . base_url() . "index.php/logout' data-role='button' class='ui-btn ui-icon-power ui-btn-icon-right'>Logout</a>";
+                } ?>
             </div><!-- header -->
-            
+
             <div data-role="main" class="ui-content jqm-content jqm-fullwidth" id="main">
-            

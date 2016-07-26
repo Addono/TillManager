@@ -1,20 +1,22 @@
 <?php
+abstract class tables {
+  const users = "user_table";
+  const transactions = "trans_table";
+  const journal = "journ_table";
+  const posts = "posts_table";
+}
+
 class DBManager {
     private $ci;
     public $curUser;
-    
-    const user_table = "user_table";
-    const trans_table = "trans_table";
-    const journ_table = "journ_table";
-    const posts_table = "posts_table";
-    
+
     function __construct($ci) {
         $this->ci = $ci; // Parse controller object.
         $this->ci->load->database();
-        
+
         $this->create_missing_tables();
     }
-    
+
     /**
      * Adds a new user to the user table.
      */
@@ -22,18 +24,18 @@ class DBManager {
         if($username === null || $username === "") {
             return 'username';
         }
-        
+
         if($password == null || $password == "") {
             return 'password';
         }
-        
+
         // Check if a valid email has been parsed.
         if($email != null) {
             // Check if the email is empty.
             if($email == "") {
                 return 'email-empty';
             }
-            
+
             // Check if the email has a valid syntax.
             if(!$this->check_email($email)) {
                 return 'email-invalid';
@@ -49,7 +51,7 @@ class DBManager {
         if($this->user_exists($username)) {
             return 'username-exists';
         }
-        
+
         $data = [
           'username' => $username,
             'first_name' => $first_name,
@@ -61,22 +63,22 @@ class DBManager {
             'till_manager' => $till_manager,
             'email' => $email
         ];
-        
-        $this->ci->db->insert(self::user_table, $data);
+
+        $this->ci->db->insert(tables::users, $data);
     }
-    
+
     private function user_exists($username) {
         $this->ci->db->select(['username']);
         $this->ci->db->where(['username' => $username]);
-        $q = $this->ci->db->get(self::user_table);
-        
+        $q = $this->ci->db->get(tables::users);
+
         if($q->num_rows() > 0) {
             return true;
         } else {
             return false;
         }
     }
-    
+
     public function add_post($name) {
         if(is_array($name)) {
             foreach($name as $one_name) {
@@ -87,12 +89,12 @@ class DBManager {
                 "name" => $name
             ];
 
-            $this->ci->db->insert(self::posts_table, $data);
-            
+            $this->ci->db->insert(tables::posts, $data);
+
             echo $this->ci->db->insert_id();
         }
     }
-    
+
     /**
      * Get's all data in the user table for one user.
      * @param string The username whom's data should be returned
@@ -101,17 +103,17 @@ class DBManager {
     public function get_user_data($username) {
         $this->ci->db->where(['username' => $username]);
         $this->ci->db->select(['*']);
-        
-        $data = $this->ci->db->get(self::user_table)->row_array();
-        
+
+        $data = $this->ci->db->get(tables::users)->row_array();
+
         // Add zeros to the start of the pin to make them equal in length.
         while(strlen("0" . $data['pin']) <= $this->ci->config->item('pin_length')) {
             $data['pin'] = "0" . $data['pin'];
         }
-        
+
         return $data;
     }
-    
+
     /**
      * Returns all user data as an two dimensional array.
      * @param boolean/null A boolean value if only, or no, admins should be selected.
@@ -122,17 +124,17 @@ class DBManager {
         if($admin != null) {
             $this->ci->db->where(['admin' => true]);
         }
-        
+
         if($till_manager != null) {
             $this->ci->db->where(['till_manager' => true]);
         }
-        
+
         $this->ci->db->select("*");
-        $q = $this->ci->db->get(self::user_table);
-        
+        $q = $this->ci->db->get(tables::users);
+
         return $q->result_array();
     }
-    
+
     /**
      * Hashes a password.
      * @param string The password to be hashed.
@@ -141,16 +143,16 @@ class DBManager {
     private function hash_password($password) {
         return password_hash($password, PASSWORD_DEFAULT);
     }
-    
+
     /**
      * Generates a pin of the specified length.
-     * @param int The required length of the pin. 
+     * @param int The required length of the pin.
      * @return int The pin as integer.
      */
     private function generate_pin($length) {
         return rand(0, (pow(10, $length)) - 1);
     }
-    
+
     /**
      * Checks if an email address has a valid syntax.
      * @param string The email address to be checked.
@@ -163,7 +165,7 @@ class DBManager {
             return false;
         }
     }
-    
+
     /**
      * Checks if the user credentials are present in the database.
      * @param string The username.
@@ -176,13 +178,13 @@ class DBManager {
         // Query for the password.
         $this->ci->db->where(['username' => $username]);
         $this->ci->db->select(['password']);
-        $q = $this->ci->db->get(self::user_table);
-        
+        $q = $this->ci->db->get(tables::users);
+
         // Check if the username was found.
         if($q->num_rows() > 0) {
             // Get the hashed password.
             $hash = $q->row()->password;
-            
+
             // Check if the hashed password corresponds to entered password.
             if(password_verify($password, $hash)) {
                 return 'valid'; // The entered password matches the hashed version in the database.
@@ -193,9 +195,22 @@ class DBManager {
             return 'username'; // Username not found
         }
     }
-    
+
     /**
-     * 
+    * Updates a field of the username table.
+    */
+    private function update_username_field($username, $field, $value) {
+      $this->ci->db->where('username', $username);
+
+      if($this->ci->db->update(tables::users, [$field => $value])) {
+          return 'succes';
+      } else {
+          return 'db-update-failure';
+      }
+    }
+
+    /**
+     * Updates the password of a user.
      * @param string The username of the account which password should be updated.
      * @param string The old password of the user, if left null then it won't be checked (not recommended).
      * @param string The new password of the user.
@@ -211,42 +226,48 @@ class DBManager {
         // Check if the old password is correct, if it was parsed to this function.
         if($old_password != null) {
             $password_check = $this->check_user_credentials($username, $old_password);
-            
+
             if($password_check != 'valid') {
                 return $password_check;
             }
         }
-        
-        $this->ci->db->where('username', $username);
-        $hash = $this->hash_password($new_password); // The hashed version of the new password.
-        
-        if($this->ci->db->update(self::user_table, ['password' => $hash])) {
-            return 'succes';
-        }
+
+        // Generate a hashed version of the new password.
+        $hash = $this->hash_password($new_password);
+
+        return $this->update_username_field($username, 'password', $hash);
     }
-    
+
+    public function update_admin($username, $value) {
+      return $this->update_username_field($username, 'admin', $value);
+    }
+
+    public function update_till_manager($username, $value) {
+      return $this->update_username_field($username, 'till_manager', $value);
+    }
+
     public function reset_pin($username) {
         $this->ci->db->where(['username' => $username]);
         $this->ci->db->select(['username']);
-        $q = $this->ci->db->get(self::user_table);
-        
+        $q = $this->ci->db->get(tables::users);
+
         if($q->num_rows() == 0) {
             return 'username';
         } else {
             $this->ci->db->where(['username' => $username]);
-            $this->ci->db->update(self::user_table, ['pin' => $this->generate_pin($this->ci->config->item('pin_length'))]);
-            
+            $this->ci->db->update(tables::users, ['pin' => $this->generate_pin($this->ci->config->item('pin_length'))]);
+
             return 'succes';
         }
     }
-    
+
     /**
     * Creates the required tables, if they are missing from the database.
     */
    private function create_missing_tables() {
        // Define the SQL creation code for each table we need.
        $table_sql = [
-            self::posts_table => "CREATE TABLE " . self::posts_table . " (
+            tables::posts => "CREATE TABLE " . tables::posts . " (
             `post_id` mediumint UNSIGNED NOT NULL AUTO_INCREMENT,
             `name` tinytext,
             `debit` FLOAT(10,2) DEFAULT 0.00,
@@ -258,8 +279,8 @@ class DBManager {
             ENGINE=InnoDB
             AUTO_INCREMENT=7000000
             ;",
-           
-           self::user_table => "CREATE TABLE `" . self::user_table . "` (
+
+           tables::users => "CREATE TABLE `" . tables::users . "` (
            id mediumint NOT NULL PRIMARY KEY AUTO_INCREMENT,
            username tinytext NOT NULL,
            first_name tinytext,
@@ -277,7 +298,7 @@ class DBManager {
        ENGINE=InnoDB
        AUTO_INCREMENT=0;",
 
-       self::trans_table => "CREATE TABLE " . self::trans_table . " (
+       tables::transactions => "CREATE TABLE " . tables::transactions . " (
            trans_id mediumint NOT NULL PRIMARY KEY AUTO_INCREMENT,
            author_id mediumint UNSIGNED NOT NULL,
            description tinytext,
@@ -286,12 +307,12 @@ class DBManager {
            cdate datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
            edate datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL ,
            UNIQUE KEY id (trans_id)
-       ) 
+       )
        ENGINE=InnoDB
        AUTO_INCREMENT=1000000
        ;",
 
-       self::journ_table => "CREATE TABLE " . self::journ_table . " (
+       tables::journal => "CREATE TABLE " . tables::journal . " (
            `journ_id` mediumint UNSIGNED NOT NULL AUTO_INCREMENT,
            `trans_id` mediumint UNSIGNED NOT NULL,
            `accountid` mediumint UNSIGNED NOT NULL,
@@ -315,13 +336,13 @@ class DBManager {
            } elseif($this->ci->db->query($sql)) { // Create the table if it doesn't exist.
                // Give the user feedback that a table was created.
                $this->ci->Logger->add_warning("Table '$name' created");
-               
+
                // Add the default admin user to the user table.
                switch($name) {
-                    case self::user_table:
+                    case tables::users:
                         $this->add_user('admin', 'Site', 'Admin', 'Banana', true, false);
                         break;
-                    case self::posts_table:
+                    case tables::posts:
                         $this->add_post(['Inventory', 'Deposit', 'Profit', 'COGS', 'Sales revenue']);
                         break;
                }
