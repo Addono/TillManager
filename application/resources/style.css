@@ -5,3 +5,25 @@
 .compact-switch > .ui-flipswitch {
   margin: 0px;
 }
+
+.balance-table {
+  min-width: 25em;
+}
+
+/* Make sure that the debit and credit side are of equal width. */
+.balance-table > thead > tr > th {
+  width: 50%;
+}
+
+.balance-table > tbody > tr > td:nth-child(2) {
+  border-right-style: solid;
+  border-right-color: #ddd;
+  border-right-width: 1px;
+}
+
+.balance-table > tbody > tr:first-child > td,
+.balance-table > tbody > tr:last-child > td {
+  border-top-style: solid;
+  border-top-color: #ddd;
+  border-top-width: 1px;
+}

@@ -22,6 +22,12 @@ class Pages extends CI_Controller {
             "admin" => false,
             "tillmanager" => false
         ],
+        "balance" => [
+            "location" => "balance",
+            "title" => "Balance",
+            "admin" => false,
+            "tillmanager" => false
+        ],
         "manage_users" => [
             "location" => "manage_users",
             "title" => "Manage users",
@@ -121,7 +127,7 @@ class Pages extends CI_Controller {
         $data['logged_in'] = $this->logged_in;
         $data['redirect'] = null;
         $data['user_data'] = $this->user_data;
-        $data['navigation_veriables'] = $this->pages;
+        $data['navigation_pages'] = $this->pages;
 
         // Show the page which should be loaded.
         switch($page) {

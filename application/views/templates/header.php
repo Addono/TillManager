@@ -1,22 +1,3 @@
-<?php
-$navigation_pages = [
-    [
-        "location" => "home",
-        "title" => "Home",
-        "admin" => false
-    ],
-    [
-        "location" => "account",
-        "title" => "Account details",
-        "admin" => false
-    ],
-    [
-        "location" => "manage_users",
-        "title" => "Manage users",
-        "admin" => true
-    ]
-];
-?>
 <!DOCTYPE html>
 <html>
     <head>

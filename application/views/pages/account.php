@@ -1,6 +1,6 @@
 <?php
     $this->page_Logger = new Logger;
-    
+
     // Check which form was submitted.
     switch($this->input->post('type')) {
         case 'change-password':
@@ -38,7 +38,7 @@
                     $this->page_Logger->add_error("Something went wrong, please contact your system administrator.");
                     break;
             }
-            
+
             $user_data = $this->DBManager->get_user_data($user_data['username']);
         break;
     }
@@ -51,39 +51,39 @@
             padding-right: 2em;
         }
     </style>
-    
-    <h3>Account details</h3>
+
+    <h3>My account</h3>
     <table class="first-column-bold">
         <tr><!-- Username -->
             <td>Username</td>
             <td><?php echo $user_data['username']; ?></td>
         </tr>
-        
+
         <tr><!-- First name -->
             <td>First name</td>
             <td><?php echo $user_data['first_name'];?></td>
         </tr>
-        
+
         <tr><!-- Last name -->
             <td>Last name</td>
             <td><?php echo $user_data['last_name'];?></td>
         </tr>
-        
+
         <tr><!-- Role(s) -->
             <td><?php echo ($user_data['till_manager'] || $user_data['admin']) ? "Roles" : "Role";?></td>
             <td>User<?php echo $user_data['till_manager'] ? ", Till manager" : ""; echo $user_data['admin'] ? ", Admin" : ""; ?></td>
         </tr>
-        
+
         <tr><!-- Pin -->
             <td>Pin</td>
             <td>
-                <?php 
+                <?php
                 echo $this->Util->get_html_popup_button('Show', $user_data['pin']);
                 echo $this->Util->get_html_popup_button('Reset pin',
                         "<form method='post' data-ajax='false'>
                         <input type='hidden' name='type' value='reset-pin'>
                         <p>Are you sure you want to reset your pin code?</p>" .
-                        $this->Util->form->get_submit('Reset pin') . 
+                        $this->Util->form->get_submit('Reset pin') .
                         "</form>",
                         'alert'
                         );
@@ -96,7 +96,7 @@
 
 <div class="ui-body ui-body-a ui-corner-all">
     <h3>Change password</h3>
-    
+
     <form method="post">
         <input type='hidden' name='type' value='change-password'>
         <div class="ui-field-contain">
