@@ -16,6 +16,12 @@ class Pages extends CI_Controller {
             "admin" => false,
             "tillmanager" => false
         ],
+        "create_transaction" => [
+            "location" => "create_transaction",
+            "title" => "Create transaction",
+            "admin" => false,
+            "tillmanager" => false
+        ],
         "account" => [
             "location" => "account",
             "title" => "Account details",
@@ -207,8 +213,8 @@ class Pages extends CI_Controller {
               $username = $this->input->post('name');
               $value = $this->input->post('value');
 
-              if('admin' == $username) {
-                echo "failed: not allowed to change the admin status of the main admin account";
+              if('admin' == $username || 'local' == $username) {
+                echo "failed: not allowed to change the admin status of the main admin or 'local' account.";
               } elseif($username == "" || $value == "") {
                 echo "failed: invalid data parsed";
               } else {
@@ -231,8 +237,8 @@ class Pages extends CI_Controller {
                 // Convert the switch value into a boolean value.
                 $value = $value == "True" || $value == "Yes";
 
-                if('admin' == $username) {
-                  echo "failed: not allowed to change the till manager status of the main admin account";
+                if('admin' == $username || 'local' == $username) {
+                  echo "failed: not allowed to change the till manager status of the main admin or 'local' account.";
                 } else {
                   echo $this->DBManager->update_till_manager($username, $value);
                 }

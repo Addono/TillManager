@@ -4,6 +4,7 @@ abstract class tables {
   const transactions = "trans_table";
   const journal = "journ_table";
   const posts = "posts_table";
+  const products = "products_table";
 }
 
 class DBManager {
@@ -18,20 +19,16 @@ class DBManager {
 
         $actions = [
           [
-            "post_id" => 7000001,
-            "amount" => -1
+            "post_id" => 7000000,
+            "amount" => 5.95
           ],
           [
-            "post_id" => 7000002,
-            "amount" => 1
-          ],
-          [
-            "post_id" => 7000004,
-            "amount" => -2
+            "post_id" => 7000008,
+            "amount" => 5.95
           ],
         ];
 
-        //$this->create_transaction(1, "sell", "", $actions);
+        //$this->create_transaction(1, "unknown", "", $actions);
     }
 
     //////////\\\\\\\\\\
@@ -77,8 +74,8 @@ class DBManager {
             'username' => $username,
             'first_name' => $first_name,
             'last_name' => $last_name,
-            'debit_post_id' => $username == "admin" ? null : $this->add_post($username . '-debit', 'debit', 1),
-            'credit_post_id' => $username == "admin" ? null : $this->add_post($username . '-credit', 'credit', 1),
+            'debit_post_id' => $username == "admin" ? null : $this->add_post($username, 'debit', 1, $this->get_masterpost_id("Till debit")),
+            'credit_post_id' => $username == "admin" ? null : $this->add_post($username, 'credit', 1, $this->get_masterpost_id("Till credit")),
             'password' => $this->hash_password($password),
             'pin' => $this->generate_pin($this->ci->config->item('pin_length')),
             'admin' => $admin,
@@ -271,9 +268,8 @@ class DBManager {
         }
     }
 
-
     //////////\\\\\\\\\\
-    //   Transactions \\
+    //  Transactions  \\
     //////////\\\\\\\\\\
 
     public function create_transaction($author_id, $type, $description, $actions) {
@@ -338,9 +334,9 @@ class DBManager {
     //////////\\\\\\\\\\
 
     private function create_journal($author_id, $trans_id, $post_id, $amount) {
-      $result = $this->update_post($post_id, $amount);
+      echo $result = $this->update_post($post_id, $amount) . "\n";
 
-      if(is_string($result)) {
+      if(is_string($result) && $result != "success") {
         error_log("Journal creation failed with post updating, report'$result'");
         return "error: could not update post";
       }
@@ -363,26 +359,51 @@ class DBManager {
     //     Posts      \\
     //////////\\\\\\\\\\
 
-    public function add_post($name, $cd, $priority = 0) {
+    public function add_post($name, $cd, $priority = 0, $parent = null, $id = null) {
         if($cd != "credit" && $cd != "debit") {
           return "error: invalid cd parsed";
+        }
+
+        if(!($parent == null || $parent == -1) && !$this->post_exists($parent)) {
+          return "error: parent not found";
         }
 
         $data = [
             "name" => $name,
             "cd" => $cd,
-            "priority" => $priority
+            "priority" => $priority,
+            "parent" => $parent
         ];
+
+        if($id != null) {
+          $data["post_id"] = $id;
+        }
 
         $this->ci->db->insert(tables::posts, $data);
 
         return $this->ci->db->insert_id();
     }
 
+    /**
+     * Adds multiple posts all parsed as an array.
+     */
     public function add_posts($posts) {
-      foreach($posts as $post) {
+      foreach($posts as $name => $post) {
         if(isset($post['priority'])) {
-          $this->add_post($post['name'], $post['cd'], $post['priority']);
+          switch($post['parent']) {
+            case true:
+              $post['parent'] = 0;
+              break;
+            case false:
+              $post['parent'] = null;
+              break;
+          }
+
+          if(isset($post['id'])) {
+            $this->add_post($name, $post['cd'], $post['priority'], $post['parent'], $post['id']);
+          } else {
+            $this->add_post($name, $post['cd'], $post['priority'], $post['parent']);
+          }
         } else {
           $this->add_post($post['name'], $post['cd']);
         }
@@ -390,22 +411,65 @@ class DBManager {
     }
 
     private function update_post($post_id, $amount) {
+      // Check if the post exists.
+      if(!$this->post_exists($post_id)) {
+        return "error: post not found";
+      }
+
+      // Update the parent - if it has one.
       $this->ci->db->where('post_id', $post_id);
-      $this->ci->db->select("amount");
-      $old_value = $this->ci->db->get(tables::posts)->row()->amount;
+      $this->ci->db->select("parent");
+      $result = $this->ci->db->get(tables::posts);
+      $parent = $result->row()->parent;
 
-      $new_value = $old_value + $amount;
+      if($parent === 0) {
+        // Prevent direct alteration of a parent post.
+        return "error: can not only alter a parent post";
+      } elseif($parent != null) {
+        // Update the parent post.
+        if($this->update_post_amount($parent, $amount) != "success") {
+          return "error: could not update amount parent";
+        }
+      }
 
+      // Update the target post.
+      if($this->update_post_amount($post_id, $amount) != "success") {
+        return "error: could not update amount post";
+      } else {
+        return "success";
+      }
+    }
+
+    private function update_post_amount($post_id, $amount) {
+      if(!$this->post_exists($post_id)) {
+        return "error: post does not exists";
+      }
+
+      // Get the old amount from the database.
+      $this->ci->db->where('post_id', $post_id);
+      $this->ci->db->select(["amount"]);
+      $result = $this->ci->db->get(tables::posts);
+      $old_amount = $result->row()->amount;
+
+      // Calculate the new amount.
       $data = [
-        "amount" => $new_value
+        "amount" =>  $old_amount + $amount
       ];
 
+      // Update the database with the new amount.
       $this->ci->db->where('post_id', $post_id);
-      if($this->ci->db->update(tables::posts, $data)){
-        return $new_value;
+      if($this->ci->db->update(tables::posts, $data)) {
+        return "success";
       } else {
         return "error: could not update post";
       }
+    }
+
+    private function post_exists($post_id) {
+      $this->ci->db->where("post_id", $post_id);
+      $amount = $this->ci->db->get(tables::posts)->num_rows();
+
+      return $amount >= 1;
     }
 
     private function get_post_cd($post_id) {
@@ -415,11 +479,50 @@ class DBManager {
       return $this->ci->db->get(tables::posts)->row()->cd;
     }
 
-    public function get_posts() {
+    public function get_posts($parents_only) {
       $this->ci->db->select("*");
+      $this->ci->db->where("parent", null);
+      $this->ci->db->or_where("parent", 0);
 
       return $this->ci->db->get(tables::posts)->result_array();
     }
+
+    private function get_masterpost_id($name) {
+      return self::master_posts[$name]["id"];
+    }
+
+    const posts_id_start = 7000000;
+    const master_posts = [
+      "Possessions" => [
+        "cd" => "debit",
+        "parent" => false,
+        "priority" => 3,
+        "id" => self::posts_id_start
+      ],
+      "Inventory" => [
+        "cd" => "debit",
+        "parent" => true,
+        "priority" => 2,
+        "id" => self::posts_id_start + 1
+      ],
+      "Till debit" => [
+        "cd" => "debit",
+        "parent" => true,
+        "priority" => 1,
+        "id" => self::posts_id_start + 2
+      ],
+      "Equity" => [
+        "cd" => "credit",
+        "priority" => 3,
+        "id" => self::posts_id_start + 3
+      ],
+      "Till credit" => [
+        "cd" => "credit",
+        "parent" => true,
+        "priority" => 1,
+        "id" => self::posts_id_start + 4
+      ]
+    ];
 
     /**
     * Creates the required tables, if they are missing from the database.
@@ -429,6 +532,7 @@ class DBManager {
        $table_sql = [
             tables::posts => "CREATE TABLE " . tables::posts . " (
             `post_id` mediumint UNSIGNED NOT NULL AUTO_INCREMENT,
+            `parent` mediumint UNSIGNED DEFAULT null,
             `name` tinytext,
             `cd` ENUM('credit','debit') NOT NULL,
             `amount` FLOAT(10,2) DEFAULT 0.00,
@@ -438,7 +542,7 @@ class DBManager {
             PRIMARY KEY (`post_id`)
             )
             ENGINE=InnoDB
-            AUTO_INCREMENT=7000000
+            AUTO_INCREMENT=" . self::posts_id_start . "
             ;",
 
            tables::users => "CREATE TABLE `" . tables::users . "` (
@@ -461,7 +565,7 @@ class DBManager {
            AUTO_INCREMENT=0;",
 
            tables::transactions => "CREATE TABLE " . tables::transactions . " (
-               trans_id mediumint NOT NULL PRIMARY KEY AUTO_INCREMENT,
+               trans_id mediumint UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
                author_id mediumint UNSIGNED NOT NULL,
                description tinytext,
                type ENUM('purchase', 'sell', 'decleration', 'payout', 'refund', 'upgrade', 'unknown', 'error') DEFAULT 'error' NOT NULL,
@@ -475,18 +579,27 @@ class DBManager {
            ;",
 
            tables::journal => "CREATE TABLE " . tables::journal . " (
-               `journ_id` mediumint UNSIGNED NOT NULL AUTO_INCREMENT,
+               `journ_id` mediumint UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
                `trans_id` mediumint UNSIGNED NOT NULL,
                `post_id` mediumint UNSIGNED NOT NULL,
                `amount` FLOAT(6,2) NOT NULL,
                `new_balance` FLOAT(10,2),
                `cdate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                `edate` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-               PRIMARY KEY (`journ_id`)
+               UNIQUE KEY id (`journ_id`)
            )
            ENGINE=InnoDB
            AUTO_INCREMENT=5000000
-           ;"
+           ;",
+           
+           tables::products => "CREATE TABLE " . tables::products . " (
+               `product_id` mediumint UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+               `post_id` mediumint UNSIGNED NOT NULL,
+               `name` tinytext NOT NULL,
+               `description` tinytext
+            )
+            ENGINE=InnoDB
+            AUTO_INCREMENT=9000000"
        ];
 
        // Check for each table if it exists, if not create it.
@@ -501,25 +614,10 @@ class DBManager {
                switch($name) {
                     case tables::users:
                         $this->add_user('admin', 'Site', 'Admin', 'Banana', true, false);
+                        $this->add_user('local', 'Local', 'Computer', 'Banana', false, false);
                         break;
                     case tables::posts:
-                        $this->add_posts([
-                          [
-                            'name' => 'Possessions',
-                            'cd' => 'debit',
-                            'priority' => '3'
-                          ],
-                          [
-                            'name' => 'Inventory',
-                            'cd' => 'debit',
-                            'priority' => '2'
-                          ],
-                          [
-                            'name' => 'Equity',
-                            'cd' => 'credit',
-                            'priority' => '3'
-                          ]
-                        ]);
+                        $this->add_posts(self::master_posts);
                         break;
                }
            } else {

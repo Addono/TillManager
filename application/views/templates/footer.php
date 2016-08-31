@@ -1,5 +1,4 @@
 
-            </div><!-- main -->
             <?php // Show the log, if there is anything to show.
                 if(isset($log)) {
                     if($log != "" && $log != "&nbsp;") {
@@ -7,7 +6,9 @@
                     }
                 }
             ?>
-        <em>Adriaan Knapen &copy; 2016 (Beta, WIP)</em> <!-- Koen was here! -->
+            
+            <!-- Koen was here! -->
+            
         </div><!-- page -->
 
         <?php // If a menu is required, initiate jQuery mobile to build it for us.

@@ -43,80 +43,82 @@
         break;
     }
 ?>
+<div data-role="main" class="ui-content jqm-content jqm-fullwidth" id="main">    
+    <div class="ui-body ui-body-a ui-corner-all">
+        <style>
+            .first-column-bold tr > td:first-child {
+                font-weight:bold;
+                padding-right: 2em;
+            }
+        </style>
 
-<div class="ui-body ui-body-a ui-corner-all">
-    <style>
-        .first-column-bold tr > td:first-child {
-            font-weight:bold;
-            padding-right: 2em;
-        }
-    </style>
+        <h3>My account</h3>
+        <table class="first-column-bold">
+            <tr><!-- Username -->
+                <td>Username</td>
+                <td><?php echo $user_data['username']; ?></td>
+            </tr>
 
-    <h3>My account</h3>
-    <table class="first-column-bold">
-        <tr><!-- Username -->
-            <td>Username</td>
-            <td><?php echo $user_data['username']; ?></td>
-        </tr>
+            <tr><!-- First name -->
+                <td>First name</td>
+                <td><?php echo $user_data['first_name'];?></td>
+            </tr>
 
-        <tr><!-- First name -->
-            <td>First name</td>
-            <td><?php echo $user_data['first_name'];?></td>
-        </tr>
+            <tr><!-- Last name -->
+                <td>Last name</td>
+                <td><?php echo $user_data['last_name'];?></td>
+            </tr>
 
-        <tr><!-- Last name -->
-            <td>Last name</td>
-            <td><?php echo $user_data['last_name'];?></td>
-        </tr>
+            <tr><!-- Role(s) -->
+                <td><?php echo ($user_data['till_manager'] || $user_data['admin']) ? "Roles" : "Role";?></td>
+                <td>User<?php echo $user_data['till_manager'] ? ", Till manager" : ""; echo $user_data['admin'] ? ", Admin" : ""; ?></td>
+            </tr>
 
-        <tr><!-- Role(s) -->
-            <td><?php echo ($user_data['till_manager'] || $user_data['admin']) ? "Roles" : "Role";?></td>
-            <td>User<?php echo $user_data['till_manager'] ? ", Till manager" : ""; echo $user_data['admin'] ? ", Admin" : ""; ?></td>
-        </tr>
+            <tr><!-- Pin -->
+                <td>Pin</td>
+                <td>
+                    <?php
+                    echo $this->Util->get_html_popup_button('Show', $user_data['pin']);
+                    echo $this->Util->get_html_popup_button('Reset pin',
+                            "<form method='post' data-ajax='false'>
+                            <input type='hidden' name='type' value='reset-pin'>
+                            <p>Are you sure you want to reset your pin code?</p>" .
+                            $this->Util->form->get_submit('Reset pin') .
+                            "</form>",
+                            'alert'
+                            );
+                    ?>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <br>
 
-        <tr><!-- Pin -->
-            <td>Pin</td>
-            <td>
-                <?php
-                echo $this->Util->get_html_popup_button('Show', $user_data['pin']);
-                echo $this->Util->get_html_popup_button('Reset pin',
-                        "<form method='post' data-ajax='false'>
-                        <input type='hidden' name='type' value='reset-pin'>
-                        <p>Are you sure you want to reset your pin code?</p>" .
-                        $this->Util->form->get_submit('Reset pin') .
-                        "</form>",
-                        'alert'
-                        );
-                ?>
-            </td>
-        </tr>
-    </table>
-</div>
-<br>
+    <div class="ui-body ui-body-a ui-corner-all">
+        <h3>Change password</h3>
 
-<div class="ui-body ui-body-a ui-corner-all">
-    <h3>Change password</h3>
+        <form method="post">
+            <input type='hidden' name='type' value='change-password'>
+            <div class="ui-field-contain">
+                <label for="current_password">Current password</label>
+                <input type="password" name="current_password" required />
+            </div>
 
-    <form method="post">
-        <input type='hidden' name='type' value='change-password'>
-        <div class="ui-field-contain">
-            <label for="current_password">Current password</label>
-            <input type="password" name="current_password" required />
-        </div>
+            <div class="ui-field-contain">
+                <label for="new_password">New password</label>
+                <input type="password" name="new_password" required />
+            </div>
 
-        <div class="ui-field-contain">
-            <label for="new_password">New password</label>
-            <input type="password" name="new_password" required />
-        </div>
+            <div class="ui-field-contain">
+                <label for="new_password_confirm">Confirm new password</label>
+                <input type="password" name="new_password_confirm" required />
+            </div>
 
-        <div class="ui-field-contain">
-            <label for="new_password_confirm">Confirm new password</label>
-            <input type="password" name="new_password_confirm" required />
-        </div>
-
-        <button type="submit" data-role="button" class="ui-btn ui-shadow ui-corner-all" name="submit" value="submit">Login</button>
-    </form>
-</div>
+            <button type="submit" data-role="button" class="ui-btn ui-shadow ui-corner-all" name="submit" value="submit">Login</button>
+        </form>
+    </div>
 
 <?php
 $this->page_Logger->show_html();
+?>
+</div><!-- main -->

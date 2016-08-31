@@ -8,7 +8,7 @@
         <meta name="viewport" content="initial-scale=1, maximum-scale=1">
         <?php
         // Add jQuery, jQuery UI, jQuery Mobile js and css.
-        $this->Util->resources->add(['jquery', 'jquery-ui' ,'jquery-mobile', 'css']);
+        $this->Util->resources->add(['jquery', 'jquery-mobile', 'css']);
 
         // Check if the page should redirect.
         if ($redirect != null) {
@@ -23,7 +23,7 @@
         <div data-role="page" class="ui-responsive-panel" data-position-fixed="true">
             <div data-role="panel" data-position="left" data-display="overlay" data-theme="a" id="nav-panel">
                 <ul data-role="listview">
-                    <li data-icon="delete"><a href="#" data-rel="close">Close this panel</a></li>
+                    <!-- <li data-icon="delete"><a href="#" data-rel="close">Close this panel</a></li> -->
                     <?php
                         foreach($navigation_pages as $page) {
                             if($page['admin'] && !$user_data['admin']) {
@@ -54,5 +54,3 @@
                     echo "<a data-ajax='false' data-method='delete' rel='nofollow' href='" . base_url() . "index.php/logout' data-role='button' class='ui-btn ui-icon-power ui-btn-icon-right'>Logout</a>";
                 } ?>
             </div><!-- header -->
-
-            <div data-role="main" class="ui-content jqm-content jqm-fullwidth" id="main">
