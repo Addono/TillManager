@@ -5,11 +5,11 @@ abstract class tables {
   const journal = "journ_table";
   const posts = "posts_table";
   const products = "products_table";
+  const logins = "logins_table";
 }
 
 class DBManager {
     private $ci;
-    public $curUser;
 
     function __construct($ci) {
         $this->ci = $ci; // Parse controller object.
@@ -38,7 +38,9 @@ class DBManager {
     /**
      * Adds a new user to the user table, also creates a new post for this user.
      */
-    public function add_user($username, $first_name, $last_name, $password, $admin, $till_manager, $conf_password = null, $email = null) {
+    public function add_user($username, $first_name, $prefix_name, 
+            $last_name, $password, $admin, $till_manager, 
+            $conf_password = null, $email = null) {
         if($username === null || $username === "") {
             return 'username';
         }
@@ -73,6 +75,7 @@ class DBManager {
         $data = [
             'username' => $username,
             'first_name' => $first_name,
+            'prefix_name' => $prefix_name,
             'last_name' => $last_name,
             'debit_post_id' => $username == "admin" ? null : $this->add_post($username, 'debit', 1, $this->get_masterpost_id("Till debit")),
             'credit_post_id' => $username == "admin" ? null : $this->add_post($username, 'credit', 1, $this->get_masterpost_id("Till credit")),
@@ -177,26 +180,32 @@ class DBManager {
      *      'username' if the username wasn't found, and 'password' if the
      *      password did not match the hashed password in the database.
      */
-    public function check_user_credentials($username, $password) {
+    public function check_user_credentials($username, $password, $type, $author = null) {
         // Query for the password.
         $this->ci->db->where(['username' => $username]);
         $this->ci->db->select(['password']);
         $q = $this->ci->db->get(tables::users);
+        
+        $return;
 
         // Check if the username was found.
         if($q->num_rows() > 0) {
-            // Get the hashed password.
+            // Get the hashed password from the database.
             $hash = $q->row()->password;
 
             // Check if the hashed password corresponds to entered password.
             if(password_verify($password, $hash)) {
-                return 'valid'; // The entered password matches the hashed version in the database.
+                $return =  'valid'; // The entered password matches the hashed version in the database.
             } else {
-                return 'password'; // The entered password did not match the hashed version in the database.
+                $return = 'password'; // The entered password did not match the hashed version in the database.
             }
         } else {
-            return 'username'; // Username not found
+            $return = 'username'; // Username not found
         }
+        
+        $this->add_login($username, $type, $return, $author);
+        
+        return $return;
     }
 
     /**
@@ -232,7 +241,7 @@ class DBManager {
 
         // Check if the old password is correct, if it was parsed to this function.
         if($old_password != null) {
-            $password_check = $this->check_user_credentials($username, $old_password);
+            $password_check = $this->check_user_credentials($username, $old_password, 'password_change');
 
             if($password_check != 'valid') {
                 return $password_check;
@@ -266,6 +275,22 @@ class DBManager {
 
             return 'succes';
         }
+    }
+    
+    //////////\\\\\\\\\\
+    //     Logins     \\
+    //////////\\\\\\\\\\
+    
+    private function add_login($username, $type, $success, $author = null) {
+        $data = [
+            "username" => $username,
+            "type" => $type,
+            "success" => $success,
+            "author" => $author,
+            "ip" => $_SERVER['REMOTE_ADDR']
+        ];
+        
+        $this->ci->db->insert(tables::logins, $data);
     }
 
     //////////\\\\\\\\\\
@@ -395,6 +420,7 @@ class DBManager {
               $post['parent'] = 0;
               break;
             case false:
+            default:
               $post['parent'] = null;
               break;
           }
@@ -549,6 +575,7 @@ class DBManager {
            id mediumint UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
            username tinytext NOT NULL,
            first_name tinytext,
+           prefix_name tinytext,
            last_name tinytext,
            debit_post_id mediumint,
            credit_post_id mediumint,
@@ -599,7 +626,19 @@ class DBManager {
                `description` tinytext
             )
             ENGINE=InnoDB
-            AUTO_INCREMENT=9000000"
+            AUTO_INCREMENT=9000000",
+           
+           tables::logins => "CREATE TABLE " . tables::logins . " ( 
+               `id` mediumint UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+               `username` tinytext NOT NULL,
+               `author` TINYINT UNSIGNED,
+               `type` ENUM('login', 'password_change') NOT NULL,
+               `success` TINYTEXT NOT NULL,
+               `ip` tinytext NOT NULL,
+               `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+           )
+           ENGINE=InnoDB
+           AUTO_INCREMENT=2000000"
        ];
 
        // Check for each table if it exists, if not create it.
@@ -613,8 +652,8 @@ class DBManager {
                // Add the default admin user to the user table.
                switch($name) {
                     case tables::users:
-                        $this->add_user('admin', 'Site', 'Admin', 'Banana', true, false);
-                        $this->add_user('local', 'Local', 'Computer', 'Banana', false, false);
+                        $this->add_user('admin', 'Site', '', 'Admin', 'Banana', true, false);
+                        $this->add_user('local', 'Local', '', 'Computer', 'Banana', false, false);
                         break;
                     case tables::posts:
                         $this->add_posts(self::master_posts);

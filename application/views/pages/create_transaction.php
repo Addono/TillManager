@@ -1,25 +1,31 @@
-<div data-role="tabs" id="tabs">
-    <div data-role="main" class="ui-content jqm-content jqm-fullwidth" id="main">    
-        <div id="a">
-            a
-        </div>
+<?php
+    $price = .70;
+?>
 
-        <div id="b">
-            b
-        </div>
+<div data-role="main" class="ui-content jqm-content jqm-fullwidth" id="main">
+    <div class="ui-body ui-body-a ui-corner-all">
+        <form>
+            <table data-role="table" data-mode="reflow" class="ui-responsive">
+                <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td>Amount</td>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php
+                $users = $this->DBManager->get_all_user_data();
 
-        <div id="c">
-            c
-        </div>
-    </div><!-- main -->
-
-    <div data-role="footer" data-position="fixed">
-        <div data-role="navbar">
-            <ul>
-                <li><a href="#a" data-icon="grid" data-ajax="false">Summary</a></li>
-                <li><a href="#b" data-icon="star" data-ajax="false" class="ui-btn-active">Favs</a></li>
-                <li><a href="#c" data-icon="gear" data-ajax="false">Setup</a></li>
-            </ul>
-        </div><!-- navbar -->
-    </div><!-- footer -->
-</div><!-- tabs -->
+                // Display all users.
+                foreach($users as $user) {
+                    // Hide the admin and local user.
+                    if($user['username'] != 'admin' || $user['username'] != 'local') {
+                        
+                    }
+                }
+                ?>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>

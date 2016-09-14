@@ -84,7 +84,7 @@ class Pages extends CI_Controller {
                 $password = $this->input->post('password');
 
                 // Check if the credentials entered by the user are correct.
-                $login = $this->DBManager->check_user_credentials($username, $password);
+                $login = $this->DBManager->check_user_credentials($username, $password, 'login');
 
                 // Check if the login was succesfull, if not show an error message.
                 switch($login) {

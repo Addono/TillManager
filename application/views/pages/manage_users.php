@@ -4,6 +4,7 @@ $this->page_Logger = new Logger;
 // Get all post variables into one array.
 $form['username'] = $this->input->post('username');
 $form['first_name'] = $this->input->post('first_name');
+$form['prefix_name'] = $this->input->post('prefix_name');
 $form['last_name'] = $this->input->post('last_name');
 $form['email']  = $this->input->post('email');
 $form['password'] = $this->input->post('password');
@@ -18,6 +19,7 @@ $form['conf-change-password'] = $this->input->post('conf-change-password');
 $form_default = [
             'username' => '',
             'first_name' => '',
+            'prefix_name' => '',
             'last_name' => '',
             'email' => '',
             'password' => '',
@@ -37,7 +39,7 @@ switch($this->input->post('type')) {
         if($form['username'] === null) {
             $form = $form_default;
         } else {
-            switch($this->DBManager->add_user($form['username'], $form['first_name'], $form['last_name'], $form['password'], $form['admin'], $form['till_manager'], $form['password_conf'], $form['email'])) {
+            switch($this->DBManager->add_user($form['username'], $form['first_name'], $form['prefix_name'], $form['last_name'], $form['password'], $form['admin'], $form['till_manager'], $form['password_conf'], $form['email'])) {
                 case 'username':
                     $this->page_Logger->add_warning("Failed to add user, username should not be empty. Please fill the username field and try again.");
                     break;
@@ -80,37 +82,42 @@ switch($this->input->post('type')) {
 <div data-role="main" class="ui-content jqm-content jqm-fullwidth" id="main">
     <div class="ui-body ui-body-a ui-corner-all">
         <h3>Add user</h3>
-        <p><i>All fields are required</i></p>
+        <p><i>All fields marked with an "*" are required.</i></p>
 
         <form method="post">
             <input type="hidden" name="type" value="add-user">
             <div class="ui-field-contain">
-                <label for="username">Username</label>
+                <label for="username">Username*</label>
                 <input type="text" name="username" value="<?php echo $form['username'];?>" required />
             </div>
 
             <div class="ui-field-contain">
-                <label for="first_name">First name</label>
+                <label for="first_name">First name*</label>
                 <input type="text" name="first_name" value="<?php echo $form['first_name'];?>" required />
+            </div>
+            
+            <div class="ui-field-contain">
+                <label for="last_name">Surname prefix</label>
+                <input type="text" name="prefix_name" value="<?php echo $form['prefix_name'];?>"/>
             </div>
 
             <div class="ui-field-contain">
-                <label for="last_name">Last name</label>
+                <label for="last_name">Last name*</label>
                 <input type="text" name="last_name" value="<?php echo $form['last_name'];?>" required />
             </div>
 
             <div class="ui-field-contain">
-                <label for="username">Email</label>
+                <label for="username">Email*</label>
                 <input type="text" name="email" value="<?php echo $form['email'];?>" required />
             </div>
 
             <div class="ui-field-contain">
-                <label for="new_password">Password</label>
+                <label for="new_password">Password*</label>
                 <input type="password" name="password" required />
             </div>
 
             <div class="ui-field-contain">
-                <label for="password_confirm">Confirm password</label>
+                <label for="password_confirm">Confirm password*</label>
                 <input type="password" name="password_confirm" required />
             </div>
 
@@ -154,6 +161,12 @@ switch($this->input->post('type')) {
                         'type' => 'string',
                         'priority' => '2'
 
+                    ],
+                                        [
+                        'name' => 'prefix_name',
+                        'friendly-name' => 'Prefix',
+                        'type' => 'string',
+                        'priority' => '3'
                     ],
                     [
                         'name' => 'last_name',
