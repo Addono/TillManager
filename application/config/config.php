@@ -369,7 +369,7 @@ $config['encryption_key'] = 'dpf9IiNM28FEmcChYme9oIhIG4WUZQQR';
 */
 $config['sess_driver'] = 'files';
 $config['sess_cookie_name'] = 'ci_session';
-$config['sess_expiration'] = 7200;
+$config['sess_expiration'] = 0;
 $config['sess_save_path'] = getcwd() . '/application/sessions/';
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;

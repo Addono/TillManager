@@ -139,7 +139,7 @@ switch($this->input->post('type')) {
 
     <div class="ui-body ui-body-a ui-corner-all">
         <h3>User information</h3>
-        <table data-role="table" data-mode="reflow" class="ui-responsive">
+        <table data-role="table" data-mode="reflow" class="ui-responsive striped">
             <?php
             /**
              *  Stores which columns should be displayed, and how they should be displayed.

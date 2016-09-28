@@ -39,7 +39,8 @@
                     break;
             }
 
-            $user_data = $this->DBManager->get_user_data($user_data['username']);
+            // Renew the user data.
+            $user_data = $this->DBManager->get_user_data($user_data['id']);
         break;
     }
 ?>

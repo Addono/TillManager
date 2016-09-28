@@ -66,6 +66,23 @@ class Util {
 
         return $html;
     }
+    
+    /**
+     * Concaterantes the real name of a user.
+     * @param array The data of the user as an array.
+     * @return string The real name of the parsed user.
+     */
+    function combine_name($user) {
+        if($user['prefix_name'] != "" && $user['prefix_name'] != null) {
+            return $user['first_name'] . " " . $user['prefix_name'] . " " . $user['last_name'];
+        } else {
+            return $user['first_name'] . " " . $user['last_name'];
+        }
+    }
+    
+    public function price_to_string($price) {
+        return "€" . number_format((float) $price, 2);
+    }
 }
 
 /**

@@ -27,3 +27,7 @@
   border-top-color: #ddd;
   border-top-width: 1px;
 }
+
+.striped > tbody > tr:nth-child(odd) {
+    background: #e9e9e9;
+}

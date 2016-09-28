@@ -7,10 +7,13 @@ abstract class tables {
   const products = "products_table";
   const logins = "logins_table";
 }
-
+/**
+ * @TODO: Make object oriented
+ */
 class DBManager {
     private $ci;
-
+    private $current_user;
+    
     function __construct($ci) {
         $this->ci = $ci; // Parse controller object.
         $this->ci->load->database();
@@ -31,16 +34,63 @@ class DBManager {
         //$this->create_transaction(1, "unknown", "", $actions);
     }
 
+    /**
+     * @TODO Implement different products
+     * @return The price of a product.
+     */
+    public function get_price($amount) {
+        return .66 * $amount;
+    }
+    
+    /**
+     * Gives the primary key of the next entry in a table.
+     * @param string    The name of the table.
+     * @return int      The value of the primary key of the next row.
+     */
+    private function get_next_primary_key($table) {
+        // Get all the data of the requested table.
+        $result = $this->ci->db->query("SHOW TABLE STATUS LIKE \"" . $this->ci->db->escape_str($table) . "\";");
+        
+        // Return the value of the next primary key.
+        return $result->row()->Auto_increment;
+    }
+    
     //////////\\\\\\\\\\
     //     Users      \\
     //////////\\\\\\\\\\
 
     /**
+     * Sets the id of the current user.
+     * @param int The id of the user.
+     */
+    public function set_current_user($user_id) {
+        $this->current_user = $user_id;
+    }
+    
+    /**
+     * Returns the id of the current user as set earlier.
+     * @return int The id of the user.
+     */
+    public function get_current_user() {
+        return $this->current_user;
+    }
+    
+    /**
      * Adds a new user to the user table, also creates a new post for this user.
+     * @param string    The username of the new user.
+     * @param string    The first name of the new user.
+     * @param string    The prefix of the name of the new user.
+     * @param string    The last name of the new user.
+     * @param string    The password name of the new user.
+     * @param boolean   True if the new user should have admin rights.
+     * @param boolean   True if the new user should have till manager rights.
+     * @param string    A confirmation of the password. (Optional)
+     * @param string    The email adres of the user. (Optional)
+     * @return string   'succes' if it succeeded, else an error as a string.
      */
     public function add_user($username, $first_name, $prefix_name, 
-            $last_name, $password, $admin, $till_manager, 
-            $conf_password = null, $email = null) {
+            $last_name, $password, $admin, $till_manager, $conf_password = null,
+            $email = null) {
         if($username === null || $username === "") {
             return 'username';
         }
@@ -71,14 +121,16 @@ class DBManager {
         if($this->user_exists($username)) {
             return 'username-exists';
         }
+        
+        $primary_key = $this->get_next_primary_key(tables::users);
 
         $data = [
             'username' => $username,
             'first_name' => $first_name,
             'prefix_name' => $prefix_name,
             'last_name' => $last_name,
-            'debit_post_id' => $username == "admin" ? null : $this->add_post($username, 'debit', 1, $this->get_masterpost_id("Till debit")),
-            'credit_post_id' => $username == "admin" ? null : $this->add_post($username, 'credit', 1, $this->get_masterpost_id("Till credit")),
+            'debit_post_id' => $username == "admin" || $username == "local" ? null : $this->add_post($primary_key, 'debit', 1, $this->get_masterpost_id("Till debit")),
+            'credit_post_id' => $username == "admin" || $username == "local" ? null : $this->add_post($primary_key, 'credit', 1, $this->get_masterpost_id("Till credit")),
             'password' => $this->hash_password($password),
             'pin' => $this->generate_pin($this->ci->config->item('pin_length')),
             'admin' => $admin,
@@ -86,9 +138,19 @@ class DBManager {
             'email' => $email
         ];
 
-        $this->ci->db->insert(tables::users, $data);
+        // Insert the data in the databse.
+        if($this->ci->db->insert(tables::users, $data)) {
+            return 'succes';
+        } else {
+            return 'database';
+        }
     }
 
+    /**
+     * Checks if a user account exists.
+     * @param string The username of the account to be checked.
+     * @return boolean True if the username exists, else false.
+     */
     private function user_exists($username) {
         $this->ci->db->select(['username']);
         $this->ci->db->where(['username' => $username]);
@@ -100,14 +162,21 @@ class DBManager {
             return false;
         }
     }
+    
+    public function username_to_id($username) {
+        $this->ci->db->where('username', $username);
+        $this->ci->db->select('id');
+        
+        return $this->ci->db->get(tables::users)->row()->id;
+    }
 
     /**
      * Get's all data in the user table for one user.
      * @param string The username whom's data should be returned
      * @return array All user data as an array.
      */
-    public function get_user_data($username) {
-        $this->ci->db->where(['username' => $username]);
+    public function get_user_data($id) {
+        $this->ci->db->where(['id' => $id]);
         $this->ci->db->select(['*']);
 
         $data = $this->ci->db->get(tables::users)->row_array();
@@ -128,11 +197,11 @@ class DBManager {
      */
     public function get_all_user_data($admin = null, $till_manager = null) {
         if($admin != null) {
-            $this->ci->db->where(['admin' => true]);
+            $this->ci->db->where(['admin' => $admin]);
         }
 
         if($till_manager != null) {
-            $this->ci->db->where(['till_manager' => true]);
+            $this->ci->db->where(['till_manager' => $till_manager]);
         }
 
         $this->ci->db->select("*");
@@ -296,10 +365,13 @@ class DBManager {
     //////////\\\\\\\\\\
     //  Transactions  \\
     //////////\\\\\\\\\\
+    
+    // @TODO: Use transactions https://www.codeigniter.com/userguide3/database/transactions.html
 
     public function create_transaction($author_id, $type, $description, $actions) {
       $credit = 0;
       $debit = 0;
+      $status = 'success';
 
       foreach($actions as $action) {
         // Check if all required fields are set.
@@ -349,9 +421,42 @@ class DBManager {
 
       $trans_id = $this->ci->db->insert_id();
 
+      // Create all required journal entries.
       foreach ($actions as $action) {
-        $this->create_journal($author_id, $trans_id, $action['post_id'], $action['amount']);
+        $result = $this->create_journal($author_id, $trans_id, $action['post_id'], $action['amount']);
+        
+        if($result != 'success') {
+            $status = $result;
+        }
       }
+      
+      return $status;
+    }
+    
+    public function create_purchase($user_id, $amount, $author = null) {
+        if($author == null) {
+             $author = $this->get_current_user();
+        }
+        
+        $price = $this->get_price($amount);
+        
+        $actions = [
+            // Decrease the inventory.
+            [
+                "post_id" => $this->get_masterpost_id('Inventory'),
+                "amount" => -$price
+            ],
+            // Decrease the credit of the user.
+            [
+                "post_id" => $this->get_user_post_id($user_id, 'credit'),
+                "amount" => -$price
+            ]
+        ];
+        
+        $description = "Purchase of $amount consumption for €" . $this->get_price($amount) . 
+                " (€" . $this->get_price(1) . " each) for user '$user_id'.";
+        
+        return $this->create_transaction($author, 'purchase', $description, $actions);
     }
 
     //////////\\\\\\\\\\
@@ -359,8 +464,8 @@ class DBManager {
     //////////\\\\\\\\\\
 
     private function create_journal($author_id, $trans_id, $post_id, $amount) {
-      echo $result = $this->update_post($post_id, $amount) . "\n";
-
+      $result = $this->update_post($post_id, $amount);
+      
       if(is_string($result) && $result != "success") {
         error_log("Journal creation failed with post updating, report'$result'");
         return "error: could not update post";
@@ -504,7 +609,32 @@ class DBManager {
 
       return $this->ci->db->get(tables::posts)->row()->cd;
     }
+    
+    public function get_user_post_id($user_id, $cd) {
+        $user = $this->get_user_data($user_id);
+        
+        switch($cd) {
+            case 'credit':
+                return $user['credit_post_id'];
+            case 'debit':
+                return $user['debit_post_id'];
+            default:
+                'error: invalid cd';
+        }
+    }
+    
+    public function get_post($post_id) {
+        $this->ci->db->where('post_id', $post_id);
+        $this->ci->db->select('*');
+        
+        return $this->ci->db->get(tables::posts)->row();
+    }
 
+    /**
+     * 
+     * @param int $parents_only
+     * @return type
+     */
     public function get_posts($parents_only) {
       $this->ci->db->select("*");
       $this->ci->db->where("parent", null);
@@ -527,7 +657,7 @@ class DBManager {
       ],
       "Inventory" => [
         "cd" => "debit",
-        "parent" => true,
+        "parent" => false,
         "priority" => 2,
         "id" => self::posts_id_start + 1
       ],
@@ -539,6 +669,7 @@ class DBManager {
       ],
       "Equity" => [
         "cd" => "credit",
+        "parent" => false,
         "priority" => 3,
         "id" => self::posts_id_start + 3
       ],

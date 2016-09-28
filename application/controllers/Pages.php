@@ -9,16 +9,17 @@ class Pages extends CI_Controller {
     private $logged_in;
     private $user_data;
 
-    private $pages = [
+    // Stores information about names, locations, and access rights.
+    public $pages = [
         "home" => [
             "location" => "home",
             "title" => "Home",
             "admin" => false,
             "tillmanager" => false
         ],
-        "create_transaction" => [
-            "location" => "create_transaction",
-            "title" => "Create transaction",
+        "purchase" => [
+            "location" => "purchase",
+            "title" => "Purchase",
             "admin" => false,
             "tillmanager" => false
         ],
@@ -39,6 +40,13 @@ class Pages extends CI_Controller {
             "title" => "Manage users",
             "admin" => true,
             "tillmanager" => false
+        ],
+        "process_purchase" => [
+            "location" => "process_purchase",
+            "title" => "Process purchase",
+            "admin" => false,
+            "tillmanager" => false,
+            "hidden" => true
         ]
     ];
 
@@ -58,7 +66,12 @@ class Pages extends CI_Controller {
         // Check if the user is logged in.
         $this->current_user_logged_in();
 
-        $this->get_data_current_user();
+        $user = $this->get_data_current_user();
+        
+        // If there is a user logged in set the current user of DBManager.
+        if($user != null) {
+            $this->DBManager->set_current_user($user["id"]);
+        }
 
         // Log the user out if he's logged in and wants to log out.
         if($this->logged_in && $page == 'logout') {
@@ -83,11 +96,9 @@ class Pages extends CI_Controller {
                 $username = $this->input->post('username');
                 $password = $this->input->post('password');
 
-                // Check if the credentials entered by the user are correct.
-                $login = $this->DBManager->check_user_credentials($username, $password, 'login');
-
-                // Check if the login was succesfull, if not show an error message.
-                switch($login) {
+                // Check if the credentials entered by the user are correct, 
+                // if they are not then show an error message.
+                switch($this->DBManager->check_user_credentials($username, $password, 'login')) {
                     case 'valid':
                         $this->session->set_userdata('username', $username);
                         $this->logged_in = true;
@@ -123,12 +134,14 @@ class Pages extends CI_Controller {
 
     private function get_data_current_user() {
       if($this->logged_in) {
-          $user = $this->session->username;
-          return $this->user_data = $this->DBManager->get_user_data($user);
+          $username = $this->session->username;
+          $user_id = $this->DBManager->username_to_id($username);
+          return $this->user_data = $this->DBManager->get_user_data($user_id);
       }
     }
 
     public function view($page) {
+        // Set the default value of the data variable.
         $data['name'] = self::name;
         $data['logged_in'] = $this->logged_in;
         $data['redirect'] = null;
@@ -143,7 +156,10 @@ class Pages extends CI_Controller {
 
                 // If the user is already logged in, show the home page instead.
                 if($this->logged_in) {
-                    $data['redirect'] = 'home';
+                    $data['redirect'] = [
+                        "target" => "home",
+                        "time" => 0
+                    ];
 
                     $this->load->view('templates/header', $data);
                     $this->load->view('templates/footer', $data);
@@ -161,7 +177,10 @@ class Pages extends CI_Controller {
                 }
             break;
             case 'logout':
-                $data['redirect'] = 'login';
+                $data['redirect'] = [
+                    "target" => "login",
+                    "time" => 0
+                ];
                 $data['title'] = 'Logout';
                 $data['navigation'] = false;
 

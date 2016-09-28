@@ -30,10 +30,8 @@ foreach($posts as $post) {
         <h3>Balance</h3>
           <table class="balance-table">
             <thead>
-              <tr>
                 <th colspan="2">Debit</th>
                 <th colspan="2">Credit</th>
-              </tr>
             </thead>
             <tbody>
         <?php for($i = 0, $max = max(count($debit), count($credit)); $i < $max; $i++) { ?>
@@ -52,5 +50,47 @@ foreach($posts as $post) {
               </tr>
             </tbody>
           </table>
-    </div>
+    </div> <br>
+    
+    <?php
+    
+    $all_users = $this->DBManager->get_all_user_data();
+    
+    ?>
+    
+    <div class="ui-body ui-body-a ui-corner-all">
+        <h3>Till credit and debit</h3>
+        <p>Till credit: The amount each user can still can spend.</p>
+        <p>Till debit: The amount of till money a user has in his possession.</p>
+        
+        <table>
+            <thead>
+                <th>Name</th>
+                <th>User debit</th>
+                <th>User credit</th>
+            </thead>
+            <tbody>
+            <?php
+                foreach($all_users as $user) {
+                    // Skip the admin and local account.
+                    if($user['username'] == "admin" || $user['username'] == "local") {
+                        continue;
+                    }
+                    
+                    // Get all the data for this user.
+                    $name = $this->Util->combine_name($user);
+                    $debit = $this->DBManager->get_post($user['debit_post_id']);
+                    $credit = $this->DBManager->get_post($user['credit_post_id']);
+                    ?>
+                <tr>
+                    <td><?php echo $name; ?></td>
+                    <td>&euro;<?php echo $debit->amount; ?></td>
+                    <td>&euro;<?php echo $credit->amount; ?></td>
+                </tr>
+                <?php
+                }
+            ?>
+            </tbody>
+        </table>
+    </div> <br>
 </div><!-- main -->

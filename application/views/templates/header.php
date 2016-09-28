@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <title>
-            <?php echo $name . str_replace("_", " ", ucfirst($title)); ?>
+            <?php echo $name . str_replace("_", " ", ucfirst($title)) . "\n"; ?>
         </title>
         <meta name="viewport" content="initial-scale=1, maximum-scale=1">
         <?php
@@ -12,9 +12,10 @@
 
         // Check if the page should redirect.
         if ($redirect != null) {
-            echo "<script type='text/javascript'> window.location.href = '" . base_url() . "index.php/$redirect/'</script>";
+            echo "<meta http-equiv='refresh' content='" . $redirect['time'] . "; url=" . base_url() . "index.php/" . $redirect['target'] . "/' />\n";
         }
         ?>
+        
     </head>
     <body>
         <?php
@@ -26,10 +27,11 @@
                     <!-- <li data-icon="delete"><a href="#" data-rel="close">Close this panel</a></li> -->
                     <?php
                         foreach($navigation_pages as $page) {
-                            if($page['admin'] && !$user_data['admin']) {
+                            if(($page['admin'] && !$user_data['admin']) || 
+                                    (isset($page['hidden']) && $page['hidden'])) {
                                 continue;
                             }
-
+                            
                             if(!isset($page['location'])) {
                                 echo "<li>" . $page['title'] . "</li>";
                             } else {
