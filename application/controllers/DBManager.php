@@ -118,7 +118,7 @@ class DBManager {
         }
 
         // Check if the username is already in use.
-        if($this->user_exists($username)) {
+        if($this->check_username_exists($username)) {
             return 'username-exists';
         }
         
@@ -151,16 +151,42 @@ class DBManager {
      * @param string The username of the account to be checked.
      * @return boolean True if the username exists, else false.
      */
-    private function user_exists($username) {
+    private function check_username_exists($username) {
         $this->ci->db->select(['username']);
         $this->ci->db->where(['username' => $username]);
         $q = $this->ci->db->get(tables::users);
 
-        if($q->num_rows() > 0) {
-            return true;
-        } else {
-            return false;
+        return $q->num_rows() > 0;
+    }
+    
+    /**
+     * Checks if an user account with the given id exists.
+     * @param int The id of the user.
+     * @return boolean If there exists an user account with the given id.
+     */
+    public function check_user_id_exists($user_id) {
+        $this->ci->db->select(['id']);
+        $this->ci->db->where(['id' => $user_id]);
+        $q = $this->ci->db->get(tables::users);
+
+        return $q->num_rows() > 0;
+    }
+    
+    function check_user_rights($user_id, $admin = null, $tillmanager = null) {
+        $this->ci->db->select(['id']);
+        $this->ci->db->where(['id' => $user_id]);
+        
+        if($admin != null) {
+            $this->ci->db->where(['admin' => $admin]);
         }
+        
+        if($tillmanager != null) {
+            $this->ci->db->where(['till_manager' => $tillmanager]);
+        }
+        
+        $q = $this->ci->db->get(tables::users);
+
+        return $q->num_rows() > 0;
     }
     
     public function username_to_id($username) {
@@ -195,7 +221,9 @@ class DBManager {
      * @param boolean/null A boolean value if only, or no, till managers should be selected.
      * @return array A two dimensional array with the information of all users.
      */
-    public function get_all_user_data($admin = null, $till_manager = null) {
+    public function get_all_user_data($admin = null, $till_manager = null, $default = true) {
+        $this->ci->db->select("*");
+        
         if($admin != null) {
             $this->ci->db->where(['admin' => $admin]);
         }
@@ -203,8 +231,12 @@ class DBManager {
         if($till_manager != null) {
             $this->ci->db->where(['till_manager' => $till_manager]);
         }
-
-        $this->ci->db->select("*");
+        
+        if(!$default) {
+            $this->ci->db->where('username !=', 'admin');
+            $this->ci->db->where('username !=', 'local');
+        }
+        
         $q = $this->ci->db->get(tables::users);
 
         return $q->result_array();
@@ -403,7 +435,7 @@ class DBManager {
         case 'decleration':
         case 'payout':
         case 'refund':
-        case 'upgrade':
+        case 'deposit':
         case 'unknown':
           $data = [
             "author_id" => $author_id,
@@ -433,22 +465,25 @@ class DBManager {
       return $status;
     }
     
-    public function create_purchase($user_id, $amount, $author = null) {
-        if($author == null) {
-             $author = $this->get_current_user();
-        }
-        
+    public function create_purchase($user_id, $amount, $author) {
         $price = $this->get_price($amount);
+        
+        $inventory_post = $this->get_masterpost_id('Inventory');
+        $user_post = $this->get_user_post_id($user_id, 'credit');
+        
+        if(!is_numeric($user_post) || !is_numeric($inventory_post)) {
+            return "error: system couldn't find user or inventory post";
+        }
         
         $actions = [
             // Decrease the inventory.
             [
-                "post_id" => $this->get_masterpost_id('Inventory'),
+                "post_id" => $inventory_post,
                 "amount" => -$price
             ],
             // Decrease the credit of the user.
             [
-                "post_id" => $this->get_user_post_id($user_id, 'credit'),
+                "post_id" => $user_post,
                 "amount" => -$price
             ]
         ];
@@ -457,6 +492,30 @@ class DBManager {
                 " (€" . $this->get_price(1) . " each) for user '$user_id'.";
         
         return $this->create_transaction($author, 'purchase', $description, $actions);
+    }
+    
+    public function create_deposit($user_id, $tm_id, $amount, $author) {        
+        $user_post = $this->get_user_post_id($user_id, 'credit');
+        $tm_post   = $this->get_user_post_id($tm_id, 'debit');
+        
+        if(!is_numeric($user_post) || !is_numeric($tm_post)) {
+            return "error: system couldn't find user or tillmanager post";
+        }
+        
+        $actions = [
+            [
+                "post_id" => $user_post,
+                "amount" => $amount
+            ],
+            [
+                "post_id" => $tm_post,
+                "amount" => $amount
+            ]
+        ];
+        
+        $description = "Deposit of €$amount from $user_id to $tm_id.";
+        
+        return $this->create_transaction($author, 'deposit', $description, $actions);
     }
 
     //////////\\\\\\\\\\
@@ -726,7 +785,7 @@ class DBManager {
                trans_id mediumint UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
                author_id mediumint UNSIGNED NOT NULL,
                description tinytext,
-               type ENUM('purchase', 'sell', 'decleration', 'payout', 'refund', 'upgrade', 'unknown', 'error') DEFAULT 'error' NOT NULL,
+               type ENUM('purchase', 'sell', 'decleration', 'payout', 'refund', 'deposit', 'unknown', 'error') DEFAULT 'error' NOT NULL,
                approved BOOLEAN NOT NULL DEFAULT FALSE,
                cdate datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
                edate datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL ,
