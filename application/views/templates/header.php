@@ -28,6 +28,7 @@
                     <?php
                         foreach($navigation_pages as $page) {
                             if(($page['admin'] && !$user_data['admin']) || 
+                                    ($page['tillmanager'] && !$user_data['till_manager']) || 
                                     (isset($page['hidden']) && $page['hidden'])) {
                                 continue;
                             }

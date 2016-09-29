@@ -41,6 +41,12 @@ class Pages extends CI_Controller {
             "admin" => true,
             "tillmanager" => false
         ],
+        "deposit" => [
+            "location" => "deposit",
+            "title" => "Deposit",
+            "admin" => false,
+            "tillmanager" => true
+        ],
         "process_purchase" => [
             "location" => "process_purchase",
             "title" => "Process purchase",
@@ -204,7 +210,7 @@ class Pages extends CI_Controller {
                     show_404();
                 } elseif($this->pages[$page]['admin'] && !$this->user_data['admin']) {
                     $this->load->view('templates/admin_only', $data);
-                } elseif($this->pages[$page]['admin'] && !$this->user_data['admin']) {
+                } elseif($this->pages[$page]['tillmanager'] && !$this->user_data['till_manager']) {
                     $this->load->view('templates/tillmanager_only', $data);
                 } else {
                     $this->load->view('pages/' . $page, $data);
