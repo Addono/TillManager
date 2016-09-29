@@ -12,7 +12,7 @@
 
         // Check if the page should redirect.
         if ($redirect != null) {
-            echo "<meta http-equiv='refresh' content='" . $redirect['time'] . "; url=" . base_url() . "index.php/" . $redirect['target'] . "/' />\n";
+            echo "<meta http-equiv='refresh' content='" . $redirect['time'] . "; url=" . $this->Util->get_url($redirect['target']) . "/' />\n";
         }
         ?>
         
@@ -39,7 +39,7 @@
                                 if($page['location'] == $title) {
                                     echo "<li data-theme='b'>" . $page['title'] . "</li>\n";
                                 } else {
-                                    echo "<li><a href='" . base_url() . "index.php/" . $page['location'] . "' data-url='" . base_url() . "index.php/" . $page['location'] . "'>" . $page['title'] . "</a></li>\n";
+                                    echo "<li><a href='" . $this->Util->get_url($page['location']) . "' data-url='" . $this->Util->get_url($page['location']) . "'>" . $page['title'] . "</a></li>\n";
                                 }
                             }
                         }
@@ -54,6 +54,6 @@
                 <?php
                 // Show the logout button if the user is logged in.
                 if($logged_in) {
-                    echo "<a data-ajax='false' data-method='delete' rel='nofollow' href='" . base_url() . "index.php/logout' data-role='button' class='ui-btn ui-icon-power ui-btn-icon-right'>Logout</a>";
+                    echo "<a data-ajax='false' data-method='delete' rel='nofollow' href='" . $this->Util->get_url('logout') . "' data-role='button' class='ui-btn ui-icon-power ui-btn-icon-right'>Logout</a>";
                 } ?>
             </div><!-- header -->

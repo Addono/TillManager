@@ -67,14 +67,21 @@ switch($this->input->post('type')) {
         break;
     case('change-password'):
         $error = "Failed to update the password of '" . $form['username-change-password'] . "', ";
+        
+        $current_user = $this->DBManager->get_user_data($this->DBManager->get_current_user());
 
-        switch($this->DBManager->update_password($form['username-change-password'], null, $form["change-password"], $form["conf-change-password"])) {
-            case 'passwords-not-equal':
-                $this->page_Logger->add_warning($error . "the passwords did not match.");
-            break;
-            case 'succes':
-                $this->page_Logger->add_message("Password for '" . $form['username-change-password'] . "' succesfully updated, this user can now login with this new password.", "check");
+        // Prevent other users than the 'admin' user to change the password of 'admin'.
+        if($form['username-change-password'] == "admin" && $current_user['username'] == "admin") {
+            $this->page_Logger->add_warning("Only 'admin' is allowed to change its own password");
+        } else {
+            switch($this->DBManager->update_password($form['username-change-password'], null, $form["change-password"], $form["conf-change-password"])) {
+                case 'passwords-not-equal':
+                    $this->page_Logger->add_warning($error . "the passwords did not match.");
                 break;
+                case 'succes':
+                    $this->page_Logger->add_message("Password for '" . $form['username-change-password'] . "' succesfully updated, this user can now login with this new password.", "check");
+                    break;
+            }
         }
         break;
 }
@@ -282,8 +289,12 @@ switch($this->input->post('type')) {
                             case 'change-password':
                                 $username = $user[$column['username']];
 
-                                if($username == "admin" || $username == $user_data['username']) {
+                                if($username == $user_data['username']) {
                                     echo "<a href='" . $this->Util->get_url('account') . "' class='ui-btn ui-corner-all ui-shadow ui-mini ui-icon-alert ui-btn-icon-left' style='margin: 0'>Change your own password</a>";
+                                    break;
+                                }
+                                
+                                if($username == 'admin') {
                                     break;
                                 }
                                 

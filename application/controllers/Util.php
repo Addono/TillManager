@@ -13,9 +13,9 @@ class Util {
         $this->ci->load->helper('url'); // Load required packages.
 
         $this->resources = new resources(base_url() . "application/resources");
-        $this->form = new Form($ci);
+        $this->form = new Form($ci, $this);
 
-        $this->Ajax = new Ajax;
+        $this->Ajax = new Ajax($this);
     }
 
     /**
@@ -45,7 +45,7 @@ class Util {
         $style = "";
 
         if($id == null) {
-            $id = "popup-" . rand(0, 99999999999);
+            $id = "popup" . rand(0, 999999999999);
         }
 
         if($mini) {
@@ -136,39 +136,47 @@ class resources {
 }
 
 class Ajax {
-  public function switch_js($class) {
+    private $Util;
+
+    function __construct($util) {
+        $this->Util = $util;
+    }    
+    
+public function switch_js($class) {
     echo
     "<script>
     $( document ).ready(function() {
-      $('.ajax-$class').click(function() {
-        var select = $( this ).find('select');
-        var name = select.attr('name');
-        var value = select.val();
+    $('.ajax-$class').click(function() {
+      var select = $( this ).find('select');
+      var name = select.attr('name');
+      var value = select.val();
 
-        $.post('". base_url() . "index.php/ajax/$class-switch', {name: name, value: value}, function(result) {
-          console.log('I tried to send ' + name + ':' + value);
-          console.log('The server returned \"' + result + '\"');
+      $.post('" . $this->Util->get_url("ajax/$class-switch") . "', {name: name, value: value}, function(result) {
+        console.log('I tried to send ' + name + ':' + value);
+        console.log('The server returned \"' + result + '\"');
 
-          switch(result) {
-            case 'failed: user not logged in':
-              alert('Action failed because you are not logged in anymore, reload the page and login before proceding.');
-              break;
-            case 'failed: access denied':
-              alert('Action failed, you do not have enough rights to do this.');
-              break;
-          }
-        });
+        switch(result) {
+          case 'failed: user not logged in':
+            alert('Action failed because you are not logged in anymore, reload the page and login before proceding.');
+            break;
+          case 'failed: access denied':
+            alert('Action failed, you do not have enough rights to do this.');
+            break;
+        }
       });
     });
+  });
 </script>\n";
   }
 }
 
 class Form {
     private $ci;
+    private $Util;
 
-    function __construct($ci) {
+    function __construct($ci, $util) {
         $this->ci = $ci;
+        $this->Util = $util;
     }
 
     /**
@@ -223,5 +231,38 @@ class Form {
 
     public function get_submit($title = "Submit", $inline = false) {
         return '<button type="submit" data-role="button" class="ui-btn ui-shadow ui-corner-all' . ($inline ? ' ui-btn-inline' : '') . '" name="submit" value="submit">' . $title . '</button>';
+    }
+    
+    public function get_radio_all_users($users, $name, $filterable = false, $select_id = null, $required = false) {
+        if($filterable) {
+            $filterable = "true";
+        } else {
+            $filterable = "false";
+        }
+        
+        $html = "<fieldset data-role='controlgroup' data-filter='$filterable' data-inset='$filterable'>\n";
+        
+        foreach($users as $user) {
+            $user_id = $user['id'];
+            $user_full_name = $this->Util->combine_name($user);
+            
+            $attr = "type='radio' name='$name' id='$name-$user_id' value='$user_id'";
+            
+            if($select_id != null && $select_id == $user_id) {
+                $attr .= " checked='checked'";
+                $user_full_name = "Me: " . $user_full_name;
+            }
+            
+            if($required) {
+                $attr .= " required";
+            }
+            
+            $html .= "<input $attr>\n"
+                    . "<label for='$name-$user_id'>$user_full_name</label>\n";
+        }
+        
+        $html .= "</fieldset>\n";
+        
+        return $html;
     }
 }

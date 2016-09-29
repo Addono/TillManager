@@ -1,6 +1,7 @@
 <?php
 /**
- *  @TODO Add rights management for purchases.
+ * @TODO Add rights management for purchases.
+ * @TODO Add server sided form validation.
  */
 $purchases = [];
 
@@ -20,7 +21,7 @@ foreach($users as $user) {
 ?>
 
 <script type="text/JavaScript">
-    var url = "<?php echo  base_url() . "index.php/purchase"; ?>";
+    var url = "<?php echo  $this->Util->get_url("purchase"); ?>";
     var timeout = setTimeout("location.href = '" + url + "';", 10000);
      
     $(document).ready(function(){
@@ -40,12 +41,15 @@ foreach($users as $user) {
             if(count($purchases) == 0) {
                 echo "<p>No purchases selected</p>";
             } else {
+                $curr_user_id   = $this->DBManager->get_current_user();
+                $curr_user      = $this->DBManager->get_user_data($curr_user_id);
+                
                 foreach($purchases as $purchase) {
                     $author = $this->DBManager->get_user_data($purchase["user"]["id"]);
                     
                     echo $this->Util->combine_name($purchase["user"]) . ": <b>" . $purchase["amount"] . "</b> consumption(s) - ";
                     
-                    $result = $this->DBManager->create_purchase($author["id"], $purchase["amount"]);
+                    $result = $this->DBManager->create_purchase($author["id"], $purchase["amount"], $curr_user_id);
                     
                     if(is_int($result)) {
                         echo "Success (Transaction id #$result)";
@@ -56,12 +60,12 @@ foreach($users as $user) {
                     echo "<p>";
                 }
                 
-                echo "<p>Signed by " . $this->Util->combine_name($author) . "</p>";
+                echo "<p>Signed by " . $this->Util->combine_name($curr_user) . "</p>";
             }
             ?>
         
         <p>
-            <i id="returnMessage">You will be automatically returned after 10 seconds. Click "cancel" to prevent this from happening.</i>
+            <i id="returnMessage">You will be automatically returned after 10 seconds. Click "Cancel" to prevent this from happening.</i>
             <button id="cancel">Cancel</button>
         </p>
     </div>

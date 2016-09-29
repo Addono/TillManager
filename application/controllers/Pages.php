@@ -23,11 +23,11 @@ class Pages extends CI_Controller {
             "admin" => false,
             "tillmanager" => false
         ],
-        "account" => [
-            "location" => "account",
-            "title" => "Account details",
+        "deposit" => [
+            "location" => "deposit",
+            "title" => "Deposit",
             "admin" => false,
-            "tillmanager" => false
+            "tillmanager" => true
         ],
         "balance" => [
             "location" => "balance",
@@ -41,17 +41,24 @@ class Pages extends CI_Controller {
             "admin" => true,
             "tillmanager" => false
         ],
-        "deposit" => [
-            "location" => "deposit",
-            "title" => "Deposit",
+        "account" => [
+            "location" => "account",
+            "title" => "Account details",
             "admin" => false,
-            "tillmanager" => true
+            "tillmanager" => false
         ],
         "process_purchase" => [
             "location" => "process_purchase",
             "title" => "Process purchase",
             "admin" => false,
             "tillmanager" => false,
+            "hidden" => true
+        ],
+        "process_deposit" => [
+            "location" => "process_deposit",
+            "title" => "Process deposit",
+            "admin" => false,
+            "tillmanager" => true,
             "hidden" => true
         ]
     ];

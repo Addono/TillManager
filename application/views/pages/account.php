@@ -115,7 +115,7 @@
                 <input type="password" name="new_password_confirm" required />
             </div>
 
-            <button type="submit" data-role="button" class="ui-btn ui-shadow ui-corner-all" name="submit" value="submit">Login</button>
+            <?php echo $this->Util->form->get_submit("Change password"); ?>
         </form>
     </div>
 
