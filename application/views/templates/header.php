@@ -5,10 +5,10 @@
         <title>
             <?php echo $name . str_replace("_", " ", ucfirst($title)) . "\n"; ?>
         </title>
-        <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <?php
         // Add jQuery, jQuery UI, jQuery Mobile js and css.
-        $this->Util->resources->add(['jquery', 'jquery-mobile', 'css']);
+        $this->Util->resources->add(['jquery', 'jquery-mobile', 'jqm-spinbox', 'css']);
 
         // Check if the page should redirect.
         if ($redirect != null) {

@@ -1,5 +1,7 @@
 <?php
 /**
+ * @TODO: Add multilanguage support with gettext
+ * 
  * @author      Adriaan Knapen <a.d.knapen@student.tue.nl> <adriaan.knapen@gmail.com>
  * @copyright   Copyright (c) 2016, Adriaan Knapen
  * @licence     http://opensource.org/licenses/MIT	MIT License

@@ -379,6 +379,14 @@ class DBManager {
     }
     
     //////////\\\\\\\\\\
+    //    Products    \\
+    //////////\\\\\\\\\\
+    
+    public function add_product() {
+        
+    }
+    
+    //////////\\\\\\\\\\
     //     Logins     \\
     //////////\\\\\\\\\\
     

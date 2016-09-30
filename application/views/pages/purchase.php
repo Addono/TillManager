@@ -28,19 +28,7 @@ $price = $this->DBManager->get_price(1);
                                 <?php echo $this->Util->combine_name($user); ?>
                             </td>
                             <td>
-                                <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
-                                    <input type="radio" name="<?php echo $user['id']; ?>" id="<?php echo $user['id']; ?>_0" value="0" checked="checked" />
-                                    <label for="<?php echo $user['id']; ?>_0">0</label>
-                                    
-                                    <input type="radio" name="<?php echo $user['id']; ?>" id="<?php echo $user['id']; ?>_1" value="1"/>
-                                    <label for="<?php echo $user['id']; ?>_1">1</label>
-                                    
-                                    <input type="radio" name="<?php echo $user['id']; ?>" id="<?php echo $user['id']; ?>_2" value="2"/>
-                                    <label for="<?php echo $user['id']; ?>_2">2</label>
-                                    
-                                    <input type="radio" name="<?php echo $user['id']; ?>" id="<?php echo $user['id']; ?>_3" value="3"/>
-                                    <label for="<?php echo $user['id']; ?>_3">3</label>
-                                </fieldset>
+                                <?php echo $this->Util->form->get_horizontal_spinbox($user['id'], 0); ?>
                             </td>
                             </tr>
                         <?php

@@ -124,23 +124,36 @@ class resources {
     private function get_html($package) {
         switch(strtolower($package)) {
             case 'css':
-                echo "<link href='$this->location/style.css' rel='stylesheet'>";
+                echo $this->css_resource("style.css");
                 break;
             case 'jquery':
-                echo "<script src='$this->location/jquery-ui/external/jquery/jquery.js' type='text/javascript'></script>";
+                echo $this->js_resource("jquery-ui/external/jquery/jquery.js");
                 break;
             case 'jquery-ui':
-                echo "<link href='$this->location/jquery-ui/jquery-ui.min.css' rel='stylesheet'>\n" .
-                    "<script src='$this->location/jquery-ui/jquery-ui.min.js' type='text/javascript'></script>";
+                echo $this->css_resource("jquery-ui/jquery-ui.min.css");
+                echo $this->js_resource("jquery-ui/jquery-ui.min.js");
                 break;
             case 'jquery-mobile':
-                echo "<link href='$this->location/jquery-mobile/jquery.mobile-1.4.5.css' rel='stylesheet'>\n" .
-                    "<script src='$this->location/jquery-mobile/jquery.mobile-1.4.5.min.js' type='text/javascript'></script>";
+                echo $this->css_resource("jquery-mobile/jquery.mobile-1.4.5.css");
+                echo $this->js_resource("jquery-mobile/jquery.mobile-1.4.5.min.js");
+                break;
+            case 'jqm-spinbox':
+                echo $this->js_resource("jqm-spinbox.min.js");
+                echo $this->js_resource("jqm-spinbox-helper.js");
                 break;
             default: // Log an error if the package does not exist.
                 error_log("Package  '$package' was not found, and could therefore not be added by the Resources class.");
                 break;
         }
+    }
+    
+    // @TODO: Chekc if the resource exists.
+    private function js_resource($location) {
+        return "<script src='$this->location/$location' type='text/javascript'></script>\n";
+    }
+    
+    private function css_resource($location) {
+        return "<link href='$this->location/$location' rel='stylesheet'>\n";
     }
 }
 
@@ -297,5 +310,24 @@ class Form {
         $html .= "</fieldset>\n";
         
         return $html;
+    }
+    
+    public function get_horizontal_spinbox($name, $value = 0, $min = null, $max = null) {
+        $attr = "class='spinbox-btn'"
+                . " type='text'"
+                . " data-role='spinbox' "
+                . " data-options='{'type':'horizontal'}'"
+                . " value='$value'"
+                . " name='$name'";
+        
+        if($min != null) {
+            $attr .= " min='$min'";
+        }
+        
+        if($max != null) {
+            $attr .= " max='$max'";
+        }
+        
+        echo "<input $attr/>\n";
     }
 }
