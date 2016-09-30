@@ -1,4 +1,10 @@
 <?php
+/**
+ * @author      Adriaan Knapen <a.d.knapen@student.tue.nl> <adriaan.knapen@gmail.com>
+ * @copyright   Copyright (c) 2016, Adriaan Knapen
+ * @licence     http://opensource.org/licenses/MIT	MIT License
+ */
+
 require_once('DBManager.php'); // Import the database manage object.
 require_once('Util.php');
 require_once('Logger.php');
