@@ -53,6 +53,7 @@ class Pages extends CI_Controller {
             "admin" => false,
             "tillmanager" => false
         ],
+        // Hidden pages
         "process_purchase" => [
             "location" => "process_purchase",
             "title" => "Process purchase",

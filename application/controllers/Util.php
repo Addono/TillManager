@@ -39,6 +39,15 @@ class Util {
         . "\n<div style='max-width:30em' data-role='popup' id='$id' class='ui-content'>$message</div>";
     }
 
+    /**
+     * Creates a popup and button, clicking the button will open the popup.
+     * @param string The text on the button.
+     * @param string The HTML the popup should contain.
+     * @param string The name of the jQM icon placed at the button, or null if non should be used.
+     * @param string The ID of the button, null if it should be generated.
+     * @param boolean If jQM 'mini'-style should be used.
+     * @return string The HTML of the button and popup.
+     */
     public function get_html_popup_button($button, $popup, $icon = null, $id = null, $mini = false) {
         $html = "";
         $class = "";
