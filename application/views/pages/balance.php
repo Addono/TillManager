@@ -59,15 +59,16 @@ foreach($posts as $post) {
     ?>
     
     <div class="ui-body ui-body-a ui-corner-all">
-        <h3>Till credit and debit</h3>
-        <p>Till credit: The amount each user can still can spend.</p>
-        <p>Till debit: The amount of till money a user has in his possession.</p>
         
         <table>
             <thead>
                 <th>Name</th>
-                <th>User debit</th>
-                <th>User credit</th>
+                <th>Till debit
+                    <?php echo $this->Util->get_html_tooltip("The amount of till money a user has in his possession."); ?>
+                </th>
+                <th>Till credit
+                    <?php echo $this->Util->get_html_tooltip("The amount each user can still can spend."); ?>
+                </th>
             </thead>
             <tbody>
             <?php
