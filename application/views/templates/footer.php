@@ -7,8 +7,7 @@
                 }
             ?>
             
-            <!-- Koen was here! -->
-            
+            <!-- Koen was here!-->
         </div><!-- page -->
 
         <?php // If a menu is required, initiate jQuery mobile to build it for us.
@@ -42,4 +41,5 @@
         </script>
         <?php } ?>
     </body>
+    <!-- Page rendered in <?php echo $this->benchmark->elapsed_time(); ?>s -->
 </html>
