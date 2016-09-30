@@ -238,18 +238,42 @@ class Form {
         return $html . "</div>\n"; // Return the generated HTML of the switch.
     }
 
+    /**
+     * Generates the HTML of a submit button.
+     * @param string    The text of the submit button.
+     * @param boolean   If the button should have the jQM inline style.
+     * @return string   The HTML of the submit button.
+     */
     public function get_submit($title = "Submit", $inline = false) {
-        return '<button type="submit" data-role="button" class="ui-btn ui-shadow ui-corner-all' . ($inline ? ' ui-btn-inline' : '') . '" name="submit" value="submit">' . $title . '</button>';
+        $classes = "ui-btn ui-shadow ui-corner-all";
+        
+        if($inline) {
+            $classes .= " ui-btn-inline";
+        }
+        
+        return "<button type='submit' data-role='button'"
+                . " class='$classes' name='submit' value='submit'>$title</button>";
     }
     
-    public function get_radio_all_users($users, $name, $filterable = false, $select_id = null, $required = false) {
+    /**
+     * Generates HTML for a radio button list of all supplied users.
+     * @param array     The user data as multidimentional array.
+     * @param string    The name of the radio buttons.
+     * @param boolean   If it should be filterable or not.
+     * @param string    The ID of the user whom should be selected.
+     * @param boolean   If the radiobuttons are a required field of the form.
+     * @return string   The generated HTML.
+     */
+    public function get_radio_all_users($users, $name, $filterable = false, 
+            $select_id = null, $required = false) {
         if($filterable) {
             $filterable = "true";
         } else {
             $filterable = "false";
         }
         
-        $html = "<fieldset data-role='controlgroup' data-filter='$filterable' data-inset='$filterable'>\n";
+        $html = "<fieldset data-role='controlgroup' data-filter='$filterable'"
+                . " data-inset='$filterable'>\n";
         
         foreach($users as $user) {
             $user_id = $user['id'];
