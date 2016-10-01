@@ -23,16 +23,16 @@ $price = $this->DBManager->get_price(1);
                 foreach($users as $user) {
                     // Hide the admin and local user.
                     if($user['username'] != 'admin' && $user['username'] != 'local') { ?>
-                        <tr>
-                            <td>
-                                <?php echo $this->Util->combine_name($user); ?>
-                            </td>
-                            <td>
-                                <?php echo $this->Util->form->get_horizontal_spinbox($user['id'], 0, 0); ?>
-                            </td>
-                            </tr>
-                        <?php
-                    }
+                        
+                    <tr>
+                        <td>
+                            <?php echo $this->Util->combine_name($user) . "\n"; ?>
+                        </td>
+                        <td>
+                            <?php echo $this->Util->form->get_horizontal_spinbox($user['id'], 0, 0); ?>
+                        </td>
+                    </tr>
+<?php               }
                 }
                 ?>
                 </tbody>
