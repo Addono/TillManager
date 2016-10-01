@@ -4,7 +4,7 @@ function get_sum($posts) {
 
   foreach($posts as $post) {
     // Only sum the parent values.
-    if($post["parent"] == null || $post["parent"] == 0) {
+    if($post["parent"] === null || $post["parent"] === 0) {
       $sum += $post['amount'];
     }
   }

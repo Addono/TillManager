@@ -28,7 +28,7 @@ $price = $this->DBManager->get_price(1);
                                 <?php echo $this->Util->combine_name($user); ?>
                             </td>
                             <td>
-                                <?php echo $this->Util->form->get_horizontal_spinbox($user['id'], 0); ?>
+                                <?php echo $this->Util->form->get_horizontal_spinbox($user['id'], 0, 0); ?>
                             </td>
                             </tr>
                         <?php

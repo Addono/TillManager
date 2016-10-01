@@ -9,7 +9,7 @@
         $new_password = $this->input->post('new_password');
         $new_password_conf = $this->input->post('new_password_confirm');
 
-        if($current_password != null) {
+        if($current_password !== null) {
             switch($this->DBManager->update_password($username, $current_password, $new_password)) {
                     case 'succes':
                         $this->page_Logger->add_message("Password succesfully updated.", "check");

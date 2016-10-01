@@ -11,7 +11,7 @@
         $this->Util->resources->add(['jquery', 'jquery-mobile', 'jqm-spinbox', 'css']);
 
         // Check if the page should redirect.
-        if ($redirect != null) {
+        if ($redirect !== null) {
             echo "<meta http-equiv='refresh' content='" . $redirect['time'] . "; url=" . $this->Util->get_url($redirect['target']) . "/' />\n";
         }
         ?>

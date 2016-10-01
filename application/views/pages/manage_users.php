@@ -9,8 +9,6 @@ $form['last_name'] = $this->input->post('last_name');
 $form['email']  = $this->input->post('email');
 $form['password'] = $this->input->post('password');
 $form['password_conf'] = $this->input->post('password_confirm');
-$form['admin'] = $this->input->post('admin');
-$form['till_manager'] = $this->input->post('till_manager');
 $form['username-change-password'] = $this->input->post('username-change-password');
 $form['change-password'] = $this->input->post('change-password');
 $form['conf-change-password'] = $this->input->post('conf-change-password');
@@ -24,8 +22,6 @@ $form_default = [
             'email' => '',
             'password' => '',
             'password_conf' => '',
-            'admin' => null,
-            'till_manager' => null,
             'username-change-password' => '',
             'change-password' => '',
             'conf-change-password' => ''
@@ -39,7 +35,7 @@ switch($this->input->post('type')) {
         if($form['username'] === null) {
             $form = $form_default;
         } else {
-            switch($this->DBManager->add_user($form['username'], $form['first_name'], $form['prefix_name'], $form['last_name'], $form['password'], $form['admin'], $form['till_manager'], $form['password_conf'], $form['email'])) {
+            switch($this->DBManager->add_user($form['username'], $form['first_name'], $form['prefix_name'], $form['last_name'], $form['password'], false, false, $form['password_conf'], $form['email'])) {
                 case 'username':
                     $this->page_Logger->add_warning("Failed to add user, username should not be empty. Please fill the username field and try again.");
                     break;
@@ -129,11 +125,6 @@ switch($this->input->post('type')) {
             </div>
 
             <?php
-
-                // Add the two switches for the user rights.
-                echo $this->Util->form->get_switch('admin', 'Admin', 'No', 'Yes', $form['admin']);
-                echo $this->Util->form->get_switch('till_manager', 'Till Manager', 'No', 'Yes', $form['till_manager']);
-
                 // Add the submit button.
                 echo $this->Util->form->get_submit('Add user', false);
             ?>

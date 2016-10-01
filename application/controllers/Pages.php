@@ -91,7 +91,7 @@ class Pages extends CI_Controller {
         $user = $this->get_data_current_user();
         
         // If there is a user logged in set the current user of DBManager.
-        if($user != null) {
+        if($user !== null) {
             $this->DBManager->set_current_user($user["id"]);
         }
 
@@ -151,7 +151,7 @@ class Pages extends CI_Controller {
     }
 
     private function current_user_logged_in() {
-      return $this->logged_in = isset($this->session->username) && $this->session->username != NULL;
+      return $this->logged_in = isset($this->session->username) && $this->session->username !== null;
     }
 
     private function get_data_current_user() {

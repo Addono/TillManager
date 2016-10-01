@@ -9,7 +9,7 @@ $to = $this->input->post('to');
 $amount_str = number_format($this->input->post('amount'), 2);
 $amount = floatval($amount_str);
 
-if($from == null) {
+if($from === null) {
     $result = "Go to the deposit page to create a new deposit.";
 } elseif(!$this->DBManager->check_user_id_exists($from)) {
     $result = "Deposit failed: Invalid user selected";

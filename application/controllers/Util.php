@@ -53,7 +53,7 @@ class Util {
         $class = "";
         $style = "";
 
-        if($id == null) {
+        if($id === null) {
             $id = "popup" . rand(0, 999999999999);
         }
 
@@ -62,7 +62,7 @@ class Util {
             $style .= "margin: 0";
         }
 
-        if($icon == null) {
+        if($icon === null) {
             $html .= "<a href='#$id' data-rel='popup' data-transition='pop' class='ui-btn ui-corner-all $class' style='$style'>$button</a>\n";
         } else {
             $html .= "<a href='#$id' data-rel='popup' data-transition='pop' class='ui-btn ui-corner-all ui-icon-$icon ui-btn-icon-left $class' style='$style'>$button</a>\n";
@@ -82,7 +82,7 @@ class Util {
      * @return string The real name of the parsed user.
      */
     function combine_name($user) {
-        if($user['prefix_name'] != "" && $user['prefix_name'] != null) {
+        if($user['prefix_name'] !== "" && $user['prefix_name'] !== null) {
             return $user['first_name'] . " " . $user['prefix_name'] . " " . $user['last_name'];
         } else {
             return $user['first_name'] . " " . $user['last_name'];
@@ -230,7 +230,7 @@ class Form {
         }
 
         // Don't create a label if it will not contain text.
-        if($label != null && $label != "") {
+        if($label !== null && $label !== "") {
             $html .= '<label for="flip-select-second">' . $label . '</label>';
         }
 
@@ -239,8 +239,10 @@ class Form {
                 . '<option>' . $option_left . '</option>';
 
         // Set the default position to right if this is specified.
-        if($default_pos === $option_right && is_string($default_pos) || // Check if the default position is equal to the right one, if the default position is parsed as a string.
-                ($default_pos && is_bool($default_pos))) { // Check if the default position is right (true) if the default position is set as an boolean.
+        // Check if the default position is equal to the right one, if the default position is parsed as a string.
+        if($default_pos === $option_right && is_string($default_pos) ||
+                // Check if the default position is right (true) if the default position is set as an boolean.
+                ($default_pos && is_bool($default_pos))) { 
             $html .= '<option selected="">' . $option_right . '</option>';
         } else {
             $html .= '<option>' . $option_right . '</option>';
@@ -294,7 +296,7 @@ class Form {
             
             $attr = "type='radio' name='$name' id='$name-$user_id' value='$user_id'";
             
-            if($select_id != null && $select_id == $user_id) {
+            if($select_id !== null && $select_id === $user_id) {
                 $attr .= " checked='checked'";
                 $user_full_name = "Me: " . $user_full_name;
             }
@@ -320,11 +322,11 @@ class Form {
                 . " value='$value'"
                 . " name='$name'";
         
-        if($min != null) {
+        if($min !== null) {
             $attr .= " min='$min'";
         }
         
-        if($max != null) {
+        if($max !== null) {
             $attr .= " max='$max'";
         }
         

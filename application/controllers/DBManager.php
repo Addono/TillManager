@@ -95,14 +95,14 @@ class DBManager {
             return 'username';
         }
 
-        if($password == null || $password == "") {
+        if($password === null || $password === "") {
             return 'password';
         }
 
         // Check if a valid email has been parsed.
-        if($email != null) {
+        if($email !== null) {
             // Check if the email is empty.
-            if($email == "") {
+            if($email === "") {
                 return 'email-empty';
             }
 
@@ -113,7 +113,7 @@ class DBManager {
         }
 
         // If the confirmation password is passed, check if it matches.
-        if($conf_password != null && $password != $conf_password) {
+        if($conf_password !== null && $password !== $conf_password) {
             return 'password-conf';
         }
 
@@ -129,8 +129,8 @@ class DBManager {
             'first_name' => $first_name,
             'prefix_name' => $prefix_name,
             'last_name' => $last_name,
-            'debit_post_id' => $username == "admin" || $username == "local" ? null : $this->add_post($primary_key, 'debit', 1, $this->get_masterpost_id("Till debit")),
-            'credit_post_id' => $username == "admin" || $username == "local" ? null : $this->add_post($primary_key, 'credit', 1, $this->get_masterpost_id("Till credit")),
+            'debit_post_id' => $username === "admin" || $username === "local" ? null : $this->add_post($primary_key, 'debit', 1, $this->get_masterpost_id("Till debit")),
+            'credit_post_id' => $username === "admin" || $username === "local" ? null : $this->add_post($primary_key, 'credit', 1, $this->get_masterpost_id("Till credit")),
             'password' => $this->hash_password($password),
             'pin' => $this->generate_pin($this->ci->config->item('pin_length')),
             'admin' => $admin,
@@ -176,11 +176,11 @@ class DBManager {
         $this->ci->db->select(['id']);
         $this->ci->db->where(['id' => $user_id]);
         
-        if($admin != null) {
+        if($admin !== null) {
             $this->ci->db->where(['admin' => $admin]);
         }
         
-        if($tillmanager != null) {
+        if($tillmanager !== null) {
             $this->ci->db->where(['till_manager' => $tillmanager]);
         }
         
@@ -224,11 +224,11 @@ class DBManager {
     public function get_all_user_data($admin = null, $till_manager = null, $default = true) {
         $this->ci->db->select("*");
         
-        if($admin != null) {
+        if($admin !== null) {
             $this->ci->db->where(['admin' => $admin]);
         }
 
-        if($till_manager != null) {
+        if($till_manager !== null) {
             $this->ci->db->where(['till_manager' => $till_manager]);
         }
         
@@ -341,10 +341,10 @@ class DBManager {
         }
 
         // Check if the old password is correct, if it was parsed to this function.
-        if($old_password != null) {
+        if($old_password !== null) {
             $password_check = $this->check_user_credentials($username, $old_password, 'password_change');
 
-            if($password_check != 'valid') {
+            if($password_check !== 'valid') {
                 return $password_check;
             }
         }
@@ -561,7 +561,7 @@ class DBManager {
           return "error: invalid cd parsed";
         }
 
-        if(!($parent == null || $parent == -1) && !$this->post_exists($parent)) {
+        if(!($parent === null || $parent === -1) && !$this->post_exists($parent)) {
           return "error: parent not found";
         }
 
@@ -572,7 +572,7 @@ class DBManager {
             "parent" => $parent
         ];
 
-        if($id != null) {
+        if($id !== null) {
           $data["post_id"] = $id;
         }
 
@@ -623,7 +623,7 @@ class DBManager {
       if($parent === 0) {
         // Prevent direct alteration of a parent post.
         return "error: can not only alter a parent post";
-      } elseif($parent != null) {
+      } elseif($parent !== null) {
         // Update the parent post.
         if($this->update_post_amount($parent, $amount) != "success") {
           return "error: could not update amount parent";
