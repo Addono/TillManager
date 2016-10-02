@@ -6,6 +6,17 @@
  * @copyright   Copyright (c) 2016, Adriaan Knapen
  * @licence     http://opensource.org/licenses/MIT	MIT License
  */
+// I18N support information here
+$language = 'nl_NL';
+
+putenv('LANG=' . $language);
+setlocale(LC_ALL, $language);
+
+// Set the text domain as 'messages'
+$domain = 'TillManager';
+$localedir = dirname(__FILE__) . '../languages';
+bindtextdomain($domain, $localedir);
+textdomain($domain);
 
 require_once('DBManager.php'); // Import the database manage object.
 require_once('Util.php');

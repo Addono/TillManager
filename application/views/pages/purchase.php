@@ -4,15 +4,15 @@ $price = $this->DBManager->get_price(1);
 ?>
 
 <div data-role="main" class="ui-content jqm-content jqm-fullwidth" id="main">
-    Price per consumption: <?php echo $this->Util->price_to_string($price); ?>
     <div class="ui-body ui-body-a ui-corner-all">
+        Price per consumption: <?php echo $this->Util->price_to_string($price); ?>
         <?php echo form_open('process_purchase', 'data-ajax="false"'); ?>
-            <button type="submit">Purchase</button>
+            <button type="submit"><?php echo _('Purchase'); ?></button>
             <table data-role="table" data-filter="true" data-mode="reflow" class="ui-responsive striped">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Amount of consumptions</th>
+                        <th><?php echo _('Name'); ?></th>
+                        <th><?php echo _('Amount of consumptions'); ?></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -23,7 +23,7 @@ $price = $this->DBManager->get_price(1);
                 foreach($users as $user) {
                     // Hide the admin and local user.
                     if($user['username'] != 'admin' && $user['username'] != 'local') { ?>
-                        
+
                     <tr>
                         <td>
                             <?php echo $this->Util->combine_name($user) . "\n"; ?>
