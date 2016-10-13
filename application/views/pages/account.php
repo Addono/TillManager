@@ -53,38 +53,46 @@
             }
         </style>
 
-        <h3>My account</h3>
+        <h3><?php _("My account"); ?></h3>
         <table class="first-column-bold">
             <tr><!-- Username -->
-                <td>Username</td>
+                <td><?php _e("Username"); ?></td>
                 <td><?php echo $user_data['username']; ?></td>
             </tr>
 
             <tr><!-- First name -->
-                <td>First name</td>
+                <td><?php _e("First name"); ?></td>
                 <td><?php echo $user_data['first_name'];?></td>
             </tr>
 
             <tr><!-- Last name -->
-                <td>Last name</td>
+                <td><?php _e("Last name"); ?></td>
                 <td><?php echo $user_data['last_name'];?></td>
             </tr>
 
             <tr><!-- Role(s) -->
-                <td><?php echo ($user_data['till_manager'] || $user_data['admin']) ? "Roles" : "Role";?></td>
-                <td>User<?php echo $user_data['till_manager'] ? ", Till manager" : ""; echo $user_data['admin'] ? ", Admin" : ""; ?></td>
+                <?php
+                    $n = 0;
+                    if($user_data['till_manager']) $n++;
+                    if($user_data['admin']) $n++;
+                ?>
+                <td><?php echo _n("Role", "Roles", $n); ?></td>
+                <td><?php _e("User");
+                          echo $user_data['till_manager'] ? ", " . _("Till manager") : "";
+                          echo $user_data['admin'] ? ", " . _("Admin") : ""; ?>
+                </td>
             </tr>
 
             <tr><!-- Pin -->
-                <td>Pin</td>
+                <td><?php _e("Pin"); ?></td>
                 <td>
                     <?php
-                    echo $this->Util->get_html_popup_button('Show', $user_data['pin']);
-                    echo $this->Util->get_html_popup_button('Reset pin',
+                    echo $this->Util->get_html_popup_button(_("Show"), $user_data['pin']);
+                    echo $this->Util->get_html_popup_button(_("Reset pin"),
                             "<form method='post' data-ajax='false'>
                             <input type='hidden' name='type' value='reset-pin'>
-                            <p>Are you sure you want to reset your pin code?</p>" .
-                            $this->Util->form->get_submit('Reset pin') .
+                            <p>" . _("Are you sure you want to reset your pin code?") . "</p>" .
+                            $this->Util->form->get_submit(_("Reset pin")) .
                             "</form>",
                             'alert'
                             );
@@ -96,26 +104,26 @@
     <br>
 
     <div class="ui-body ui-body-a ui-corner-all">
-        <h3>Change password</h3>
+        <h3><?php _e("Change password"); ?></h3>
 
         <form method="post">
             <input type='hidden' name='type' value='change-password'>
             <div class="ui-field-contain">
-                <label for="current_password">Current password</label>
+                <label for="current_password"><?php _e("Current password"); ?></label>
                 <input type="password" name="current_password" required />
             </div>
 
             <div class="ui-field-contain">
-                <label for="new_password">New password</label>
+                <label for="new_password"><?php _e("New password"); ?></label>
                 <input type="password" name="new_password" required />
             </div>
 
             <div class="ui-field-contain">
-                <label for="new_password_confirm">Confirm new password</label>
+                <label for="new_password_confirm"><?php _e("Confirm new password"); ?></label>
                 <input type="password" name="new_password_confirm" required />
             </div>
 
-            <?php echo $this->Util->form->get_submit("Change password"); ?>
+            <?php echo $this->Util->form->get_submit(_("Change password")); ?>
         </form>
     </div>
 

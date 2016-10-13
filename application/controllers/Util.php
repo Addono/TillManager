@@ -174,15 +174,12 @@ public function switch_js($class) {
       var value = select.val();
 
       $.post('" . $this->Util->get_url("ajax/$class-switch") . "', {name: name, value: value}, function(result) {
-        console.log('I tried to send ' + name + ':' + value);
-        console.log('The server returned \"' + result + '\"');
-
         switch(result) {
           case 'failed: user not logged in':
-            alert('Action failed because you are not logged in anymore, reload the page and login before proceding.');
+            alert('" . _("Action failed because you are not logged in anymore, reload the page and login before proceding.") . "');
             break;
           case 'failed: access denied':
-            alert('Action failed, you do not have enough rights to do this.');
+            alert('" . _("Action failed, you do not have enough rights to do this.") . "');
             break;
         }
       });

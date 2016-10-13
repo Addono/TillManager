@@ -27,11 +27,11 @@ foreach($posts as $post) {
  ?>
 <div data-role="main" class="ui-content jqm-content jqm-fullwidth" id="main">    
     <div class="ui-body ui-body-a ui-corner-all">
-        <h3>Balance</h3>
+        <h3><?php _e("Balance"); ?></h3>
           <table class="balance-table">
             <thead>
-                <th colspan="2">Debit</th>
-                <th colspan="2">Credit</th>
+                <th colspan="2"><?php _e("Debit"); ?></th>
+                <th colspan="2"><?php _e("Credit"); ?></th>
             </thead>
             <tbody>
         <?php for($i = 0, $max = max(count($debit), count($credit)); $i < $max; $i++) { ?>
@@ -43,9 +43,9 @@ foreach($posts as $post) {
               </tr>
         <?php } ?>
               <tr>
-                <td>Total</td>
+                <td><?php _e("Total"); ?></td>
                 <td>&euro;<?php echo get_sum($debit);?></td>
-                <td>Total</td>
+                <td><?php _e("Total"); ?></td>
                 <td>&euro;<?php echo get_sum($credit);?></td>
               </tr>
             </tbody>
@@ -62,12 +62,12 @@ foreach($posts as $post) {
         
         <table>
             <thead>
-                <th>Name</th>
-                <th>Till debit
-                    <?php echo $this->Util->get_html_tooltip("The amount of till money a user has in his possession."); ?>
+                <th><?php _e("Name"); ?></th>
+                <th><?php _e("Till debit"); ?>
+                    <?php echo $this->Util->get_html_tooltip(_("The amount of till money a user has in his possession.")); ?>
                 </th>
-                <th>Till credit
-                    <?php echo $this->Util->get_html_tooltip("The amount each user can still can spend."); ?>
+                <th><?php _e("Till credit"); ?>
+                    <?php echo $this->Util->get_html_tooltip(_("The amount each user can still can spend.")); ?>
                 </th>
             </thead>
             <tbody>

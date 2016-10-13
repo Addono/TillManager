@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TillManager\n"
-"POT-Creation-Date: 2016-10-02 02:32+0200\n"
-"PO-Revision-Date: 2016-10-02 02:32+0200\n"
+"POT-Creation-Date: 2016-10-13 23:48+0200\n"
+"PO-Revision-Date: 2016-10-13 23:53+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -13,17 +13,331 @@ msgstr ""
 "X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: _;_e\n"
+"X-Poedit-KeywordsList: _;gettext;_n;_e\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: resources\n"
 
-#: controllers/Pages.php:20 views/pages/purchase.php:10
+#: controllers/Pages.php:56 views/templates/admin_only.php:5
+#: views/templates/tillmanager_only.php:5
+msgid "Home"
+msgstr "Home"
+
+#: controllers/Pages.php:62 views/pages/purchase.php:10
 msgid "Purchase"
 msgstr "Aankoop"
 
-#: views/pages/purchase.php:14
+#: controllers/Pages.php:68 views/pages/deposit.php:23
+msgid "Deposit"
+msgstr "Storting"
+
+#: controllers/Pages.php:74 views/pages/balance.php:30
+msgid "Balance"
+msgstr "Balans"
+
+#: controllers/Pages.php:80
+msgid "Manage users"
+msgstr "Beheer gebruikers"
+
+#: controllers/Pages.php:86 views/pages/account.php:56
+msgid "My account"
+msgstr "Mijn account"
+
+#: controllers/Pages.php:93
+msgid "Process purchase"
+msgstr "Verwerk aankoop"
+
+#: controllers/Pages.php:100
+msgid "Process deposit"
+msgstr "Verwerk storting"
+
+#: controllers/Pages.php:160
+msgid "Invalid password."
+msgstr "Ongeldig wachtwoord."
+
+#: controllers/Pages.php:163
+msgid "Sorry, we do not now that username."
+msgstr "Sorry, maar die gebruikersnaam kennen we niet."
+
+#: controllers/Pages.php:237 views/templates/header.php:57
+msgid "Logout"
+msgstr "Uitloggen"
+
+#: controllers/Util.php:179
+msgid ""
+"Action failed because you are not logged in anymore, reload the page and "
+"login before proceding."
+msgstr ""
+"Handeling mislukt omdat je niet meer ingelogd bent, herlaad de pagina en "
+"probeer daarna opnieuw."
+
+#: controllers/Util.php:182
+msgid "Action failed, you do not have enough rights to do this."
+msgstr "Handeling mislukt, je hebt niet de benodigde rechten om dit te doen."
+
+#: views/pages/account.php:59 views/pages/manage_users.php:95
+#: views/pages/manage_users.php:154 views/templates/login.php:9
+msgid "Username"
+msgstr "Gebruikersnaam"
+
+#: views/pages/account.php:64 views/pages/manage_users.php:100
+#: views/pages/manage_users.php:160
+msgid "First name"
+msgstr "Voornaam"
+
+#: views/pages/account.php:69 views/pages/manage_users.php:110
+#: views/pages/manage_users.php:173
+msgid "Last name"
+msgstr "Achternaam"
+
+#: views/pages/account.php:79
+msgid "Role"
+msgstr "Rol"
+
+#: views/pages/account.php:80
+msgid "User"
+msgstr "Gebruiker"
+
+#: views/pages/account.php:81 views/pages/manage_users.php:194
+msgid "Till manager"
+msgstr "Kas beheerder"
+
+#: views/pages/account.php:82 views/pages/manage_users.php:185
+msgid "Admin"
+msgstr "Administrator"
+
+#: views/pages/account.php:87
+msgid "Pin"
+msgstr "Pincode"
+
+#: views/pages/account.php:90
+msgid "Show"
+msgstr "Inzien"
+
+#: views/pages/account.php:91 views/pages/account.php:95
+msgid "Reset pin"
+msgstr "Herstel pincode"
+
+#: views/pages/account.php:94
+msgid "Are you sure you want to reset your pin code?"
+msgstr "Weet je zeker dat je je pincode wilt herstellen?"
+
+#: views/pages/account.php:107 views/pages/account.php:126
+#: views/pages/manage_users.php:202 views/pages/manage_users.php:307
+msgid "Change password"
+msgstr "Wachtwoord aanpassen"
+
+#: views/pages/account.php:112
+msgid "Current password"
+msgstr "Huidig wachtwoord"
+
+#: views/pages/account.php:117
+msgid "New password"
+msgstr "Nieuw wachtwoord"
+
+#: views/pages/account.php:122
+msgid "Confirm new password"
+msgstr "Bevestig nieuw wachtwoord"
+
+#: views/pages/balance.php:33
+msgid "Debit"
+msgstr "Debit"
+
+#: views/pages/balance.php:34
+msgid "Credit"
+msgstr "Credit"
+
+#: views/pages/balance.php:46 views/pages/balance.php:48
+msgid "Total"
+msgstr "Totaal"
+
+#: views/pages/balance.php:65 views/pages/purchase.php:14
 msgid "Name"
 msgstr "Naam"
+
+#: views/pages/balance.php:66
+msgid "Till debit"
+msgstr "Kas debit"
+
+#: views/pages/balance.php:67
+msgid "The amount of till money a user has in his possession."
+msgstr "De hoeveelheid geld van de kas iemand in bewaring heeft."
+
+#: views/pages/balance.php:69
+msgid "Till credit"
+msgstr "Kas credit"
+
+#: views/pages/balance.php:70
+msgid "The amount each user can still can spend."
+msgstr "De hoeveelheid geld elke gebruiker nog kan besteden."
+
+#: views/pages/deposit.php:25
+msgid "Received from"
+msgstr "Ontvangen van"
+
+#: views/pages/deposit.php:28
+msgid "Given to"
+msgstr "Gegeven aan"
+
+#: views/pages/deposit.php:31
+msgid "Amount"
+msgstr "Hoeveelheid"
+
+#: views/pages/deposit.php:32
+msgid "Amount in &euro;"
+msgstr "Hoeveelheid in &euro;"
+
+#: views/pages/manage_users.php:40
+msgid ""
+"Failed to add user, username should not be empty. Please fill the username "
+"field and try again."
+msgstr ""
+"Gebruiker toevoegen mislukt, een gebruikersnaam is verplicht. Vul een "
+"gebruikersnaam in en probeer opnieuw."
+
+#: views/pages/manage_users.php:43
+msgid ""
+"Failed to add user, username is already in use. Try again with a different "
+"username."
+msgstr ""
+"Gebruiker toevoegen mislukt, gebruikersnaam is al in gebruik. Probeer "
+"opnieuw met aan andere gebruikersnaam."
+
+#: views/pages/manage_users.php:46
+msgid "Failed to add user, email address should not be empty."
+msgstr "Gebruiker toevoegen mislukt, email adres is verplicht."
+
+#: views/pages/manage_users.php:49
+msgid "Failed to add user, email address has an invalid syntax."
+msgstr "Gebruiker toevoegen mislukt, email adres is niet geldig."
+
+#: views/pages/manage_users.php:52
+msgid "Failed to add user, password should not be empty."
+msgstr "Gebruiker toevoegen mislukt, een wachtwoord is verplicht."
+
+#: views/pages/manage_users.php:55
+msgid ""
+"Failed to add user, passwords did not match. Make sure that they are equal."
+msgstr ""
+"Gebruiker toevoegen mislukt, de opgegeven wachtwoorden waren niet gelijk aan "
+"elkaar."
+
+#: views/pages/manage_users.php:58
+#, php-format
+msgid "User '%s' added succesfully."
+msgstr "Gebruiker '%s' succesvol toegevoegd."
+
+#: views/pages/manage_users.php:71
+msgid "Only 'admin' is allowed to change its own password"
+msgstr "Alleen 'admin' mag zijn eigen wachtwoord veranderen."
+
+#: views/pages/manage_users.php:75
+#, php-format
+msgid "Failed to update the password of '%s', the passwords did not match."
+msgstr ""
+"Wachtwoord veranderen van '%s'  mislukt omdat de opgegeven wachtwoorden niet "
+"hetzelfde waren."
+
+#: views/pages/manage_users.php:79
+#, php-format
+msgid ""
+"Password for '%s' succesfully updated, this user can now login with this new "
+"password."
+msgstr ""
+"Wachtwoord voor '%s' aangepast, deze gebruiker kan nu inloggen met z'n "
+"nieuwe wachtwoord."
+
+#: views/pages/manage_users.php:89 views/pages/manage_users.php:131
+msgid "Add user"
+msgstr "Gebruiker toevoegen"
+
+#: views/pages/manage_users.php:90
+msgid "All fields marked with an \"*\" are required."
+msgstr "Alle velden met een \"*\" zijn verplicht."
+
+#: views/pages/manage_users.php:105
+msgid "Surname prefix"
+msgstr "Tussenvoegsel"
+
+#: views/pages/manage_users.php:115 views/pages/manage_users.php:179
+msgid "Email"
+msgstr "Email"
+
+#: views/pages/manage_users.php:120 views/templates/login.php:14
+msgid "Password"
+msgstr "Wachtwoord"
+
+#: views/pages/manage_users.php:125
+msgid "Confirm password"
+msgstr "Bevestig wachtwoord"
+
+#: views/pages/manage_users.php:141
+msgid "User information"
+msgstr "Gebruikers informatie"
+
+#: views/pages/manage_users.php:167
+msgid "Prefix"
+msgstr "Tussenvgsl."
+
+#: views/pages/manage_users.php:287
+msgid "Change your own password"
+msgstr "Pas je wachtwoord aan"
+
+#: views/pages/purchase.php:8
+msgid "Price per consumption:"
+msgstr "Prijs per consumptie:"
+
+#: views/pages/purchase.php:15
+msgid "Amount of consumptions"
+msgstr "Hoeveelheid consumpties"
+
+#: views/templates/admin_only.php:2
+msgid "Get out, admin only here!"
+msgstr "Ga nou weg! We willen alleen admins hier!"
+
+#: views/templates/admin_only.php:3
+msgid ""
+"You need to be logged  in as an administrator to be allowed to access this "
+"page. Click the 'Home' button to go back to safety."
+msgstr ""
+"Om deze op deze pagina te mogen komen moet je een administrator zijn. Klik "
+"de 'Home' knop om terug naar de veiligheid te gaan."
+
+#: views/templates/admin_only.php:4 views/templates/tillmanager_only.php:4
+msgid ""
+"If you think that you should be able to access this page, then please "
+"contact your system administrator for help."
+msgstr ""
+"Als je denkt dat je wel op deze pagina zou moeten kunnen, neem dan contact "
+"op met je systeembeheerder voor hulp."
+
+#: views/templates/admin_only.php:6 views/templates/tillmanager_only.php:6
+msgid ""
+"Don't worry, you are not in danger <small> - at least not that I'm currently "
+"aware of</small>. But really, you should go now, this page is not that "
+"interesting and you just have to click that button."
+msgstr ""
+"Maak je geen zorgen, je bent niet echt in gevaar <small> - in ieder geval "
+"niet naar mijn weten </small>. Maar nu even serieus, deze pagina is ook weer "
+"niet zo interessant en om weg te gaan hoef je alleen op die knop te drukken."
+
+#: views/templates/login.php:2 views/templates/login.php:18
+msgid "Login"
+msgstr "Log in"
+
+#: views/templates/tillmanager_only.php:2
+msgid "Get out, till manager here!"
+msgstr "Ga nou weg! We willen alleen kas beheerders hier!"
+
+#: views/templates/tillmanager_only.php:3
+msgid ""
+"You need to be logged  in as a till manager to be allowed to access this "
+"page. Click the 'Home' button to go back to safety."
+msgstr ""
+"Om deze op deze pagina te mogen komen moet je een kas beheerder zijn. Klik "
+"de 'Home' knop om terug naar de veiligheid te gaan."
+
+#~ msgid "Price per consumption: "
+#~ msgstr "Prijs per consumptie:"
 
 #~ msgid "'"
 #~ msgstr "'"

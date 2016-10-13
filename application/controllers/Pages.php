@@ -6,17 +6,36 @@
  * @copyright   Copyright (c) 2016, Adriaan Knapen
  * @licence     http://opensource.org/licenses/MIT	MIT License
  */
+clearstatcache(); // remove while in production
+
 // I18N support information here
-$language = 'nl_NL';
+$language = 'nl';
 
 putenv('LANG=' . $language);
-setlocale(LC_ALL, $language);
+if(!setlocale(LC_ALL, $language)) {
+    echo "<!-- Language $language not detected, using default language. -->";
+}
 
 // Set the text domain as 'messages'
 $domain = 'TillManager';
-$localedir = dirname(__FILE__) . '../languages';
+$localedir = dirname(__FILE__) . '../../language';
 bindtextdomain($domain, $localedir);
 textdomain($domain);
+
+/**
+ * A rename of ngettext, which is the plural version of gettext().
+ * @param string The singular message ID.
+ * @param string The plural message ID.
+ * @param float  The number (e.g. item count) to determine the translation.
+ * @return string Translation of the message ID according to n.
+ */
+function _n($msgid1, $msgid2, $n) {
+    return ngettext($msgid1, $msgid2, $n);
+}
+
+function _e($msgid) {
+    echo _($msgid);
+}
 
 require_once('DBManager.php'); // Import the database manage object.
 require_once('Util.php');
@@ -27,63 +46,64 @@ class Pages extends CI_Controller {
     const name = "Stamkas - ";
     private $logged_in;
     private $user_data;
-
+    public $pages;
+    
     // Stores information about names, locations, and access rights.
-    public $pages = [
-        "home" => [
-            "location" => "home",
-            "title" => "Home",
-            "admin" => false,
-            "tillmanager" => false
-        ],
-        "purchase" => [
-            "location" => "purchase",
-            "title" => "Purchase",
-            "admin" => false,
-            "tillmanager" => false
-        ],
-        "deposit" => [
-            "location" => "deposit",
-            "title" => "Deposit",
-            "admin" => false,
-            "tillmanager" => true
-        ],
-        "balance" => [
-            "location" => "balance",
-            "title" => "Balance",
-            "admin" => false,
-            "tillmanager" => false
-        ],
-        "manage_users" => [
-            "location" => "manage_users",
-            "title" => "Manage users",
-            "admin" => true,
-            "tillmanager" => false
-        ],
-        "account" => [
-            "location" => "account",
-            "title" => "Account details",
-            "admin" => false,
-            "tillmanager" => false
-        ],
-        // Hidden pages
-        "process_purchase" => [
-            "location" => "process_purchase",
-            "title" => "Process purchase",
-            "admin" => false,
-            "tillmanager" => false,
-            "hidden" => true
-        ],
-        "process_deposit" => [
-            "location" => "process_deposit",
-            "title" => "Process deposit",
-            "admin" => false,
-            "tillmanager" => true,
-            "hidden" => true
-        ]
-    ];
-
     public function index($page = 'home') {
+        $this->pages = [
+            "home" => [
+                "location" => "home",
+                "title" => _("Home"),
+                "admin" => false,
+                "tillmanager" => false
+            ],
+            "purchase" => [
+                "location" => "purchase",
+                "title" => _("Purchase"),
+                "admin" => false,
+                "tillmanager" => false
+            ],
+            "deposit" => [
+                "location" => "deposit",
+                "title" => _("Deposit"),
+                "admin" => false,
+                "tillmanager" => true
+            ],
+            "balance" => [
+                "location" => "balance",
+                "title" => _("Balance"),
+                "admin" => false,
+                "tillmanager" => false
+            ],
+            "manage_users" => [
+                "location" => "manage_users",
+                "title" => _("Manage users"),
+                "admin" => true,
+                "tillmanager" => false
+            ],
+            "account" => [
+                "location" => "account",
+                "title" => _("My account"),
+                "admin" => false,
+                "tillmanager" => false
+            ],
+            // Hidden pages
+            "process_purchase" => [
+                "location" => "process_purchase",
+                "title" => _("Process purchase"),
+                "admin" => false,
+                "tillmanager" => false,
+                "hidden" => true
+            ],
+            "process_deposit" => [
+                "location" => "process_deposit",
+                "title" => _("Process deposit"),
+                "admin" => false,
+                "tillmanager" => true,
+                "hidden" => true
+            ]
+        ];
+        
         // Load our own settings.
         $this->config->load('TillManager');
 
@@ -137,10 +157,10 @@ class Pages extends CI_Controller {
                         $this->logged_in = true;
                         break;
                     case 'password':
-                        $this->Logger->add_warning('Invalid password.');
+                        $this->Logger->add_warning(_('Invalid password.'));
                         break;
                     case 'username':
-                        $this->Logger->add_warning('Username not found, note that the username is case sensitive.');
+                        $this->Logger->add_warning(_('Sorry, we do not now that username.'));
                         break;
                 }
             }
@@ -214,7 +234,7 @@ class Pages extends CI_Controller {
                     "target" => "login",
                     "time" => 0
                 ];
-                $data['title'] = 'Logout';
+                $data['title'] = _('Logout');
                 $data['navigation'] = false;
 
                 $data['log'] = $this->Logger->get_html();

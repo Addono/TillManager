@@ -54,6 +54,6 @@
                 <?php
                 // Show the logout button if the user is logged in.
                 if($logged_in) {
-                    echo "<a data-ajax='false' data-method='delete' rel='nofollow' href='" . $this->Util->get_url('logout') . "' data-role='button' class='ui-btn ui-icon-power ui-btn-icon-right'>Logout</a>";
+                    echo "<a data-ajax='false' data-method='delete' rel='nofollow' href='" . $this->Util->get_url('logout') . "' data-role='button' class='ui-btn ui-icon-power ui-btn-icon-right'>" . _("Logout") . "</a>";
                 } ?>
             </div><!-- header -->
