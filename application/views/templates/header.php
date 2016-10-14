@@ -26,6 +26,8 @@
                 <ul data-role="listview">
                     <!-- <li data-icon="delete"><a href="#" data-rel="close">Close this panel</a></li> -->
                     <?php
+                        $current_page;
+                        
                         foreach($navigation_pages as $page) {
                             if(($page['admin'] && !$user_data['admin']) || 
                                     ($page['tillmanager'] && !$user_data['till_manager']) || 
@@ -38,6 +40,7 @@
                             } else {
                                 if($page['location'] == $title) {
                                     echo "<li data-theme='b'>" . $page['title'] . "</li>\n";
+                                    $current_page = $page;
                                 } else {
                                     echo "<li><a href='" . $this->Util->get_url($page['location']) . "' data-url='" . $this->Util->get_url($page['location']) . "'>" . $page['title'] . "</a></li>\n";
                                 }
@@ -50,7 +53,7 @@
 
             <div data-role="header" class="ui-header" id="header">
                 <?php if($navigation) {?><a href="#nav-panel" data-role="button" role="button" class="jqm-navmenu-link ui-nodisc-icon ui-alt-icon ui-btn-left ui-btn ui-icon-bars ui-btn-icon-notext" id="nav-button">Panel</a> <?php } ?>
-                <h1><?php echo $name .  str_replace("_", " ", ucfirst($title)); ?></h1>
+                <h1><?php echo $name .  $current_page['title']; ?></h1>
                 <?php
                 // Show the logout button if the user is logged in.
                 if($logged_in) {
