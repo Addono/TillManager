@@ -36,9 +36,9 @@ foreach($posts as $post) {
             <tbody>
         <?php for($i = 0, $max = max(count($debit), count($credit)); $i < $max; $i++) { ?>
               <tr>
-                <td><?php echo isset($debit[$i]) ? $debit[$i]["name"] : "";?></td>
+                <td><?php echo isset($debit[$i]) ? _($debit[$i]["name"]) : "";?></td>
                 <td><?php echo isset($debit[$i]) ? "&euro;" . $debit[$i]["amount"] : "";?></td>
-                <td><?php echo isset($credit[$i]) ? $credit[$i]["name"] : "";?></td>
+                <td><?php echo isset($credit[$i]) ? _($credit[$i]["name"]) : "";?></td>
                 <td><?php echo isset($credit[$i]) ? "&euro;" . $credit[$i]["amount"] : "";?></td>
               </tr>
         <?php } ?>
