@@ -762,7 +762,6 @@ class DBManager {
             `amount` FLOAT(10,2) DEFAULT 0.00,
             `priority` tinyint UNSIGNED NOT NULL DEFAULT 0,
             `cdate` TIMESTAMP NOT NULL DEFAULT now(),
-            `edate` TIMESTAMP NOT NULL DEFAULT now() ON UPDATE now(),
             PRIMARY KEY (`post_id`)
             )
             ENGINE=InnoDB
@@ -783,7 +782,6 @@ class DBManager {
            admin BOOLEAN NOT NULL DEFAULT FALSE,
            till_manager BOOLEAN NOT NULL DEFAULT FALSE,
            cdate datetime DEFAULT NOW() NOT NULL,
-           edate datetime NOT NULL DEFAULT now() ON UPDATE now(),
            UNIQUE KEY id (id)
            )
            ENGINE=InnoDB
@@ -796,7 +794,6 @@ class DBManager {
                type ENUM('purchase', 'sell', 'decleration', 'payout', 'refund', 'deposit', 'unknown', 'error') DEFAULT 'error' NOT NULL,
                approved BOOLEAN NOT NULL DEFAULT FALSE,
                cdate datetime DEFAULT now() NOT NULL,
-               edate datetime DEFAULT now() ON UPDATE now() NOT NULL ,
                UNIQUE KEY id (trans_id)
            )
            ENGINE=InnoDB
@@ -810,7 +807,6 @@ class DBManager {
                `amount` FLOAT(6,2) NOT NULL,
                `new_balance` FLOAT(10,2),
                `cdate` TIMESTAMP NOT NULL DEFAULT now(),
-               `edate` TIMESTAMP NOT NULL DEFAULT now() ON UPDATE now(),
                UNIQUE KEY id (`journ_id`)
            )
            ENGINE=InnoDB
