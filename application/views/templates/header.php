@@ -49,7 +49,11 @@
                     ?>
                 </ul>
             </div><!-- nav-panel -->
-        <?php } ?>
+        <?php 
+        } else {
+            $current_page['title'] = _("Login");
+        }
+        ?>
 
             <div data-role="header" class="ui-header" id="header">
                 <?php if($navigation) {?><a href="#nav-panel" data-role="button" role="button" class="jqm-navmenu-link ui-nodisc-icon ui-alt-icon ui-btn-left ui-btn ui-icon-bars ui-btn-icon-notext" id="nav-button">Panel</a> <?php } ?>
