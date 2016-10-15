@@ -123,14 +123,25 @@ class DBManager {
         }
         
         $primary_key = $this->get_next_primary_key(tables::users);
-
+        
+        $debit_post_id; $credit_post_id;
+        if($username === "admin" || $username === "local") {
+            $debit_post_id = null;
+            $credit_post_id = null;
+        } else {
+            $debit_post_id = $this->add_post($primary_key, 'debit', 1, $this->get_masterpost_id("Till debit"));
+            $credit_post_id = $this->add_post($primary_key, 'credit', 1, $this->get_masterpost_id("Till credit"));
+        }
+        
+        // @TODO: Check if debit and credit post id did return valid values.
+        
         $data = [
             'username' => $username,
             'first_name' => $first_name,
             'prefix_name' => $prefix_name,
             'last_name' => $last_name,
-            'debit_post_id' => $username === "admin" || $username === "local" ? null : $this->add_post($primary_key, 'debit', 1, $this->get_masterpost_id("Till debit")),
-            'credit_post_id' => $username === "admin" || $username === "local" ? null : $this->add_post($primary_key, 'credit', 1, $this->get_masterpost_id("Till credit")),
+            'debit_post_id' => $debit_post_id,
+            'credit_post_id' => $credit_post_id,
             'password' => $this->hash_password($password),
             'pin' => $this->generate_pin($this->ci->config->item('pin_length')),
             'admin' => $admin,
@@ -560,8 +571,8 @@ class DBManager {
         if($cd != "credit" && $cd != "debit") {
           return "error: invalid cd parsed";
         }
-
-        if(!($parent === null || $parent === -1) && !$this->post_exists($parent)) {
+        
+        if($parent !== null && $parent !==0 && !$this->post_exists($parent)) {
           return "error: parent not found";
         }
 
