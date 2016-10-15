@@ -761,7 +761,7 @@ class DBManager {
             `cd` ENUM('credit','debit') NOT NULL,
             `amount` FLOAT(10,2) DEFAULT 0.00,
             `priority` tinyint UNSIGNED NOT NULL DEFAULT 0,
-            `cdate` TIMESTAMP NOT NULL DEFAULT now(),
+            `cdate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (`post_id`)
             )
             ENGINE=InnoDB
@@ -793,7 +793,7 @@ class DBManager {
                description tinytext,
                type ENUM('purchase', 'sell', 'decleration', 'payout', 'refund', 'deposit', 'unknown', 'error') DEFAULT 'error' NOT NULL,
                approved BOOLEAN NOT NULL DEFAULT FALSE,
-               cdate datetime DEFAULT now() NOT NULL,
+               cdate datetime DEFAULT CURRENT_TIMESTAMP NOT NULL ,
                UNIQUE KEY id (trans_id)
            )
            ENGINE=InnoDB
@@ -806,7 +806,7 @@ class DBManager {
                `post_id` mediumint UNSIGNED NOT NULL,
                `amount` FLOAT(6,2) NOT NULL,
                `new_balance` FLOAT(10,2),
-               `cdate` TIMESTAMP NOT NULL DEFAULT now(),
+               `cdate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                UNIQUE KEY id (`journ_id`)
            )
            ENGINE=InnoDB
@@ -829,7 +829,7 @@ class DBManager {
                `type` ENUM('login', 'password_change') NOT NULL,
                `success` TINYTEXT NOT NULL,
                `ip` tinytext NOT NULL,
-               `date` TIMESTAMP NOT NULL DEFAULT now()
+               `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
            )
            ENGINE=InnoDB
            AUTO_INCREMENT=2000000"
