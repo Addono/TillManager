@@ -781,7 +781,7 @@ class DBManager {
            password tinytext NOT NULL,
            admin BOOLEAN NOT NULL DEFAULT FALSE,
            till_manager BOOLEAN NOT NULL DEFAULT FALSE,
-           cdate datetime DEFAULT NOW() NOT NULL,
+           cdate datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
            UNIQUE KEY id (id)
            )
            ENGINE=InnoDB
