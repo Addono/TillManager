@@ -761,8 +761,8 @@ class DBManager {
             `cd` ENUM('credit','debit') NOT NULL,
             `amount` FLOAT(10,2) DEFAULT 0.00,
             `priority` tinyint UNSIGNED NOT NULL DEFAULT 0,
-            `cdate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            `edate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            `cdate` TIMESTAMP NOT NULL DEFAULT now(),
+            `edate` TIMESTAMP NOT NULL DEFAULT now() ON UPDATE now(),
             PRIMARY KEY (`post_id`)
             )
             ENGINE=InnoDB
@@ -783,7 +783,7 @@ class DBManager {
            admin BOOLEAN NOT NULL DEFAULT FALSE,
            till_manager BOOLEAN NOT NULL DEFAULT FALSE,
            cdate datetime DEFAULT NOW() NOT NULL,
-           edate datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+           edate datetime NOT NULL DEFAULT now() ON UPDATE now(),
            UNIQUE KEY id (id)
            )
            ENGINE=InnoDB
@@ -795,8 +795,8 @@ class DBManager {
                description tinytext,
                type ENUM('purchase', 'sell', 'decleration', 'payout', 'refund', 'deposit', 'unknown', 'error') DEFAULT 'error' NOT NULL,
                approved BOOLEAN NOT NULL DEFAULT FALSE,
-               cdate datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
-               edate datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL ,
+               cdate datetime DEFAULT now() NOT NULL,
+               edate datetime DEFAULT now() ON UPDATE now() NOT NULL ,
                UNIQUE KEY id (trans_id)
            )
            ENGINE=InnoDB
@@ -809,8 +809,8 @@ class DBManager {
                `post_id` mediumint UNSIGNED NOT NULL,
                `amount` FLOAT(6,2) NOT NULL,
                `new_balance` FLOAT(10,2),
-               `cdate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-               `edate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+               `cdate` TIMESTAMP NOT NULL DEFAULT now(),
+               `edate` TIMESTAMP NOT NULL DEFAULT now() ON UPDATE now(),
                UNIQUE KEY id (`journ_id`)
            )
            ENGINE=InnoDB
@@ -833,7 +833,7 @@ class DBManager {
                `type` ENUM('login', 'password_change') NOT NULL,
                `success` TINYTEXT NOT NULL,
                `ip` tinytext NOT NULL,
-               `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+               `date` TIMESTAMP NOT NULL DEFAULT now()
            )
            ENGINE=InnoDB
            AUTO_INCREMENT=2000000"
