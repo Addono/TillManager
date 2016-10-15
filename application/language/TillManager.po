@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TillManager\n"
-"POT-Creation-Date: 2016-10-13 23:48+0200\n"
-"PO-Revision-Date: 2016-10-13 23:53+0200\n"
+"POT-Creation-Date: 2016-10-15 10:24+0200\n"
+"PO-Revision-Date: 2016-10-15 10:24+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -58,7 +58,7 @@ msgstr "Ongeldig wachtwoord."
 msgid "Sorry, we do not now that username."
 msgstr "Sorry, maar die gebruikersnaam kennen we niet."
 
-#: controllers/Pages.php:237 views/templates/header.php:57
+#: controllers/Pages.php:237 views/templates/header.php:64
 msgid "Logout"
 msgstr "Uitloggen"
 
@@ -80,12 +80,10 @@ msgid "Username"
 msgstr "Gebruikersnaam"
 
 #: views/pages/account.php:64 views/pages/manage_users.php:100
-#: views/pages/manage_users.php:160
 msgid "First name"
 msgstr "Voornaam"
 
 #: views/pages/account.php:69 views/pages/manage_users.php:110
-#: views/pages/manage_users.php:173
 msgid "Last name"
 msgstr "Achternaam"
 
@@ -97,11 +95,11 @@ msgstr "Rol"
 msgid "User"
 msgstr "Gebruiker"
 
-#: views/pages/account.php:81 views/pages/manage_users.php:194
+#: views/pages/account.php:81 views/pages/manage_users.php:181
 msgid "Till manager"
 msgstr "Kas beheerder"
 
-#: views/pages/account.php:82 views/pages/manage_users.php:185
+#: views/pages/account.php:82 views/pages/manage_users.php:172
 msgid "Admin"
 msgstr "Administrator"
 
@@ -122,7 +120,8 @@ msgid "Are you sure you want to reset your pin code?"
 msgstr "Weet je zeker dat je je pincode wilt herstellen?"
 
 #: views/pages/account.php:107 views/pages/account.php:126
-#: views/pages/manage_users.php:202 views/pages/manage_users.php:307
+#: views/pages/manage_users.php:189 views/pages/manage_users.php:290
+#: views/pages/manage_users.php:297
 msgid "Change password"
 msgstr "Wachtwoord aanpassen"
 
@@ -150,7 +149,8 @@ msgstr "Credit"
 msgid "Total"
 msgstr "Totaal"
 
-#: views/pages/balance.php:65 views/pages/purchase.php:14
+#: views/pages/balance.php:65 views/pages/manage_users.php:159
+#: views/pages/purchase.php:14
 msgid "Name"
 msgstr "Naam"
 
@@ -258,15 +258,16 @@ msgstr "Alle velden met een \"*\" zijn verplicht."
 msgid "Surname prefix"
 msgstr "Tussenvoegsel"
 
-#: views/pages/manage_users.php:115 views/pages/manage_users.php:179
+#: views/pages/manage_users.php:115 views/pages/manage_users.php:166
 msgid "Email"
 msgstr "Email"
 
-#: views/pages/manage_users.php:120 views/templates/login.php:14
+#: views/pages/manage_users.php:120 views/pages/manage_users.php:295
+#: views/templates/login.php:14
 msgid "Password"
 msgstr "Wachtwoord"
 
-#: views/pages/manage_users.php:125
+#: views/pages/manage_users.php:125 views/pages/manage_users.php:296
 msgid "Confirm password"
 msgstr "Bevestig wachtwoord"
 
@@ -274,13 +275,14 @@ msgstr "Bevestig wachtwoord"
 msgid "User information"
 msgstr "Gebruikers informatie"
 
-#: views/pages/manage_users.php:167
-msgid "Prefix"
-msgstr "Tussenvgsl."
-
-#: views/pages/manage_users.php:287
+#: views/pages/manage_users.php:277
 msgid "Change your own password"
 msgstr "Pas je wachtwoord aan"
+
+#: views/pages/manage_users.php:291
+#, php-format
+msgid "Change password for '%s'"
+msgstr "Verander wachtwoord van '%s'"
 
 #: views/pages/purchase.php:8
 msgid "Price per consumption:"
@@ -320,7 +322,8 @@ msgstr ""
 "niet naar mijn weten </small>. Maar nu even serieus, deze pagina is ook weer "
 "niet zo interessant en om weg te gaan hoef je alleen op die knop te drukken."
 
-#: views/templates/login.php:2 views/templates/login.php:18
+#: views/templates/header.php:54 views/templates/login.php:2
+#: views/templates/login.php:18
 msgid "Login"
 msgstr "Log in"
 
@@ -335,6 +338,9 @@ msgid ""
 msgstr ""
 "Om deze op deze pagina te mogen komen moet je een kas beheerder zijn. Klik "
 "de 'Home' knop om terug naar de veiligheid te gaan."
+
+#~ msgid "Prefix"
+#~ msgstr "Tussenvgsl."
 
 #~ msgid "Price per consumption: "
 #~ msgstr "Prijs per consumptie:"

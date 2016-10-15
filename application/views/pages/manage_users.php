@@ -55,7 +55,7 @@ switch($this->input->post('type')) {
                     $this->page_Logger->add_warning(_("Failed to add user, passwords did not match. Make sure that they are equal."));
                     break;
                 default:
-                    $this->page_Logger->add_message(printf(_("User '%s' added succesfully."), $form['username']), "check");
+                    $this->page_Logger->add_message(sprintf(_("User '%s' added succesfully."), $form['username']), "check");
                     $form = $form_default;
                     break;
             }
@@ -156,23 +156,10 @@ switch($this->input->post('type')) {
                         'priority' => '1'
                     ],
                     [
-                        'name' => 'first_name',
-                        'friendly-name' => _('First name'),
-                        'type' => 'string',
+                        'friendly-name' => _('Name'),
+                        'type' => 'name',
                         'priority' => '2'
 
-                    ],
-                                        [
-                        'name' => 'prefix_name',
-                        'friendly-name' => _('Prefix'),
-                        'type' => 'string',
-                        'priority' => '3'
-                    ],
-                    [
-                        'name' => 'last_name',
-                        'friendly-name' => _('Last name'),
-                        'type' => 'string',
-                        'priority' => '3'
                     ],
                     [
                         'name' => 'email',
@@ -279,6 +266,9 @@ switch($this->input->post('type')) {
                                     echo $this->Util->form->get_switch($username, null, $strings['false'], $strings['true'], $value, $column['name'], true);
                                 }
                                 break;
+                            case 'name':
+                                echo $this->Util->combine_name($user);
+                                break;
                             case 'change-password':
                                 $username = $user[$column['username']];
 
@@ -297,14 +287,14 @@ switch($this->input->post('type')) {
 
                                 // Generate the popup of the password reset.
                                 echo $this->Util->get_html_popup_button(
-                                        "Change password", // Set the title of the popup.
-                                        "<h3>Change password for '$username'</h3>\n" .
+                                        _("Change password"), // Set the title of the popup.
+                                        "<h3>" . sprintf(_("Change password for '%s'"), $username) . "</h3>\n" .
                                         "<form method='post' data-ajax='false'>\n" .
                                         "<input type='hidden' name='type' value='change-password'>\n" .
                                         "<input type='hidden' name='username-change-password' value='" . $username . "'>\n" .
-                                        "<label for='password'>Password</label><input type='password' name='change-password' />\n" .
-                                        "<label for='conf-password'>Confirm password</label><input type='password' name='conf-change-password' />\n" .
-                                        $this->Util->form->get_submit(_('Change password'), false) .
+                                        "<label for='password'>" . _("Password") . "</label><input type='password' name='change-password' />\n" .
+                                        "<label for='conf-password'>" . _("Confirm password") . "</label><input type='password' name='conf-change-password' />\n" .
+                                        $this->Util->form->get_submit(_("Change password"), false) .
                                         "</form>\n",
                                         null, // Don't use an icon.
                                         $id, // Set the id of this popup.
