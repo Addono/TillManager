@@ -824,7 +824,7 @@ class DBManager {
                `author` TINYINT UNSIGNED,
                `type` ENUM('login', 'password_change') NOT NULL,
                `success` TINYTEXT NOT NULL,
-               `ip` tinytext NOT NULL,
+               `ip` tinytext NOT NULL
            )
            ENGINE=InnoDB
            AUTO_INCREMENT=2000000"
