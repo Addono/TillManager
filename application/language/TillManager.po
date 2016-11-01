@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TillManager\n"
-"POT-Creation-Date: 2016-11-01 16:46+0100\n"
-"PO-Revision-Date: 2016-11-01 16:47+0100\n"
+"POT-Creation-Date: 2016-11-01 17:31+0100\n"
+"PO-Revision-Date: 2016-11-01 17:31+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -286,6 +286,22 @@ msgstr "Bevestig wachtwoord"
 #: views/pages/manage_users.php:141
 msgid "User information"
 msgstr "Gebruikers informatie"
+
+#: views/pages/manage_users.php:174 views/pages/manage_users.php:183
+msgid "Yes"
+msgstr "Ja"
+
+#: views/pages/manage_users.php:175 views/pages/manage_users.php:184
+msgid "No"
+msgstr "Nee"
+
+#: views/pages/manage_users.php:245
+msgid "True"
+msgstr "Waar"
+
+#: views/pages/manage_users.php:252
+msgid "False"
+msgstr "Onwaar"
 
 #: views/pages/manage_users.php:277
 msgid "Change your own password"

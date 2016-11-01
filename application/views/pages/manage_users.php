@@ -171,8 +171,8 @@ switch($this->input->post('type')) {
                         'name' => 'admin',
                         'friendly-name' => _('Admin'),
                         'type' => 'boolean',
-                        'true' => 'Yes',
-                        'false' => 'No',
+                        'true' => _('Yes'),
+                        'false' => _('No'),
                         'priority' => '4',
                         'editable' => true
                     ],
@@ -180,8 +180,8 @@ switch($this->input->post('type')) {
                         'name' => 'till_manager',
                         'friendly-name' => _('Till manager'),
                         'type' => 'boolean',
-                        'true' => 'Yes',
-                        'false' => 'No',
+                        'true' => _('Yes'),
+                        'false' => _('No'),
                         'priority' => '5',
                         'editable' => true
                     ],
@@ -242,14 +242,14 @@ switch($this->input->post('type')) {
                                 if(isset($column['true'])) {
                                     $strings['true'] = $column['true'];
                                 } else {
-                                    $strings['true'] = "True";
+                                    $strings['true'] = _("True");
                                 }
 
                                 // Check if a different string for false is set, else use default value.
                                 if(isset($column['false'])) {
                                     $strings['false'] = $column['false'];
                                 } else {
-                                    $strings['false'] = "False";
+                                    $strings['false'] = _("False");
                                 }
 
                                 $username = $user['username'];
