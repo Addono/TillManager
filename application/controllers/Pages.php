@@ -59,7 +59,7 @@ class Pages extends CI_Controller {
             ],
             "purchase" => [
                 "location" => "purchase",
-                "title" => _("Purchase"),
+                "title" => _("New purchase"),
                 "admin" => false,
                 "tillmanager" => false
             ],

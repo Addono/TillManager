@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TillManager\n"
-"POT-Creation-Date: 2016-10-15 10:24+0200\n"
-"PO-Revision-Date: 2016-10-19 20:15+0200\n"
+"POT-Creation-Date: 2016-11-01 16:46+0100\n"
+"PO-Revision-Date: 2016-11-01 16:47+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -17,14 +17,34 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: resources\n"
 
+#: controllers/DBManager.php:30
+msgid "Possessions"
+msgstr "Eigendommen"
+
+#: controllers/DBManager.php:37
+msgid "Inventory"
+msgstr "Invertaris"
+
+#: controllers/DBManager.php:44 views/pages/balance.php:66
+msgid "Till debit"
+msgstr "Kas debit"
+
+#: controllers/DBManager.php:51
+msgid "Equity"
+msgstr "Eigen vermogen"
+
+#: controllers/DBManager.php:58 views/pages/balance.php:69
+msgid "Till credit"
+msgstr "Kas credit"
+
 #: controllers/Pages.php:56 views/templates/admin_only.php:5
 #: views/templates/tillmanager_only.php:5
 msgid "Home"
 msgstr "Home"
 
-#: controllers/Pages.php:62 views/pages/purchase.php:10
-msgid "Purchase"
-msgstr "Koop"
+#: controllers/Pages.php:62
+msgid "New purchase"
+msgstr "Nieuwe aankoop"
 
 #: controllers/Pages.php:68 views/pages/deposit.php:23
 msgid "Deposit"
@@ -154,17 +174,9 @@ msgstr "Totaal"
 msgid "Name"
 msgstr "Naam"
 
-#: views/pages/balance.php:66
-msgid "Till debit"
-msgstr "Kas debit"
-
 #: views/pages/balance.php:67
 msgid "The amount of till money a user has in his possession."
 msgstr "De hoeveelheid geld van de kas iemand in bewaring heeft."
-
-#: views/pages/balance.php:69
-msgid "Till credit"
-msgstr "Kas credit"
 
 #: views/pages/balance.php:70
 msgid "The amount each user can still can spend."
@@ -287,6 +299,10 @@ msgstr "Verander wachtwoord van '%s'"
 #: views/pages/purchase.php:8
 msgid "Price per consumption:"
 msgstr "Prijs per consumptie:"
+
+#: views/pages/purchase.php:10
+msgid "Purchase"
+msgstr "Koop"
 
 #: views/pages/purchase.php:15
 msgid "Amount of consumptions"

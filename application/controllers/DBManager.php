@@ -7,6 +7,7 @@ abstract class tables {
   const products = "products_table";
   const logins = "logins_table";
 }
+
 /**
  * @TODO: Make object oriented
  */
@@ -14,24 +15,53 @@ class DBManager {
     private $ci;
     private $current_user;
     
+    private $posts_id_start = 7000000;
+    
+    private $master_posts;
+    
     function __construct($ci) {
         $this->ci = $ci; // Parse controller object.
         $this->ci->load->database();
 
         $this->create_missing_tables();
-
-        $actions = [
-          [
-            "post_id" => 7000000,
-            "amount" => 5.95
-          ],
-          [
-            "post_id" => 7000008,
-            "amount" => 5.95
-          ],
+        
+        $this->master_posts = [
+            "Possessions" => [
+                "name" => _("Possessions"),
+                "cd" => "debit",
+                "parent" => false,
+                "priority" => 3,
+                "id" => $this->posts_id_start
+            ],
+            "Inventory" => [
+                "name" => _("Inventory"),
+                "cd" => "debit",
+                "parent" => false,
+                "priority" => 2,
+                "id" => $this->posts_id_start + 1
+            ],
+            "Till debit" => [
+                "name" => _("Till debit"),
+                "cd" => "debit",
+                "parent" => true,
+                "priority" => 1,
+                "id" => $this->posts_id_start + 2
+            ],
+            "Equity" => [
+                "name" => _("Equity"),
+                "cd" => "credit",
+                "parent" => false,
+                "priority" => 3,
+                "id" => $this->posts_id_start + 3
+            ],
+            "Till credit" => [
+                "name" => _("Till credit"),
+                "cd" => "credit",
+                "parent" => true,
+                "priority" => 1,
+                "id" => $this->posts_id_start + 4
+            ]
         ];
-
-        //$this->create_transaction(1, "unknown", "", $actions);
     }
 
     /**
@@ -722,45 +752,12 @@ class DBManager {
     }
 
     private function get_masterpost_id($name) {
-      return self::master_posts[$name]["id"];
+      return $master_posts[$name]["id"];
     }
-
-    const posts_id_start = 7000000;
-    const master_posts = [
-      "Possessions" => [
-        "cd" => "debit",
-        "parent" => false,
-        "priority" => 3,
-        "id" => self::posts_id_start
-      ],
-      "Inventory" => [
-        "cd" => "debit",
-        "parent" => false,
-        "priority" => 2,
-        "id" => self::posts_id_start + 1
-      ],
-      "Till debit" => [
-        "cd" => "debit",
-        "parent" => true,
-        "priority" => 1,
-        "id" => self::posts_id_start + 2
-      ],
-      "Equity" => [
-        "cd" => "credit",
-        "parent" => false,
-        "priority" => 3,
-        "id" => self::posts_id_start + 3
-      ],
-      "Till credit" => [
-        "cd" => "credit",
-        "parent" => true,
-        "priority" => 1,
-        "id" => self::posts_id_start + 4
-      ]
-    ];
 
     /**
     * Creates the required tables, if they are missing from the database.
+     * @TODO: Switch to the dbforge class of codeigniter.
     */
    private function create_missing_tables() {
        // Define the SQL creation code for each table we need.
@@ -775,7 +772,7 @@ class DBManager {
             PRIMARY KEY (`post_id`)
             )
             ENGINE=InnoDB
-            AUTO_INCREMENT=" . self::posts_id_start . "
+            AUTO_INCREMENT=" . $this->posts_id_start . "
             ;",
 
            tables::users => "CREATE TABLE `" . tables::users . "` (
@@ -812,7 +809,7 @@ class DBManager {
                `journ_id` mediumint UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
                `trans_id` mediumint UNSIGNED NOT NULL,
                `post_id` mediumint UNSIGNED NOT NULL,
-               `amount` FLOAT(6,2) NOT NULL,
+               `amount` FLOAT(8,2) NOT NULL,
                `new_balance` FLOAT(10,2),
                UNIQUE KEY id (`journ_id`)
            )
@@ -823,6 +820,8 @@ class DBManager {
            tables::products => "CREATE TABLE " . tables::products . " (
                `product_id` mediumint UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
                `post_id` mediumint UNSIGNED NOT NULL,
+               `amount` mediumint NOT NULL,
+               `price` FLOAT(6,2) NOT NULL,
                `name` tinytext NOT NULL,
                `description` tinytext
             )
@@ -835,7 +834,8 @@ class DBManager {
                `author` TINYINT UNSIGNED,
                `type` ENUM('login', 'password_change') NOT NULL,
                `success` TINYTEXT NOT NULL,
-               `ip` tinytext NOT NULL
+               `ip` tinytext NOT NULL,
+               `date` datetime NOT NULL
            )
            ENGINE=InnoDB
            AUTO_INCREMENT=2000000"
@@ -856,7 +856,7 @@ class DBManager {
                         $this->add_user('local', 'Local', '', 'Computer', 'Banana', false, false);
                         break;
                     case tables::posts:
-                        $this->add_posts(self::master_posts);
+                        $this->add_posts($master_posts);
                         break;
                }
            } else {
