@@ -1,15 +1,12 @@
 <?php
 /**
- * @TODO: Add multilanguage support with gettext
- * 
  * @author      Adriaan Knapen <a.d.knapen@student.tue.nl> <adriaan.knapen@gmail.com>
  * @copyright   Copyright (c) 2016, Adriaan Knapen
  * @licence     http://opensource.org/licenses/MIT	MIT License
  */
-clearstatcache(); // remove while in production
 
 // I18N support information here
-$language = 'nl';
+$language = 'en';
 
 putenv('LANG=' . $language);
 if(!setlocale(LC_ALL, $language)) {
@@ -33,6 +30,10 @@ function _n($msgid1, $msgid2, $n) {
     return ngettext($msgid1, $msgid2, $n);
 }
 
+/**
+ * Echoing version of gettext.
+ * @param string The message to be translated.
+ */
 function _e($msgid) {
     echo _($msgid);
 }

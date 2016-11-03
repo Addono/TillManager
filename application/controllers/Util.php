@@ -164,29 +164,42 @@ class Ajax {
         $this->Util = $util;
     }    
     
-public function switch_js($class) {
-    echo
-    "<script>
-    $( document ).ready(function() {
-    $('.ajax-$class').click(function() {
-      var select = $( this ).find('select');
-      var name = select.attr('name');
-      var value = select.val();
+    public function switch_js($class) {
+        echo
+            "<script>
+            $( document ).ready(function() {
+                $('.ajax-$class').click(function() {
+                    var select = $( this ).find('select');
+                    var name = select.attr('name');
+                    var firstVal = select.find(':nth-child(1)').attr('value');
+                    var value;
+                    
+                    // Get the position of the switch and get the corresponding value attribute.
+                    if(select.val() == firstVal) {
+                        value = firstVal;
+                    } else {
+                        value = select.find(':nth-child(2)').attr('value');
+                    }
 
-      $.post('" . $this->Util->get_url("ajax/$class-switch") . "', {name: name, value: value}, function(result) {
-        switch(result) {
-          case 'failed: user not logged in':
-            alert('" . _("Action failed because you are not logged in anymore, reload the page and login before proceding.") . "');
-            break;
-          case 'failed: access denied':
-            alert('" . _("Action failed, you do not have enough rights to do this.") . "');
-            break;
-        }
-      });
-    });
-  });
-</script>\n";
-  }
+                    $.post('" . $this->Util->get_url("ajax/$class-switch") . "', {name: name, value: value}, function(result) {
+                        if(result != 'succes') {
+                            switch(result) {
+                                case 'failed: user not logged in':
+                                    alert('" . _("Action failed because you are not logged in anymore, reload the page and login before proceding.") . "');
+                                    break;
+                                case 'failed: access denied':
+                                    alert('" . _("Action failed, you do not have enough rights to do this.") . "');
+                                    break;
+                                default:
+                                    alert('" . _("Something unexpected happened, the error was: ") . "\'' + result + \"'\");
+                                    break;
+                            }
+                        }
+                    });
+                });
+            });
+            </script>\n";
+    }
 }
 
 class Form {
@@ -233,16 +246,16 @@ class Form {
 
 
         $html .= '<select id="flip-select-second" name="' . $name . '" data-role="flipswitch">'
-                . '<option>' . $option_left . '</option>';
+                . '<option value="False">' . $option_left . '</option>';
 
         // Set the default position to right if this is specified.
         // Check if the default position is equal to the right one, if the default position is parsed as a string.
         if($default_pos === $option_right && is_string($default_pos) ||
                 // Check if the default position is right (true) if the default position is set as an boolean.
                 ($default_pos && is_bool($default_pos))) { 
-            $html .= '<option selected="">' . $option_right . '</option>';
+            $html .= '<option selected="" value="True">' . $option_right . '</option>';
         } else {
-            $html .= '<option>' . $option_right . '</option>';
+            $html .= '<option value="True">' . $option_right . '</option>';
         }
 
         $html .= "</select>\n";
