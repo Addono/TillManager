@@ -450,68 +450,77 @@ class DBManager {
     // @TODO: Use transactions https://www.codeigniter.com/userguide3/database/transactions.html
 
     public function create_transaction($author_id, $type, $description, $actions) {
-      $credit = 0;
-      $debit = 0;
-      $status = 'success';
+        $credit = 0;
+        $debit = 0;
+        $status = 'success';
 
-      foreach($actions as $action) {
-        // Check if all required fields are set.
-        if(!(isset($action['amount']) && isset($action['post_id']))) {
-          return "error: invalid action";
+        foreach($actions as $action) {
+            // Check if all required fields are set.
+            if(!(isset($action['amount']) && isset($action['post_id']))) {
+                return "error: invalid action";
+            }
+
+            $action['cd'] = $this->get_post_cd($action['post_id']);
+
+            // Sum all credit and debit values.
+            if($action['cd'] == 'credit') {
+                $credit += $action['amount'];
+            } elseif($action['cd'] == 'debit') {
+                $debit += $action['amount'];
+            } else {
+                return "error: invalid cd parsed";
+            }
         }
 
-        $action['cd'] = $this->get_post_cd($action['post_id']);
-
-        // Sum all credit and debit values.
-        if($action['cd'] == 'credit') {
-          $credit += $action['amount'];
-        } elseif($action['cd'] == 'debit') {
-          $debit += $action['amount'];
-        } else {
-          return "error: invalid cd parsed";
+        // Check if the credit and debit sum are equal.
+        if($credit !== $debit) {
+            return "error: debit and credit sum not equal";
         }
-      }
 
-      // Check if the credit and debit sum are equal.
-      if($credit !== $debit) {
-        return "error: debit and credit sum not equal";
-      }
-
-      // Create a new transaction.
-      switch($type) {
-        case 'purchase':
-        case 'sell':
-        case 'decleration':
-        case 'payout':
-        case 'refund':
-        case 'deposit':
-        case 'unknown':
-          $data = [
-            "author_id" => $author_id,
-            "description" => $description,
-            "type" => $type
-          ];
-
-          if(!$this->ci->db->insert(tables::transactions, $data)) {
-            return "error: database insertion failed";
-          }
-          break;
-        default:
-          return "error: type not valid";
-      }
-
-      $trans_id = $this->ci->db->insert_id();
-
-      // Create all required journal entries.
-      foreach ($actions as $action) {
-        $result = $this->create_journal($author_id, $trans_id, $action['post_id'], $action['amount']);
-        
-        if($result != 'success') {
-            $status = $result;
-        }
-      }
+        // Create a new transaction.
+        $this->ci->db->trans_start(); // Make adding the transaction atomic.
       
-      return $status;
+        switch($type) {
+            case 'purchase':
+            case 'sell':
+            case 'decleration':
+            case 'payout':
+            case 'refund':
+            case 'deposit':
+            case 'unknown':
+                $data = [
+                    "author_id" => $author_id,
+                    "description" => $description,
+                    "type" => $type
+                ];
+
+                if(!$this->ci->db->insert(tables::transactions, $data)) {
+                    return "error: database insertion failed";
+                }
+                break;
+            default:
+                return "error: type not valid";
+        }
+
+        $trans_id = $this->ci->db->insert_id();
+
+        // Create all required journal entries.
+        foreach ($actions as $action) {
+            $result = $this->create_journal($author_id, $trans_id, $action['post_id'], $action['amount']);
+        
+            if($result != 'success') {
+                $status = $result;
+            }
+        }
+      
+        $this->ci->db->trans_complete();
+      
+        // Log if adding the transaction failed.
+        if($this->ci->db->trans_status() === FALSE) {
+            log_message('error', "Adding transaction failed '" . $status . "'.");
+        }
+      
+        return $status;
     }
     
     public function create_purchase($user_id, $amount, $author) {

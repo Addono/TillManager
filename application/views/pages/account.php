@@ -72,9 +72,14 @@
 
             <tr><!-- Role(s) -->
                 <?php
-                    $n = 0;
-                    if($user_data['till_manager']) $n++;
-                    if($user_data['admin']) $n++;
+                    $n = 1;
+                    if($user_data['till_manager']) {
+                        $n++;
+                    }
+                    
+                    if($user_data['admin']) {
+                        $n++;
+                    }
                 ?>
                 <td><?php echo _n("Role", "Roles", $n); ?></td>
                 <td><?php _e("User");

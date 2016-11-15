@@ -6,7 +6,7 @@
  */
 
 // I18N support information here
-$language = 'en';
+$language = 'nl';
 
 putenv('LANG=' . $language);
 if(!setlocale(LC_ALL, $language)) {
