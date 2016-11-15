@@ -478,7 +478,7 @@ class DBManager {
         }
 
         // Create a new transaction.
-        $this->ci->db->trans_start(); // Make adding the transaction atomic.
+        $this->ci->db->trans_begin(); // Make adding the transaction atomic.
       
         switch($type) {
             case 'purchase':
@@ -509,15 +509,17 @@ class DBManager {
             $result = $this->create_journal($author_id, $trans_id, $action['post_id'], $action['amount']);
         
             if($result != 'success') {
-                $status = $result;
+                $this->ci->db->trans_rollback();
+                return $result;
             }
         }
       
-        $this->ci->db->trans_complete();
-      
         // Log if adding the transaction failed.
         if($this->ci->db->trans_status() === FALSE) {
+            $this->ci->db->trans_rollback();
             log_message('error', "Adding transaction failed '" . $status . "'.");
+        } else {
+            $this->ci->db->trans_commit();
         }
       
         return $status;
@@ -581,25 +583,26 @@ class DBManager {
     //////////\\\\\\\\\\
 
     private function create_journal($author_id, $trans_id, $post_id, $amount) {
-      $result = $this->update_post($post_id, $amount);
+        $result = $this->update_post($post_id, $amount);
       
-      if(is_string($result) && $result != "success") {
-        error_log("Journal creation failed with post updating, report'$result'");
-        return "error: could not update post";
-      }
+        if(is_string($result) && $result != "success") {
+            error_log("Journal creation failed with post updating, report'$result'");
+            return "error: could not update post";
+        }
 
-      $data = [
-        "trans_id" => $trans_id,
-        "post_id" => $post_id,
-        "amount" => $amount,
-        "new_balance" => $result
-      ];
+        $data = [
+            "trans_id" => $trans_id,
+            "post_id" => $post_id,
+            "amount" => $amount,
+            "new_balance" => $result
+        ];
 
-      if($this->ci->db->insert(tables::journal, $data)) {
-        return $this->ci->db->insert_id();
-      } else {
-        return "error: could not insert new journal into db";
-      }
+        if($this->ci->db->insert(tables::journal, $data)) {
+            return $this->ci->db->insert_id();
+        } else {
+            $this->ci->db->trans_rollback();
+            return "error: could not insert new journal into db";
+        }
     }
 
     //////////\\\\\\\\\\
@@ -697,11 +700,11 @@ class DBManager {
       $this->ci->db->where('post_id', $post_id);
       $this->ci->db->select(["amount"]);
       $result = $this->ci->db->get(tables::posts);
-      $old_amount = $result->row()->amount;
-
+      $old_amount = floatval($result->row()->amount);
+      
       // Calculate the new amount.
       $data = [
-        "amount" =>  $old_amount + $amount
+        "amount" => $old_amount + $amount
       ];
 
       // Update the database with the new amount.
@@ -709,6 +712,7 @@ class DBManager {
       if($this->ci->db->update(tables::posts, $data)) {
         return "success";
       } else {
+        $this->ci->db->trans_rollback();
         return "error: could not update post";
       }
     }
@@ -761,7 +765,7 @@ class DBManager {
     }
 
     private function get_masterpost_id($name) {
-      return $master_posts[$name]["id"];
+      return $this->master_posts[$name]["id"];
     }
 
     /**
@@ -865,7 +869,7 @@ class DBManager {
                         $this->add_user('local', 'Local', '', 'Computer', 'Banana', false, false);
                         break;
                     case tables::posts:
-                        $this->add_posts($master_posts);
+                        $this->add_posts($this->master_posts);
                         break;
                }
            } else {
