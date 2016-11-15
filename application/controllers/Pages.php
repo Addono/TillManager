@@ -9,8 +9,8 @@
 $language = 'nl';
 
 putenv('LANG=' . $language);
-if(!setlocale(LC_ALL, $language)) {
-    echo "<!-- Language $language not detected, using default language (English). -->";
+if(!setlocale(LC_ALL, "en_US", "en_en", "en")) {
+    echo "<!-- English locale not detected. -->\n";
 }
 
 // Set the text domain as 'messages'
