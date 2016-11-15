@@ -29,21 +29,25 @@
                         $current_page;
                         
                         foreach($navigation_pages as $page) {
+                            // Check if the currently evaluated page is the current page.
+                            if(isset($page['location']) && $page['location'] == $title) {
+                                $current_page = $page;
+                            }
+                            
+                            // Check if this page should not be included in the navigation.
                             if(($page['admin'] && !$user_data['admin']) || 
                                     ($page['tillmanager'] && !$user_data['till_manager']) || 
                                     (isset($page['hidden']) && $page['hidden'])) {
                                 continue;
                             }
                             
+                            // Draw its entry in the navigation.
                             if(!isset($page['location'])) {
                                 echo "<li>" . $page['title'] . "</li>";
+                            } elseif($page['location'] == $title) {
+                                echo "<li data-theme='b'>" . $page['title'] . "</li>\n";
                             } else {
-                                if($page['location'] == $title) {
-                                    echo "<li data-theme='b'>" . $page['title'] . "</li>\n";
-                                    $current_page = $page;
-                                } else {
-                                    echo "<li><a href='" . $this->Util->get_url($page['location']) . "' data-url='" . $this->Util->get_url($page['location']) . "'>" . $page['title'] . "</a></li>\n";
-                                }
+                                echo "<li><a href='" . $this->Util->get_url($page['location']) . "' data-url='" . $this->Util->get_url($page['location']) . "'>" . $page['title'] . "</a></li>\n";
                             }
                         }
                     ?>
