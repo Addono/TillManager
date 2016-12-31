@@ -1,4 +1,4 @@
-<?php
+<?
 $all_users = $this->DBManager->get_all_user_data(null, null, false);
 
 $till_managers = [];
@@ -17,7 +17,7 @@ foreach($all_users as $user) {
 
 <div data-role="main" class="ui-content jqm-content jqm-fullwidth" id="main">
     <div class="ui-body ui-body-a ui-corner-all">
-        <?php 
+        <?
         echo form_open('process_deposit', 'data-ajax="false"');
         
         echo $this->Util->form->get_submit(_("Deposit"));

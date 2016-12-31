@@ -1,5 +1,5 @@
 
-            <?php // Show the log, if there is anything to show.
+            <? // Show the log, if there is anything to show.
                 if(isset($log)) {
                     if($log != "" && $log != "&nbsp;") {
                         echo $log;
@@ -10,7 +10,7 @@
             <!-- Koen was here!-->
         </div><!-- page -->
 
-        <?php // If a menu is required, initiate jQuery mobile to build it for us.
+        <? // If a menu is required, initiate jQuery mobile to build it for us.
         if($navigation) { ?>
         <script>
             // Binds swipe functionality to the header.
@@ -39,7 +39,7 @@
                 make_header_swipeable(ui.page);
             });
         </script>
-        <?php } ?>
+        <? } ?>
     </body>
-    <!-- Page rendered in <?php echo $this->benchmark->elapsed_time(); ?>s -->
+    <!-- Page rendered in <? echo $this->benchmark->elapsed_time(); ?>s -->
 </html>

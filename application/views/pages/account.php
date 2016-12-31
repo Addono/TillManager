@@ -1,4 +1,4 @@
-<?php
+<?
     $this->page_Logger = new Logger;
 
     // Check which form was submitted.
@@ -53,25 +53,25 @@
             }
         </style>
 
-        <h3><?php _("My account"); ?></h3>
+        <h3><? _("My account"); ?></h3>
         <table class="first-column-bold">
             <tr><!-- Username -->
-                <td><?php _e("Username"); ?></td>
-                <td><?php echo $user_data['username']; ?></td>
+                <td><? _e("Username"); ?></td>
+                <td><? echo $user_data['username']; ?></td>
             </tr>
 
             <tr><!-- First name -->
-                <td><?php _e("First name"); ?></td>
-                <td><?php echo $user_data['first_name'];?></td>
+                <td><? _e("First name"); ?></td>
+                <td><? echo $user_data['first_name'];?></td>
             </tr>
 
             <tr><!-- Last name -->
-                <td><?php _e("Last name"); ?></td>
-                <td><?php echo $user_data['last_name'];?></td>
+                <td><? _e("Last name"); ?></td>
+                <td><? echo $user_data['last_name'];?></td>
             </tr>
 
             <tr><!-- Role(s) -->
-                <?php
+                <?
                     $n = 1;
                     if($user_data['till_manager']) {
                         $n++;
@@ -81,17 +81,17 @@
                         $n++;
                     }
                 ?>
-                <td><?php echo _n("Role", "Roles", $n); ?></td>
-                <td><?php _e("User");
+                <td><? echo _n("Role", "Roles", $n); ?></td>
+                <td><? _e("User");
                           echo $user_data['till_manager'] ? ", " . _("Till manager") : "";
                           echo $user_data['admin'] ? ", " . _("Admin") : ""; ?>
                 </td>
             </tr>
 
             <tr><!-- Pin -->
-                <td><?php _e("Pin"); ?></td>
+                <td><? _e("Pin"); ?></td>
                 <td>
-                    <?php
+                    <?
                     echo $this->Util->get_html_popup_button(_("Show"), $user_data['pin']);
                     echo $this->Util->get_html_popup_button(_("Reset pin"),
                             "<form method='post' data-ajax='false'>
@@ -109,30 +109,30 @@
     <br>
 
     <div class="ui-body ui-body-a ui-corner-all">
-        <h3><?php _e("Change password"); ?></h3>
+        <h3><? _e("Change password"); ?></h3>
 
         <form method="post">
             <input type='hidden' name='type' value='change-password'>
             <div class="ui-field-contain">
-                <label for="current_password"><?php _e("Current password"); ?></label>
+                <label for="current_password"><? _e("Current password"); ?></label>
                 <input type="password" name="current_password" required />
             </div>
 
             <div class="ui-field-contain">
-                <label for="new_password"><?php _e("New password"); ?></label>
+                <label for="new_password"><? _e("New password"); ?></label>
                 <input type="password" name="new_password" required />
             </div>
 
             <div class="ui-field-contain">
-                <label for="new_password_confirm"><?php _e("Confirm new password"); ?></label>
+                <label for="new_password_confirm"><? _e("Confirm new password"); ?></label>
                 <input type="password" name="new_password_confirm" required />
             </div>
 
-            <?php echo $this->Util->form->get_submit(_("Change password")); ?>
+            <? echo $this->Util->form->get_submit(_("Change password")); ?>
         </form>
     </div>
 
-<?php
+<?
 $this->page_Logger->show_html();
 ?>
 </div><!-- main -->

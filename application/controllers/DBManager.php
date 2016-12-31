@@ -1,4 +1,4 @@
-<?php
+<?
 abstract class tables {
   const users = "user_table";
   const transactions = "trans_table";

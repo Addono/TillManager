@@ -1,4 +1,4 @@
-<?php
+<?
 $this->page_Logger = new Logger;
 
 // Get all post variables into one array.
@@ -86,61 +86,61 @@ switch($this->input->post('type')) {
 ?>
 <div data-role="main" class="ui-content jqm-content jqm-fullwidth" id="main">
     <div class="ui-body ui-body-a ui-corner-all">
-        <h3><?php _e("Add user"); ?></h3>
-        <p><i><?php _e('All fields marked with an "*" are required.'); ?></i></p>
+        <h3><? _e("Add user"); ?></h3>
+        <p><i><? _e('All fields marked with an "*" are required.'); ?></i></p>
 
         <form method="post">
             <input type="hidden" name="type" value="add-user">
             <div class="ui-field-contain">
-                <label for="username"><?php _e("Username"); ?>*</label>
-                <input type="text" name="username" value="<?php echo $form['username'];?>" required />
+                <label for="username"><? _e("Username"); ?>*</label>
+                <input type="text" name="username" value="<? echo $form['username'];?>" required />
             </div>
 
             <div class="ui-field-contain">
-                <label for="first_name"><?php _e("First name"); ?>*</label>
-                <input type="text" name="first_name" value="<?php echo $form['first_name'];?>" required />
+                <label for="first_name"><? _e("First name"); ?>*</label>
+                <input type="text" name="first_name" value="<? echo $form['first_name'];?>" required />
             </div>
             
             <div class="ui-field-contain">
-                <label for="last_name"><?php _e("Surname prefix"); ?></label>
-                <input type="text" name="prefix_name" value="<?php echo $form['prefix_name'];?>"/>
+                <label for="last_name"><? _e("Surname prefix"); ?></label>
+                <input type="text" name="prefix_name" value="<? echo $form['prefix_name'];?>"/>
             </div>
 
             <div class="ui-field-contain">
-                <label for="last_name"><?php _e("Last name"); ?>*</label>
-                <input type="text" name="last_name" value="<?php echo $form['last_name'];?>" required />
+                <label for="last_name"><? _e("Last name"); ?>*</label>
+                <input type="text" name="last_name" value="<? echo $form['last_name'];?>" required />
             </div>
 
             <div class="ui-field-contain">
-                <label for="username"><?php _e("Email"); ?>*</label>
-                <input type="text" name="email" value="<?php echo $form['email'];?>" required />
+                <label for="username"><? _e("Email"); ?>*</label>
+                <input type="text" name="email" value="<? echo $form['email'];?>" required />
             </div>
 
             <div class="ui-field-contain">
-                <label for="new_password"><?php _e("Password"); ?>*</label>
+                <label for="new_password"><? _e("Password"); ?>*</label>
                 <input type="password" name="password" required />
             </div>
 
             <div class="ui-field-contain">
-                <label for="password_confirm"><?php _e("Confirm password"); ?>*</label>
+                <label for="password_confirm"><? _e("Confirm password"); ?>*</label>
                 <input type="password" name="password_confirm" required />
             </div>
 
-            <?php
+            <?
                 // Add the submit button.
                 echo $this->Util->form->get_submit(_("Add user"), false);
             ?>
         </form>
     </div> <br>
 
-    <?php
+    <?
         $this->page_Logger->show_html();
     ?>
 
     <div class="ui-body ui-body-a ui-corner-all">
-        <h3><?php _e("User information"); ?></h3>
+        <h3><? _e("User information"); ?></h3>
         <table data-role="table" data-mode="reflow" class="ui-responsive striped">
-            <?php
+            <?
             /**
              *  Stores which columns should be displayed, and how they should be displayed.
              *  'name' is the name of the SQL column.
@@ -319,7 +319,7 @@ switch($this->input->post('type')) {
         </table>
     </div>
 
-<?php
+<?
   echo $this->Util->Ajax->switch_js("admin");
   echo $this->Util->Ajax->switch_js("till_manager");
 ?>

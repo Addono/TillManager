@@ -1,4 +1,4 @@
-<?php
+<?
 /**
  * A class containing multiple tools to handle generic and regularly used HTML.
  */

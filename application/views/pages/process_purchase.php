@@ -1,4 +1,4 @@
-<?php
+<?
 /**
  * @TODO Add rights management for purchases.
  * @TODO Add server sided form validation.
@@ -21,7 +21,7 @@ foreach($users as $user) {
 ?>
 
 <script type="text/JavaScript">
-    var url = "<?php echo  $this->Util->get_url("purchase"); ?>";
+    var url = "<? echo  $this->Util->get_url("purchase"); ?>";
     var timeout = setTimeout("location.href = '" + url + "';", 10000);
      
     $(document).ready(function(){
@@ -37,7 +37,7 @@ foreach($users as $user) {
 <div data-role="main" class="ui-content jqm-content jqm-fullwidth" id="main">
     <div class="ui-body ui-body-a ui-corner-all">
         <h3>Process purchase</h3>
-            <?php
+            <?
             if(count($purchases) == 0) {
                 echo "<p>No purchases selected</p>";
             } else {

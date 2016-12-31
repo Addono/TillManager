@@ -1,4 +1,4 @@
-<?php
+<?
 $result;
 // @TODO: Add server sided form validation.
 
@@ -39,7 +39,7 @@ if($from === null) {
 ?>
 
 <script type="text/JavaScript">
-    var url = "<?php echo  $this->Util->get_url("deposit"); ?>";
+    var url = "<? echo  $this->Util->get_url("deposit"); ?>";
     var timeout = setTimeout("location.href = '" + url + "';", 10000);
      
     $(document).ready(function(){
@@ -55,7 +55,7 @@ if($from === null) {
 <div data-role="main" class="ui-content jqm-content jqm-fullwidth" id="main">
     <div class="ui-body ui-body-a ui-corner-all">
         <h3>Process deposit</h3>
-        <p><?php echo $result; ?></p>
+        <p><? echo $result; ?></p>
         
         <p>
             <i id="returnMessage">You will be automatically returned after 10 seconds. Click "Cancel" to prevent this from happening.</i>

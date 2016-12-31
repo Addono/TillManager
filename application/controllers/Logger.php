@@ -1,4 +1,4 @@
-<?php
+<?
 class Logger {
     private $html_log;
     
