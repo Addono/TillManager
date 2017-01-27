@@ -139,7 +139,6 @@ class resources {
                 break;
             case 'jqm-spinbox':
                 echo $this->js_resource("jqm-spinbox.min.js");
-                echo $this->js_resource("jqm-spinbox-helper.js");
                 break;
             default: // Log an error if the package does not exist.
                 error_log("Package  '$package' was not found, and could therefore not be added by the Resources class.");
