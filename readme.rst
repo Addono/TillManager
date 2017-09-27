@@ -2,7 +2,7 @@
 WARNING! PROJECT IS DISCONTINUED
 ********************************
 
-Development restarted from scrath at https://addono.github.com/lisa
+Development restarted from scratch at https://addono.github.com/lisa
 
 *******************
 Server Requirements
